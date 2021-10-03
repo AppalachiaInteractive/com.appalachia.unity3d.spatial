@@ -1,0 +1,23 @@
+{
+    "name": "Appalachia.Spatial",
+    "rootNamespace": "",
+    "references": [
+        "GUID:01789cac4a2597b458bedef85a39c3f2",
+        "GUID:873f913f34eb2c34385d17b9a87f21b9",
+        "GUID:4c32fdd75da6bc94f9b79f03f11f5e30",
+        "GUID:7ec7e612bfbe14a459c7dc59c358e760",
+        "GUID:6b8c99229a4703f47b9e6e696c2e8d8d",
+        "GUID:2665a8d13d1b3f18800f46e256720795",
+        "GUID:e0cd26848372d4e5c891c569017e11f1",
+        "GUID:d8b63aba1907145bea998dd612889d6b"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

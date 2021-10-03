@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3cdb1edae21241c7a10a9b73aedc6533, type: 3}
+  m_Name: Terrain_95cabf7910725844282dc767573ea1c3
+  m_EditorClassIdentifier: 
+  _niceName: 
+  _cachedName: 
+  id: 1
+  profileName: Terrain_95cabf7910725844282dc767573ea1c3
+  _terrainData: {fileID: 15600000, guid: 95cabf7910725844282dc767573ea1c3, type: 2}
+  _allocator: 4
