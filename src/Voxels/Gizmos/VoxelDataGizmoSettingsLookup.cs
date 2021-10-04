@@ -6,8 +6,9 @@ using Appalachia.Base.Scriptables;
 
 namespace Appalachia.Spatial.Voxels.Gizmos
 {
-    public class VoxelDataGizmoSettingsLookup : ScriptableObjectLookupCollection<VoxelDataGizmoSettingsLookup, VoxelDataGizmoSettingsIndex,
-        VoxelDataGizmoStyle, VoxelDataGizmoSettings, AppaList_VoxelDataGizmoStyle, AppaList_VoxelDataGizmoSettings>
+    public class VoxelDataGizmoSettingsLookup : ScriptableObjectLookupCollection<
+        VoxelDataGizmoSettingsLookup, VoxelDataGizmoSettingsIndex, VoxelDataGizmoStyle,
+        VoxelDataGizmoSettings, AppaList_VoxelDataGizmoStyle, AppaList_VoxelDataGizmoSettings>
     {
         protected override VoxelDataGizmoStyle GetUniqueKeyFromValue(VoxelDataGizmoSettings value)
         {

@@ -13,24 +13,37 @@ using UnityEngine;
 namespace Appalachia.Spatial.MeshBurial.Collections
 {
     [Serializable]
-    [ListDrawerSettings(Expanded = true, DraggableItems = false, HideAddButton = true, HideRemoveButton = true, NumberOfItemsPerPage = 5),
-     HideReferenceObjectPicker]
-    public class MeshBurialAdjustmentEntryWrapperLookup : AppaLookup<Matrix4x4Key, MeshBurialAdjustmentEntryWrapper, AppaList_Matrix4x4Key,
+    [ListDrawerSettings(
+        Expanded = true,
+        DraggableItems = false,
+        HideAddButton = true,
+        HideRemoveButton = true,
+        NumberOfItemsPerPage = 5
+    )]
+    [HideReferenceObjectPicker]
+    public class MeshBurialAdjustmentEntryWrapperLookup : AppaLookup<Matrix4x4Key,
+        MeshBurialAdjustmentEntryWrapper, AppaList_Matrix4x4Key,
         AppaList_MeshBurialAdjustmentEntryWrapper>
     {
         protected override bool ShouldDisplayTitle => true;
 
-        protected override string GetDisplayTitle(Matrix4x4Key key, MeshBurialAdjustmentEntryWrapper value)
+        protected override string GetDisplayTitle(
+            Matrix4x4Key key,
+            MeshBurialAdjustmentEntryWrapper value)
         {
             return key.ToString();
         }
 
-        protected override string GetDisplaySubtitle(Matrix4x4Key key, MeshBurialAdjustmentEntryWrapper value)
+        protected override string GetDisplaySubtitle(
+            Matrix4x4Key key,
+            MeshBurialAdjustmentEntryWrapper value)
         {
             return value.ToString();
         }
 
-        protected override Color GetDisplayColor(Matrix4x4Key key, MeshBurialAdjustmentEntryWrapper value)
+        protected override Color GetDisplayColor(
+            Matrix4x4Key key,
+            MeshBurialAdjustmentEntryWrapper value)
         {
             return Color.white;
         }

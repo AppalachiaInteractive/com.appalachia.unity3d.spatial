@@ -14,12 +14,23 @@ namespace Appalachia.Spatial.MeshBurial.State
     {
         private const string _PRF_PFX = nameof(MeshBurialSharedStateManager) + ".";
 
-        private static readonly ProfilerMarker _PRF_Get = new ProfilerMarker(_PRF_PFX + nameof(Get));
+        private static readonly ProfilerMarker _PRF_Get = new(_PRF_PFX + nameof(Get));
+
+        private static readonly ProfilerMarker _PRF_GetByPrefab =
+            new(_PRF_PFX + nameof(GetByPrefab));
+
+        private static readonly ProfilerMarker _PRF_GetByGameObject =
+            new(_PRF_PFX + nameof(GetByGameObject));
+
+        private static readonly ProfilerMarker _PRF_GetByHashCode =
+            new(_PRF_PFX + nameof(GetByHashCode));
+
         public static MeshBurialSharedState Get(GameObject go)
         {
             using (_PRF_Get.Auto())
             {
-                if (PrefabUtility.IsPartOfPrefabAsset(go) || PrefabUtility.IsAnyPrefabInstanceRoot(go))
+                if (PrefabUtility.IsPartOfPrefabAsset(go) ||
+                    PrefabUtility.IsAnyPrefabInstanceRoot(go))
                 {
                     AssetDatabase.TryGetGUIDAndLocalFileIdentifier(go, out var guid, out long _);
 
@@ -31,8 +42,6 @@ namespace Appalachia.Spatial.MeshBurial.State
                 return GetByHashCode(go.GetHashCode(), go);
             }
         }
-
-        private static readonly ProfilerMarker _PRF_GetByPrefab = new ProfilerMarker(_PRF_PFX + nameof(GetByPrefab));
 
         public static MeshBurialSharedState GetByPrefab(GameObject prefab)
         {
@@ -48,7 +57,6 @@ namespace Appalachia.Spatial.MeshBurial.State
             }
         }
 
-        private static readonly ProfilerMarker _PRF_GetByGameObject = new ProfilerMarker(_PRF_PFX + nameof(GetByGameObject));
         public static MeshBurialSharedState GetByGameObject(GameObject gameObject)
         {
             using (_PRF_GetByGameObject.Auto())
@@ -57,7 +65,6 @@ namespace Appalachia.Spatial.MeshBurial.State
             }
         }
 
-        private static readonly ProfilerMarker _PRF_GetByHashCode = new ProfilerMarker(_PRF_PFX + nameof(GetByHashCode));
         public static MeshBurialSharedState GetByHashCode(int hashCode, GameObject model)
         {
             using (_PRF_GetByHashCode.Auto())
@@ -67,9 +74,12 @@ namespace Appalachia.Spatial.MeshBurial.State
                 if (state.State.ContainsKey(hashCode))
                 {
                     return state.State.Get(hashCode);
-                                 }
+                }
 
-                var meshObj = new MeshBurialSharedState(model, MeshBurialDictionaryManager.optimizationParameters);
+                var meshObj = new MeshBurialSharedState(
+                    model,
+                    MeshBurialDictionaryManager.optimizationParameters
+                );
 
                 state.State.AddOrUpdate(hashCode, meshObj);
 

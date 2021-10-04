@@ -22,7 +22,33 @@ namespace Appalachia.Spatial.Terrains
         private static NativeHashMap<int, TerrainJobData> _nativeData;
         private static NativeKeyArray2D<int, float> _nativeHeights;
 
-        private static readonly ProfilerMarker _PRF_TerrainMetadataManager = new ProfilerMarker(_PRF_PFX + nameof(TerrainMetadataManager));
+        private static readonly ProfilerMarker _PRF_TerrainMetadataManager =
+            new(_PRF_PFX + nameof(TerrainMetadataManager));
+
+        private static readonly ProfilerMarker _PRF_Initialize = new(_PRF_PFX + nameof(Initialize));
+
+        private static readonly ProfilerMarker _PRF_ReInitialize =
+            new(_PRF_PFX + nameof(ReInitialize));
+
+        private static readonly ProfilerMarker _PRF_GetTerrain = new(_PRF_PFX + nameof(GetTerrain));
+
+        private static readonly ProfilerMarker _PRF_GetNativeMetadata =
+            new(_PRF_PFX + nameof(GetNativeMetadata));
+
+        private static readonly ProfilerMarker _PRF_GetNativeHeights =
+            new(_PRF_PFX + nameof(GetNativeHeights));
+
+        private static readonly ProfilerMarker _PRF_GetTerrainHashCodeAt =
+            new(_PRF_PFX + nameof(GetTerrainHashCodeAt));
+
+        private static readonly ProfilerMarker _PRF_GetTerrainAt =
+            new(_PRF_PFX + nameof(GetTerrainAt));
+
+        private static readonly ProfilerMarker _PRF_Remove = new(_PRF_PFX + nameof(Remove));
+
+        private static readonly ProfilerMarker _PRF_DisposeNativeCollections =
+            new(_PRF_PFX + nameof(DisposeNativeCollections));
+
         static TerrainMetadataManager()
         {
             using (_PRF_TerrainMetadataManager.Auto())
@@ -31,11 +57,8 @@ namespace Appalachia.Spatial.Terrains
             }
         }
 
-
         public static bool Initialized => _initialized;
 
-        private static readonly ProfilerMarker _PRF_Initialize = new ProfilerMarker(_PRF_PFX + nameof(Initialize));
-        
         public static void Initialize()
         {
             if (_initialized)
@@ -49,20 +72,19 @@ namespace Appalachia.Spatial.Terrains
                 terrainLookup.Lookup.Clear();
 
                 List<TerrainMetadata> results;
-                #if UNITY_EDITOR
+#if UNITY_EDITOR
                 if (Application.isPlaying)
                 {
-                    results = TerrainMetadataComponent.GetFromAllTerrains();                    
+                    results = TerrainMetadataComponent.GetFromAllTerrains();
                 }
                 else
                 {
                     results = TerrainMetadataComponent.AddToAllTerrains();
                 }
-                
-                #else
+
+#else
                 results = TerrainMetadataComponent.GetFromAllTerrains();
-                #endif
-                
+#endif
 
                 for (var i = 0; i < results.Count; i++)
                 {
@@ -79,7 +101,6 @@ namespace Appalachia.Spatial.Terrains
             }
         }
 
-        private static readonly ProfilerMarker _PRF_ReInitialize = new ProfilerMarker(_PRF_PFX + nameof(ReInitialize));
         public static void ReInitialize()
         {
             using (_PRF_ReInitialize.Auto())
@@ -90,7 +111,6 @@ namespace Appalachia.Spatial.Terrains
             }
         }
 
-        private static readonly ProfilerMarker _PRF_GetTerrain = new ProfilerMarker(_PRF_PFX + nameof(GetTerrain));
         public static TerrainMetadata GetTerrain(int hashCode)
         {
             using (_PRF_GetTerrain.Auto())
@@ -111,7 +131,6 @@ namespace Appalachia.Spatial.Terrains
             }
         }
 
-        private static readonly ProfilerMarker _PRF_GetNativeMetadata = new ProfilerMarker(_PRF_PFX + nameof(GetNativeMetadata));
         public static NativeHashMap<int, TerrainJobData> GetNativeMetadata()
         {
             using (_PRF_GetNativeMetadata.Auto())
@@ -150,7 +169,6 @@ namespace Appalachia.Spatial.Terrains
             _nativeData.SafeDispose();
         }
 
-        private static readonly ProfilerMarker _PRF_GetNativeHeights = new ProfilerMarker(_PRF_PFX + nameof(GetNativeHeights));
         public static NativeKeyArray2D<int, float> GetNativeHeights()
         {
             using (_PRF_GetNativeHeights.Auto())
@@ -169,7 +187,6 @@ namespace Appalachia.Spatial.Terrains
             }
         }
 
-        private static readonly ProfilerMarker _PRF_GetTerrainHashCodeAt = new ProfilerMarker(_PRF_PFX + nameof(GetTerrainHashCodeAt));
         public static int GetTerrainHashCodeAt(Vector3 position)
         {
             using (_PRF_GetTerrainHashCodeAt.Auto())
@@ -179,7 +196,6 @@ namespace Appalachia.Spatial.Terrains
             }
         }
 
-        private static readonly ProfilerMarker _PRF_GetTerrainAt = new ProfilerMarker(_PRF_PFX + nameof(GetTerrainAt));
         public static TerrainMetadata GetTerrainAt(Vector3 position)
         {
             using (_PRF_GetTerrainAt.Auto())
@@ -191,7 +207,6 @@ namespace Appalachia.Spatial.Terrains
             }
         }
 
-        private static readonly ProfilerMarker _PRF_Remove = new ProfilerMarker(_PRF_PFX + nameof(Remove));
         public static void Remove(Terrain t)
         {
             using (_PRF_Remove.Auto())
@@ -206,7 +221,6 @@ namespace Appalachia.Spatial.Terrains
             }
         }
 
-        private static readonly ProfilerMarker _PRF_DisposeNativeCollections = new ProfilerMarker(_PRF_PFX + nameof(DisposeNativeCollections));
         [ExecuteOnDisable]
         public static void DisposeNativeCollections()
         {
@@ -222,9 +236,8 @@ namespace Appalachia.Spatial.Terrains
 
                     if (data.heights.IsCreated)
                     {
-                        data.heights.SafeDispose();    
+                        data.heights.SafeDispose();
                     }
-                    
                 }
 
                 _nativeData.SafeDispose();

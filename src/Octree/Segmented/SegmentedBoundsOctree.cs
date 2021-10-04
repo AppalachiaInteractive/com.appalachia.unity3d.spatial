@@ -6,7 +6,8 @@ using UnityEngine;
 
 namespace Appalachia.Spatial.Octree.Segmented
 {
-    public sealed class SegmentedBoundsOctree<TTK, T> : SegmentedOctree<TTK, SegmentedBoundsOctree<TTK, T>, BoundsOctree<T>, Bounds, T>
+    public sealed class SegmentedBoundsOctree<TTK, T> : SegmentedOctree<TTK,
+        SegmentedBoundsOctree<TTK, T>, BoundsOctree<T>, Bounds, T>
     {
         public SegmentedBoundsOctree(
             OctreeStyle style,
@@ -27,9 +28,14 @@ namespace Appalachia.Spatial.Octree.Segmented
         {
         }
 
-        protected override BoundsOctree<T> CreateFromVectors(OctreeStyle style, Vector3 position, Vector3 size, int depth)
+        protected override BoundsOctree<T> CreateFromVectors(
+            OctreeStyle style,
+            Vector3 position,
+            Vector3 size,
+            int depth)
         {
-            return new BoundsOctree<T>(style, position, size, _maxDepth, _initialCapacity, _capacityIncreaseMultiplier, depth);
+            return new(style, position, size, _maxDepth, _initialCapacity,
+                _capacityIncreaseMultiplier, depth);
         }
     }
 }

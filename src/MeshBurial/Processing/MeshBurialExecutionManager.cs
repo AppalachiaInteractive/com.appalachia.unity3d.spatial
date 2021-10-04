@@ -30,7 +30,8 @@ namespace Appalachia.Spatial.MeshBurial.Processing
     {
         private const string _PRF_PFX = nameof(MeshBurialExecutionManager) + ".";
 
-        private static readonly EditorApplication.CallbackFunction _processFrame = MeshBurialExecutionManager_ProcessFrame;
+        private static readonly EditorApplication.CallbackFunction _processFrame =
+            MeshBurialExecutionManager_ProcessFrame;
 
         public static Bounds bounds;
 
@@ -61,7 +62,7 @@ namespace Appalachia.Spatial.MeshBurial.Processing
         private static DateTime _iterationStart;
         private static DateTime _itemStart;
 
-        private static List<Action> _queueActions = new List<Action>();
+        private static List<Action> _queueActions = new();
 
         private static bool _pending0Log;
         private static int _lastLogAt;
@@ -71,16 +72,91 @@ namespace Appalachia.Spatial.MeshBurial.Processing
 
         private static VegetationSystemPro _vegetationSystem;
 
-        private static readonly ProfilerMarker _PRF_MeshBurialExecutionManager = new ProfilerMarker(_PRF_PFX + nameof(MeshBurialExecutionManager));
-        
+        private static readonly ProfilerMarker _PRF_MeshBurialExecutionManager =
+            new(_PRF_PFX + nameof(MeshBurialExecutionManager));
+
+        private static readonly ProfilerMarker _PRF_EnsureCompleted =
+            new(_PRF_PFX + nameof(EnsureCompleted));
+
+        private static readonly ProfilerMarker _PRF_MeshBurialExecutionManager_ProcessFrame =
+            new(_PRF_PFX + nameof(MeshBurialExecutionManager_ProcessFrame));
+
+        private static readonly ProfilerMarker
+            _PRF_MeshBurialExecutionManager_ProcessFrame_RecordIterationTime = new(_PRF_PFX +
+                nameof(MeshBurialExecutionManager_ProcessFrame) +
+                ".RecordIterationTime");
+
+        private static readonly ProfilerMarker
+            _PRF_MeshBurialExecutionManager_ProcessFrame_InitializeProcessing = new(_PRF_PFX +
+                nameof(MeshBurialExecutionManager_ProcessFrame) +
+                ".InitializeProcessing");
+
+        private static readonly ProfilerMarker
+            _PRF_MeshBurialExecutionManager_ProcessFrame_IterateQueueingActions = new(_PRF_PFX +
+                nameof(MeshBurialExecutionManager_ProcessFrame) +
+                ".IterateQueueingActions");
+
+        private static readonly ProfilerMarker
+            _PRF_MeshBurialExecutionManager_ProcessFrame_Finally = new(_PRF_PFX +
+                nameof(MeshBurialExecutionManager_ProcessFrame) +
+                ".Finally");
+
+        private static readonly ProfilerMarker _PRF_Initialize = new(_PRF_PFX + nameof(Initialize));
+
+        private static readonly ProfilerMarker _PRF_FinalizeResultData =
+            new(_PRF_PFX + nameof(FinalizeResultData));
+
+        private static readonly ProfilerMarker _PRF_CheckFinalizedResult =
+            new(_PRF_PFX + nameof(CheckFinalizedResult));
+
+        private static readonly ProfilerMarker _PRF_ApplyFinalizedResults =
+            new(_PRF_PFX + nameof(ApplyFinalizedResults));
+
+        private static readonly ProfilerMarker _PRF_ProcessGenericQueue =
+            new(_PRF_PFX + nameof(ProcessGenericQueue));
+
+        private static readonly ProfilerMarker _PRF_ProcessGenericQueue_FinalizeAction =
+            new(_PRF_PFX + nameof(ProcessGenericQueue) + ".FinalizeAction");
+
+        private static readonly ProfilerMarker _PRF_ProcessVegetationQueue =
+            new(_PRF_PFX + nameof(ProcessVegetationQueue));
+
+        private static int cvci;
+        private static int cvpii;
+        private static int cvii;
+
+        private static readonly ProfilerMarker _PRF_ProcessVegetationQueue_ShouldNotProcess =
+            new(_PRF_PFX + nameof(ProcessVegetationQueue_ShouldNotProcess));
+
+        private static readonly ProfilerMarker _PRF_ProcessVegetationQueue_PreAction =
+            new(_PRF_PFX + nameof(ProcessVegetationQueue_PreAction));
+
+        private static readonly ProfilerMarker _PRF_ProcessVegetationQueue_PostAction =
+            new(_PRF_PFX + nameof(ProcessVegetationQueue_PostAction));
+
+        private static readonly ProfilerMarker _PRF_ShouldEscape =
+            new(_PRF_PFX + nameof(ShouldEscape));
+
+        private static readonly ProfilerMarker _PRF_CheckAndLogQueueDepth =
+            new(_PRF_PFX + nameof(CheckAndLogQueueDepth));
+
+        private static readonly ProfilerMarker _PRF_PopulateQueueingActions =
+            new(_PRF_PFX + nameof(PopulateQueueingActions));
+
+        private static readonly ProfilerMarker _PRF_PopulateQueueingActions_VegetationQueue =
+            new(_PRF_PFX + nameof(PopulateQueueingActions) + ".VegetationQueue");
+
+        private static readonly ProfilerMarker _PRF_DisposeNativeCollections =
+            new(_PRF_PFX + nameof(DisposeNativeCollections));
+
+        private static readonly ProfilerMarker _PRF_StatusLog = new(_PRF_PFX + nameof(StatusLog));
+
         static MeshBurialExecutionManager()
         {
             using (_PRF_MeshBurialExecutionManager.Auto())
             {
-                MeshObjectManager.RegisterDisposalDependency(
-                    () => MeshBurialExecutionManager.EnsureCompleted()
-                );
-                
+                MeshObjectManager.RegisterDisposalDependency(() => EnsureCompleted());
+
                 if (_BURY.Value)
                 {
                     _BURY.Value = false;
@@ -89,10 +165,8 @@ namespace Appalachia.Spatial.MeshBurial.Processing
             }
         }
 
-
         private static MeshBurialManagementQueue QUEUES => MeshBurialManagementQueue.instance;
 
-        private static readonly ProfilerMarker _PRF_EnsureCompleted = new ProfilerMarker(_PRF_PFX + nameof(EnsureCompleted));
         public static void EnsureCompleted()
         {
             using (_PRF_EnsureCompleted.Auto())
@@ -101,22 +175,15 @@ namespace Appalachia.Spatial.MeshBurial.Processing
             }
         }
 
-        private static readonly ProfilerMarker _PRF_MeshBurialExecutionManager_ProcessFrame = new ProfilerMarker(_PRF_PFX + nameof(MeshBurialExecutionManager_ProcessFrame));
-        private static readonly ProfilerMarker _PRF_MeshBurialExecutionManager_ProcessFrame_RecordIterationTime = new ProfilerMarker(_PRF_PFX + nameof(MeshBurialExecutionManager_ProcessFrame) + ".RecordIterationTime");
-
-        private static readonly ProfilerMarker _PRF_MeshBurialExecutionManager_ProcessFrame_InitializeProcessing = new ProfilerMarker(_PRF_PFX + nameof(MeshBurialExecutionManager_ProcessFrame) + ".InitializeProcessing");
-        private static readonly ProfilerMarker _PRF_MeshBurialExecutionManager_ProcessFrame_IterateQueueingActions = new ProfilerMarker(_PRF_PFX + nameof(MeshBurialExecutionManager_ProcessFrame) + ".IterateQueueingActions");
-        private static readonly ProfilerMarker _PRF_MeshBurialExecutionManager_ProcessFrame_Finally = new ProfilerMarker(_PRF_PFX + nameof(MeshBurialExecutionManager_ProcessFrame) + ".Finally");
         private static void MeshBurialExecutionManager_ProcessFrame()
         {
             using (_PRF_MeshBurialExecutionManager_ProcessFrame.Auto())
             {
                 using (_PRF_MeshBurialExecutionManager_ProcessFrame_RecordIterationTime.Auto())
                 {
-
                     _iterationStart = DateTime.Now;
-
                 }
+
                 using (_PRF_MeshBurialExecutionManager_ProcessFrame_InitializeProcessing.Auto())
                 {
                     Initialize();
@@ -146,7 +213,9 @@ namespace Appalachia.Spatial.MeshBurial.Processing
 
                         for (var i = 0; i < _queueActions.Count; i++)
                         {
-                            using (_PRF_MeshBurialExecutionManager_ProcessFrame_IterateQueueingActions.Auto())
+                            using (
+                                _PRF_MeshBurialExecutionManager_ProcessFrame_IterateQueueingActions
+                                   .Auto())
                             {
                                 _queueActions[i]();
 
@@ -179,7 +248,6 @@ namespace Appalachia.Spatial.MeshBurial.Processing
             }
         }
 
-        private static readonly ProfilerMarker _PRF_Initialize = new ProfilerMarker(_PRF_PFX + nameof(Initialize));
         private static void Initialize()
         {
             using (_PRF_Initialize.Auto())
@@ -193,7 +261,6 @@ namespace Appalachia.Spatial.MeshBurial.Processing
             }
         }
 
-        private static readonly ProfilerMarker _PRF_FinalizeResultData = new ProfilerMarker(_PRF_PFX + nameof(FinalizeResultData));
         private static void FinalizeResultData()
         {
             using (_PRF_FinalizeResultData.Auto())
@@ -202,10 +269,14 @@ namespace Appalachia.Spatial.MeshBurial.Processing
 
                 if (requeue)
                 {
-                    new TransferJob_float4x4_NA_float4x4_NA {input = resultData.requeueableMatrices, output = matrices}.Run(matrices.Length);
+                    new TransferJob_float4x4_NA_float4x4_NA
+                    {
+                        input = resultData.requeueableMatrices, output = matrices
+                    }.Run(matrices.Length);
 
                     burialOptions.permissiveness += 1;
-                    optimizationOptions.randomSearch.iterations = (int) (optimizationOptions.randomSearch.iterations * 1.5);
+                    optimizationOptions.randomSearch.iterations =
+                        (int) (optimizationOptions.randomSearch.iterations * 1.5);
 
                     pendingHandle = MeshBurialJobManager.ScheduleMeshBurialJobs(
                         resultData,
@@ -227,7 +298,6 @@ namespace Appalachia.Spatial.MeshBurial.Processing
             }
         }
 
-        private static readonly ProfilerMarker _PRF_CheckFinalizedResult = new ProfilerMarker(_PRF_PFX + nameof(CheckFinalizedResult));
         private static void CheckFinalizedResult(out bool requeue)
         {
             using (_PRF_CheckFinalizedResult.Auto())
@@ -241,7 +311,9 @@ namespace Appalachia.Spatial.MeshBurial.Processing
                     StatusLog(summary, burialOptions.permissiveness, lastItem.name);
                 }
 
-                for (var instanceIndex = 0; instanceIndex < resultData.instanceCount; instanceIndex++)
+                for (var instanceIndex = 0;
+                    instanceIndex < resultData.instanceCount;
+                    instanceIndex++)
                 {
                     var result = resultData.bestResults[instanceIndex];
                     var iteration = resultData.instances[instanceIndex, result.iterationIndex];
@@ -259,7 +331,12 @@ namespace Appalachia.Spatial.MeshBurial.Processing
                         continue;
                     }
 
-                    adjustmentState.AddOrUpdate(iteration.initial.matrix, burialOptions.matchTerrainNormal, iteration.proposed.matrix, result.error);
+                    adjustmentState.AddOrUpdate(
+                        iteration.initial.matrix,
+                        burialOptions.matchTerrainNormal,
+                        iteration.proposed.matrix,
+                        result.error
+                    );
 
                     if (!iteration.excluded)
                     {
@@ -290,7 +367,6 @@ namespace Appalachia.Spatial.MeshBurial.Processing
             }
         }
 
-        private static readonly ProfilerMarker _PRF_ApplyFinalizedResults = new ProfilerMarker(_PRF_PFX + nameof(ApplyFinalizedResults));
         private static void ApplyFinalizedResults()
         {
             using (_PRF_ApplyFinalizedResults.Auto())
@@ -309,8 +385,6 @@ namespace Appalachia.Spatial.MeshBurial.Processing
             }
         }
 
-        private static readonly ProfilerMarker _PRF_ProcessGenericQueue = new ProfilerMarker(_PRF_PFX + nameof(ProcessGenericQueue));
-        private static readonly ProfilerMarker _PRF_ProcessGenericQueue_FinalizeAction = new ProfilerMarker(_PRF_PFX + nameof(ProcessGenericQueue) + ".FinalizeAction");
         private static void ProcessGenericQueue<T>(
             AppaTemporalQueue<T> queue,
             Func<T, bool> shouldNotProcess = null,
@@ -327,7 +401,7 @@ namespace Appalachia.Spatial.MeshBurial.Processing
                     if (item != null)
                     {
                         _itemStart = DateTime.Now;
-                        
+
                         if ((shouldNotProcess != null) && shouldNotProcess(item))
                         {
                             queue.ResetCurrent();
@@ -341,7 +415,10 @@ namespace Appalachia.Spatial.MeshBurial.Processing
                         if (matrices.ShouldAllocate())
                         {
                             matrices.SafeDispose();
-                            matrices = new NativeList<float4x4>(item.length * 2, Allocator.Persistent);
+                            matrices = new NativeList<float4x4>(
+                                item.length * 2,
+                                Allocator.Persistent
+                            );
                         }
                         else
                         {
@@ -369,7 +446,8 @@ namespace Appalachia.Spatial.MeshBurial.Processing
                             threshold = _ERROR.Value,
                             minimalRotation = false,
                             accountForMeshNormal = _MESH_NORMALS.Value,
-                            matchTerrainNormal = item.GetAdoptTerrainNormal() && _TERRAIN_NORMALS.Value,
+                            matchTerrainNormal =
+                                item.GetAdoptTerrainNormal() && _TERRAIN_NORMALS.Value,
                             permissiveness = 1,
                             adjustHeight = _HEIGHT.Value,
                             applyParameters = _PARAMS.Value,
@@ -392,10 +470,12 @@ namespace Appalachia.Spatial.MeshBurial.Processing
                         var ops = sharedState.optimizationParams;
 
                         _degreeAdjustment = burialOptions.permissiveness *
-                                               (burialOptions.minimalRotation ? ops.xzDegreeAdjustmentMinimal : ops.xzDegreeAdjustment);
+                                            (burialOptions.minimalRotation
+                                                ? ops.xzDegreeAdjustmentMinimal
+                                                : ops.xzDegreeAdjustment);
 
                         _degreeAdjustment *= item.GetDegreeAdjustmentStrength();
-                        
+
                         pendingHandle = MeshBurialJobManager.ScheduleMeshBurialJobs(
                             resultData,
                             sharedState.meshObject.data,
@@ -424,7 +504,9 @@ namespace Appalachia.Spatial.MeshBurial.Processing
                                     var duration = (DateTime.Now - _itemStart).TotalSeconds;
                                     if (duration > _TIMELOGTIME.Value)
                                     {
-                                        Debug.Log($"Items [{item}] took {duration:F2} seconds to process.");
+                                        Debug.Log(
+                                            $"Items [{item}] took {duration:F2} seconds to process."
+                                        );
                                     }
                                 }
 
@@ -442,7 +524,6 @@ namespace Appalachia.Spatial.MeshBurial.Processing
             }
         }
 
-        private static readonly ProfilerMarker _PRF_ProcessVegetationQueue = new ProfilerMarker(_PRF_PFX + nameof(ProcessVegetationQueue));
         private static void ProcessVegetationQueue<T>(AppaTemporalQueue<T> queue)
             where T : MeshBurialQueueItem
         {
@@ -457,12 +538,8 @@ namespace Appalachia.Spatial.MeshBurial.Processing
             }
         }
 
-        private static int cvci = 0;
-        private static int cvpii = 0;
-        private static int cvii = 0;
-
-        private static readonly ProfilerMarker _PRF_ProcessVegetationQueue_ShouldNotProcess = new ProfilerMarker(_PRF_PFX + nameof(ProcessVegetationQueue_ShouldNotProcess));
-        private static bool ProcessVegetationQueue_ShouldNotProcess(MeshBurialVegetationQueueItem current)
+        private static bool ProcessVegetationQueue_ShouldNotProcess(
+            MeshBurialVegetationQueueItem current)
         {
             using (_PRF_ProcessVegetationQueue_ShouldNotProcess.Auto())
             {
@@ -518,7 +595,6 @@ namespace Appalachia.Spatial.MeshBurial.Processing
             }
         }
 
-        private static readonly ProfilerMarker _PRF_ProcessVegetationQueue_PreAction = new ProfilerMarker(_PRF_PFX + nameof(ProcessVegetationQueue_PreAction));
         private static void ProcessVegetationQueue_PreAction(MeshBurialVegetationQueueItem current)
         {
             using (_PRF_ProcessVegetationQueue_PreAction.Auto())
@@ -529,8 +605,8 @@ namespace Appalachia.Spatial.MeshBurial.Processing
             }
         }
 
-        private static readonly ProfilerMarker _PRF_ProcessVegetationQueue_PostAction = new ProfilerMarker(_PRF_PFX + nameof(ProcessVegetationQueue_PostAction));
-        private static void ProcessVegetationQueue_PostAction(AppaTemporalQueue<MeshBurialVegetationQueueItem> queue)
+        private static void ProcessVegetationQueue_PostAction(
+            AppaTemporalQueue<MeshBurialVegetationQueueItem> queue)
         {
             using (_PRF_ProcessVegetationQueue_PostAction.Auto())
             {
@@ -550,7 +626,6 @@ namespace Appalachia.Spatial.MeshBurial.Processing
             }
         }
 
-        private static readonly ProfilerMarker _PRF_ShouldEscape = new ProfilerMarker(_PRF_PFX + nameof(ShouldEscape));
         private static bool ShouldEscape()
         {
             using (_PRF_ShouldEscape.Auto())
@@ -586,7 +661,6 @@ namespace Appalachia.Spatial.MeshBurial.Processing
             }
         }
 
-        private static readonly ProfilerMarker _PRF_CheckAndLogQueueDepth = new ProfilerMarker(_PRF_PFX + nameof(CheckAndLogQueueDepth));
         private static void CheckAndLogQueueDepth()
         {
             using (_PRF_CheckAndLogQueueDepth.Auto())
@@ -595,7 +669,10 @@ namespace Appalachia.Spatial.MeshBurial.Processing
 
                 if (queueDepth > 0)
                 {
-                    if ((queueDepth > _lastLogAt) || ((queueDepth != _lastLogAt) && (_LOG.Value > 0) && ((Time.frameCount % _LOG.Value) == 0)))
+                    if ((queueDepth > _lastLogAt) ||
+                        ((queueDepth != _lastLogAt) &&
+                         (_LOG.Value > 0) &&
+                         ((Time.frameCount % _LOG.Value) == 0)))
                     {
                         Debug.Log($"Mesh Burial Queue Depth: {queueDepth}  [{Time.frameCount}]");
                         _lastLogAt = queueDepth;
@@ -639,8 +716,6 @@ namespace Appalachia.Spatial.MeshBurial.Processing
             }
         }
 
-        private static readonly ProfilerMarker _PRF_PopulateQueueingActions = new ProfilerMarker(_PRF_PFX + nameof(PopulateQueueingActions));
-        private static readonly ProfilerMarker _PRF_PopulateQueueingActions_VegetationQueue = new ProfilerMarker(_PRF_PFX + nameof(PopulateQueueingActions) + ".VegetationQueue");
         private static void PopulateQueueingActions()
         {
             using (_PRF_PopulateQueueingActions.Auto())
@@ -660,13 +735,13 @@ namespace Appalachia.Spatial.MeshBurial.Processing
                     _queueActions.Add(() => ProcessGenericQueue(QUEUES.array));
                     _queueActions.Add(() => ProcessGenericQueue(QUEUES.gameObject));
                     _queueActions.Add(() => ProcessGenericQueue(QUEUES.native));
+
                     //_queueActions.Add(() => ProcessGenericQueue(QUEUES.runtimePrefabRenderingSets));
                     _queueActions.Add(() => ProcessVegetationQueue(QUEUES.vegetation));
                 }
             }
         }
 
-        private static readonly ProfilerMarker _PRF_DisposeNativeCollections = new ProfilerMarker(_PRF_PFX + nameof(DisposeNativeCollections));
         [ExecuteOnDisable]
         public static void DisposeNativeCollections()
         {
@@ -690,7 +765,10 @@ namespace Appalachia.Spatial.MeshBurial.Processing
             }
         }
 
-        private static void StatusLog(MeshBurialSummaryData summary, int? permissive = null, string name = null)
+        private static void StatusLog(
+            MeshBurialSummaryData summary,
+            int? permissive = null,
+            string name = null)
         {
             StatusLog(
                 summary.total,
@@ -706,7 +784,6 @@ namespace Appalachia.Spatial.MeshBurial.Processing
             );
         }
 
-        private static readonly ProfilerMarker _PRF_StatusLog = new ProfilerMarker(_PRF_PFX + nameof(StatusLog));
         private static void StatusLog(
             int total,
             double average,

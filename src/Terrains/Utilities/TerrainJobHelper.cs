@@ -35,7 +35,11 @@ namespace Appalachia.Spatial.Terrains.Utilities
                 maxResolution = math.max(maxResolution, terrainData.heightmapResolution);
             }
 
-            var array = new NativeKeyArray2D<int, float>(terrains.Length, maxResolution * maxResolution, Allocator.Persistent);
+            var array = new NativeKeyArray2D<int, float>(
+                terrains.Length,
+                maxResolution * maxResolution,
+                Allocator.Persistent
+            );
 
             LoadHeightData(terrains, array);
 
@@ -75,7 +79,7 @@ namespace Appalachia.Spatial.Terrains.Utilities
             {
                 return default;
             }
-            
+
             var terrainData = terrain.terrainData;
             var resolution = terrainData.heightmapResolution;
             var heights2D = terrainData.GetHeights(0, 0, resolution, resolution);
@@ -103,28 +107,66 @@ namespace Appalachia.Spatial.Terrains.Utilities
             return diff;
         }
 
-        public static float CalculateHeightDifference(float3 worldPosition, TerrainJobData terrainData, NativeArray<float> heights)
+        public static float CalculateHeightDifference(
+            float3 worldPosition,
+            TerrainJobData terrainData,
+            NativeArray<float> heights)
         {
-            var height = HeightmapJobHelper.GetWorldSpaceHeight(worldPosition, terrainData.terrainPosition, heights, terrainData.resolution, terrainData.resolution, terrainData.scale);
+            var height = HeightmapJobHelper.GetWorldSpaceHeight(
+                worldPosition,
+                terrainData.terrainPosition,
+                heights,
+                terrainData.resolution,
+                terrainData.resolution,
+                terrainData.scale
+            );
 
             var diff = worldPosition.y - height;
 
             return diff;
         }
-        
+
         public static float3 GetTerrainNormal(this TerrainMetadata terrain, Vector3 worldPosition)
         {
-            return HeightmapJobHelper.GetHeightmapNormal(worldPosition, terrain.terrainPosition, terrain.heights, terrain.resolution, terrain.resolution, terrain.scale);
+            return HeightmapJobHelper.GetHeightmapNormal(
+                worldPosition,
+                terrain.terrainPosition,
+                terrain.heights,
+                terrain.resolution,
+                terrain.resolution,
+                terrain.scale
+            );
         }
 
-        public static float3 GetTerrainNormal(float3 worldPosition, TerrainJobData jobData, int terrainIndex, NativeKeyArray2D<int, float> heights)
+        public static float3 GetTerrainNormal(
+            float3 worldPosition,
+            TerrainJobData jobData,
+            int terrainIndex,
+            NativeKeyArray2D<int, float> heights)
         {
-            return GetTerrainNormal(worldPosition, jobData.terrainPosition, terrainIndex, heights, jobData.resolution, jobData.scale);
+            return GetTerrainNormal(
+                worldPosition,
+                jobData.terrainPosition,
+                terrainIndex,
+                heights,
+                jobData.resolution,
+                jobData.scale
+            );
         }
 
-        public static float3 GetTerrainNormal(float3 worldPosition, TerrainJobData jobData, NativeArray<float> heights)
+        public static float3 GetTerrainNormal(
+            float3 worldPosition,
+            TerrainJobData jobData,
+            NativeArray<float> heights)
         {
-            return HeightmapJobHelper.GetHeightmapNormal(worldPosition, jobData.terrainPosition, heights, jobData.resolution, jobData.resolution, jobData.scale);
+            return HeightmapJobHelper.GetHeightmapNormal(
+                worldPosition,
+                jobData.terrainPosition,
+                heights,
+                jobData.resolution,
+                jobData.resolution,
+                jobData.scale
+            );
         }
 
         public static float3 GetTerrainNormal(
@@ -148,10 +190,38 @@ namespace Appalachia.Spatial.Terrains.Utilities
             var xCoord = (int) x;
             var yCoord = (int) y;
 
-            var value00 = CalculateNormalSobel(terrainIndex, heights, xCoord + 0, yCoord + 0, heightmapResolution, heightmapScale);
-            var value10 = CalculateNormalSobel(terrainIndex, heights, xCoord + 1, yCoord + 0, heightmapResolution, heightmapScale);
-            var value01 = CalculateNormalSobel(terrainIndex, heights, xCoord + 0, yCoord + 1, heightmapResolution, heightmapScale);
-            var value11 = CalculateNormalSobel(terrainIndex, heights, xCoord + 1, yCoord + 1, heightmapResolution, heightmapScale);
+            var value00 = CalculateNormalSobel(
+                terrainIndex,
+                heights,
+                xCoord + 0,
+                yCoord + 0,
+                heightmapResolution,
+                heightmapScale
+            );
+            var value10 = CalculateNormalSobel(
+                terrainIndex,
+                heights,
+                xCoord + 1,
+                yCoord + 0,
+                heightmapResolution,
+                heightmapScale
+            );
+            var value01 = CalculateNormalSobel(
+                terrainIndex,
+                heights,
+                xCoord + 0,
+                yCoord + 1,
+                heightmapResolution,
+                heightmapScale
+            );
+            var value11 = CalculateNormalSobel(
+                terrainIndex,
+                heights,
+                xCoord + 1,
+                yCoord + 1,
+                heightmapResolution,
+                heightmapScale
+            );
 
             var xBlend = x - xCoord;
             var yBlend = y - yCoord;
@@ -166,7 +236,14 @@ namespace Appalachia.Spatial.Terrains.Utilities
 
         public static float GetWorldSpaceHeight(this TerrainMetadata terrain, Vector3 worldPosition)
         {
-            return HeightmapJobHelper.GetWorldSpaceHeight(worldPosition, terrain.terrainPosition, terrain.heights, terrain.resolution, terrain.resolution, terrain.scale);
+            return HeightmapJobHelper.GetWorldSpaceHeight(
+                worldPosition,
+                terrain.terrainPosition,
+                terrain.heights,
+                terrain.resolution,
+                terrain.resolution,
+                terrain.scale
+            );
         }
 
         public static float GetWorldSpaceHeight(
@@ -190,10 +267,38 @@ namespace Appalachia.Spatial.Terrains.Utilities
             var xCoord = (int) x;
             var yCoord = (int) y;
 
-            var value00 = SampleHeightmap(terrainIndex, heights, xCoord + 0, yCoord + 0, heightmapResolution, heightmapScale);
-            var value10 = SampleHeightmap(terrainIndex, heights, xCoord + 1, yCoord + 0, heightmapResolution, heightmapScale);
-            var value01 = SampleHeightmap(terrainIndex, heights, xCoord + 0, yCoord + 1, heightmapResolution, heightmapScale);
-            var value11 = SampleHeightmap(terrainIndex, heights, xCoord + 1, yCoord + 1, heightmapResolution, heightmapScale);
+            var value00 = SampleHeightmap(
+                terrainIndex,
+                heights,
+                xCoord + 0,
+                yCoord + 0,
+                heightmapResolution,
+                heightmapScale
+            );
+            var value10 = SampleHeightmap(
+                terrainIndex,
+                heights,
+                xCoord + 1,
+                yCoord + 0,
+                heightmapResolution,
+                heightmapScale
+            );
+            var value01 = SampleHeightmap(
+                terrainIndex,
+                heights,
+                xCoord + 0,
+                yCoord + 1,
+                heightmapResolution,
+                heightmapScale
+            );
+            var value11 = SampleHeightmap(
+                terrainIndex,
+                heights,
+                xCoord + 1,
+                yCoord + 1,
+                heightmapResolution,
+                heightmapScale
+            );
 
             var xBlend = x - xCoord;
             var yBlend = y - yCoord;
@@ -205,7 +310,7 @@ namespace Appalachia.Spatial.Terrains.Utilities
 
             return value + terrainPosition.y;
         }
-        
+
         private static float3 CalculateNormalSobel(
             int terrainIndex,
             NativeKeyArray2D<int, float> heights,
@@ -215,21 +320,117 @@ namespace Appalachia.Spatial.Terrains.Utilities
             float3 heightmapScale)
         {
             float3 normal;
-            var dX = SampleHeightmap(terrainIndex, heights, x - 1, y - 1, heightmapResolution, heightmapScale) * -1.0F;
-            dX += SampleHeightmap(terrainIndex, heights, x - 1, y,     heightmapResolution, heightmapScale) * -2.0F;
-            dX += SampleHeightmap(terrainIndex, heights, x - 1, y + 1, heightmapResolution, heightmapScale) * -1.0F;
-            dX += SampleHeightmap(terrainIndex, heights, x + 1, y - 1, heightmapResolution, heightmapScale) * 1.0F;
-            dX += SampleHeightmap(terrainIndex, heights, x + 1, y,     heightmapResolution, heightmapScale) * 2.0F;
-            dX += SampleHeightmap(terrainIndex, heights, x + 1, y + 1, heightmapResolution, heightmapScale) * 1.0F;
+            var dX = SampleHeightmap(
+                         terrainIndex,
+                         heights,
+                         x - 1,
+                         y - 1,
+                         heightmapResolution,
+                         heightmapScale
+                     ) *
+                     -1.0F;
+            dX += SampleHeightmap(
+                      terrainIndex,
+                      heights,
+                      x - 1,
+                      y,
+                      heightmapResolution,
+                      heightmapScale
+                  ) *
+                  -2.0F;
+            dX += SampleHeightmap(
+                      terrainIndex,
+                      heights,
+                      x - 1,
+                      y + 1,
+                      heightmapResolution,
+                      heightmapScale
+                  ) *
+                  -1.0F;
+            dX += SampleHeightmap(
+                      terrainIndex,
+                      heights,
+                      x + 1,
+                      y - 1,
+                      heightmapResolution,
+                      heightmapScale
+                  ) *
+                  1.0F;
+            dX += SampleHeightmap(
+                      terrainIndex,
+                      heights,
+                      x + 1,
+                      y,
+                      heightmapResolution,
+                      heightmapScale
+                  ) *
+                  2.0F;
+            dX += SampleHeightmap(
+                      terrainIndex,
+                      heights,
+                      x + 1,
+                      y + 1,
+                      heightmapResolution,
+                      heightmapScale
+                  ) *
+                  1.0F;
 
             dX /= heightmapScale.x;
 
-            var dY = SampleHeightmap(terrainIndex, heights, x - 1, y - 1, heightmapResolution, heightmapScale) * -1.0F;
-            dY += SampleHeightmap(terrainIndex, heights, x,     y - 1, heightmapResolution, heightmapScale) * -2.0F;
-            dY += SampleHeightmap(terrainIndex, heights, x + 1, y - 1, heightmapResolution, heightmapScale) * -1.0F;
-            dY += SampleHeightmap(terrainIndex, heights, x - 1, y + 1, heightmapResolution, heightmapScale) * 1.0F;
-            dY += SampleHeightmap(terrainIndex, heights, x,     y + 1, heightmapResolution, heightmapScale) * 2.0F;
-            dY += SampleHeightmap(terrainIndex, heights, x + 1, y + 1, heightmapResolution, heightmapScale) * 1.0F;
+            var dY = SampleHeightmap(
+                         terrainIndex,
+                         heights,
+                         x - 1,
+                         y - 1,
+                         heightmapResolution,
+                         heightmapScale
+                     ) *
+                     -1.0F;
+            dY += SampleHeightmap(
+                      terrainIndex,
+                      heights,
+                      x,
+                      y - 1,
+                      heightmapResolution,
+                      heightmapScale
+                  ) *
+                  -2.0F;
+            dY += SampleHeightmap(
+                      terrainIndex,
+                      heights,
+                      x + 1,
+                      y - 1,
+                      heightmapResolution,
+                      heightmapScale
+                  ) *
+                  -1.0F;
+            dY += SampleHeightmap(
+                      terrainIndex,
+                      heights,
+                      x - 1,
+                      y + 1,
+                      heightmapResolution,
+                      heightmapScale
+                  ) *
+                  1.0F;
+            dY += SampleHeightmap(
+                      terrainIndex,
+                      heights,
+                      x,
+                      y + 1,
+                      heightmapResolution,
+                      heightmapScale
+                  ) *
+                  2.0F;
+            dY += SampleHeightmap(
+                      terrainIndex,
+                      heights,
+                      x + 1,
+                      y + 1,
+                      heightmapResolution,
+                      heightmapScale
+                  ) *
+                  1.0F;
             dY /= heightmapScale.z;
 
             normal.x = -dX;
@@ -237,7 +438,7 @@ namespace Appalachia.Spatial.Terrains.Utilities
             normal.z = -dY;
             return math.normalize(normal);
         }
-        
+
         public static float SampleHeightmap(
             int terrainIndex,
             NativeKeyArray2D<int, float> heights,

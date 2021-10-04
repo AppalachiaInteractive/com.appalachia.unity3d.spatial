@@ -14,10 +14,19 @@ namespace Appalachia.Spatial.MeshBurial.Processing.QueueItems
     public class MeshBurialArrayQueueItem : MeshBurialManySameQueueItem
     {
         private const string _PRF_PFX = nameof(MeshBurialArrayQueueItem) + ".";
-        
+
+        private static readonly ProfilerMarker _PRF_GetAllMatrices =
+            new(_PRF_PFX + nameof(GetAllMatrices));
+
+        private static readonly ProfilerMarker _PRF_SetAllMatrices =
+            new(_PRF_PFX + nameof(SetAllMatrices));
+
         [SerializeField] private float4x4[] matrices;
 
-        public MeshBurialArrayQueueItem(GameObject model, float4x4[] matrices, bool adoptTerrainNormal = true) : base(
+        public MeshBurialArrayQueueItem(
+            GameObject model,
+            float4x4[] matrices,
+            bool adoptTerrainNormal = true) : base(
             $"Array: {model.name}",
             model,
             matrices.Length,
@@ -49,7 +58,6 @@ namespace Appalachia.Spatial.MeshBurial.Processing.QueueItems
         {
         }
 
-        private static readonly ProfilerMarker _PRF_GetAllMatrices = new ProfilerMarker(_PRF_PFX + nameof(GetAllMatrices));
         public override void GetAllMatrices(NativeList<float4x4> mats)
         {
             using (_PRF_GetAllMatrices.Auto())
@@ -58,7 +66,6 @@ namespace Appalachia.Spatial.MeshBurial.Processing.QueueItems
             }
         }
 
-        private static readonly ProfilerMarker _PRF_SetAllMatrices = new ProfilerMarker(_PRF_PFX + nameof(SetAllMatrices));
         public override void SetAllMatrices(NativeArray<float4x4> mats)
         {
             using (_PRF_SetAllMatrices.Auto())

@@ -13,12 +13,13 @@ namespace Appalachia.Spatial.MeshBurial.Processing.QueueItems
     [Serializable]
     public class MeshBurialGameObjectQueueItem : MeshBurialSingularQueueItem
     {
-        public MeshBurialGameObjectQueueItem(GameObject model, bool adoptTerrainNormal = true) : base(
-            $"GameObject: {model.name}",
-            model,
-            model.transform.localToWorldMatrix,
-            adoptTerrainNormal
-        )
+        public MeshBurialGameObjectQueueItem(GameObject model, bool adoptTerrainNormal = true) :
+            base(
+                $"GameObject: {model.name}",
+                model,
+                model.transform.localToWorldMatrix,
+                adoptTerrainNormal
+            )
         {
         }
 

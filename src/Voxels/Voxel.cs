@@ -119,7 +119,12 @@ namespace Appalachia.Spatial.Voxels
         public VoxelFaceData faceData;
 
         [BurstCompile]
-        public void UpdatePhysical(float4x4 localToWorld, float4x4 worldToLocal, float3 resolution, float3 worldResolution, float deltaTime)
+        public void UpdatePhysical(
+            float4x4 localToWorld,
+            float4x4 worldToLocal,
+            float3 resolution,
+            float3 worldResolution,
+            float deltaTime)
         {
             faceData.UpdatePhysical(localToWorld, resolution, worldResolution);
 
@@ -144,9 +149,21 @@ namespace Appalachia.Spatial.Voxels
 
             var velocityUnclamped = movementDelta * (1f / deltaTime);
             var velocityClamped = float3.zero;
-            velocityClamped.x = math.clamp(velocityUnclamped.x, -VELOCITY_COMPONENT_LIMIT, VELOCITY_COMPONENT_LIMIT);
-            velocityClamped.y = math.clamp(velocityUnclamped.y, -VELOCITY_COMPONENT_LIMIT, VELOCITY_COMPONENT_LIMIT);
-            velocityClamped.z = math.clamp(velocityUnclamped.z, -VELOCITY_COMPONENT_LIMIT, VELOCITY_COMPONENT_LIMIT);
+            velocityClamped.x = math.clamp(
+                velocityUnclamped.x,
+                -VELOCITY_COMPONENT_LIMIT,
+                VELOCITY_COMPONENT_LIMIT
+            );
+            velocityClamped.y = math.clamp(
+                velocityUnclamped.y,
+                -VELOCITY_COMPONENT_LIMIT,
+                VELOCITY_COMPONENT_LIMIT
+            );
+            velocityClamped.z = math.clamp(
+                velocityUnclamped.z,
+                -VELOCITY_COMPONENT_LIMIT,
+                VELOCITY_COMPONENT_LIMIT
+            );
 
             worldVelocity.Update(velocityClamped);
 
@@ -162,14 +179,20 @@ namespace Appalachia.Spatial.Voxels
 
             var worldVelocityDirection = math.normalize(worldVelocity.value);
 
-            normalVelocityCodirectionality = math.clamp(math.dot(faceData.worldNormal, worldVelocityDirection), -1f, 1f);
+            normalVelocityCodirectionality = math.clamp(
+                math.dot(faceData.worldNormal, worldVelocityDirection),
+                -1f,
+                1f
+            );
         }
 
 #region IEquatable
 
         public bool Equals(Voxel other)
         {
-            return position.Equals(other.position) && indices.Equals(other.indices) && faceData.Equals(other.faceData);
+            return position.Equals(other.position) &&
+                   indices.Equals(other.indices) &&
+                   faceData.Equals(other.faceData);
         }
 
         public override bool Equals(object obj)

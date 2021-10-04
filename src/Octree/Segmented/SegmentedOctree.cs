@@ -11,15 +11,15 @@ namespace Appalachia.Spatial.Octree.Segmented
         where T : SegmentedOctree<TTK, T, TT, TK, TV>
         where TT : Octree<TT, TK, TV>
     {
+        protected readonly float _capacityIncreaseMultiplier;
+        protected readonly int _depth;
+        protected readonly int _initialCapacity;
+        protected readonly int _maxDepth;
+
+        protected readonly OctreeStyle _style;
         protected Bounds _bounds;
         protected Vector3 _center;
         protected Vector3 _size;
-
-        protected readonly OctreeStyle _style;
-        protected readonly int _depth;
-        protected readonly int _maxDepth;
-        protected readonly int _initialCapacity;
-        protected readonly float _capacityIncreaseMultiplier;
 
         protected Dictionary<TTK, TT> _treeLookup;
 
@@ -30,7 +30,14 @@ namespace Appalachia.Spatial.Octree.Segmented
             int maxDepth = Octree<TT, TK, TV>._MAX_DEPTH,
             int initialCapacity = Octree<TT, TK, TV>._INITIAL_CAPACITY,
             float capacityIncreaseMultiplier = Octree<TT, TK, TV>._CAPACITY_INCREASE_MULTIPLIER,
-            int depth = 0) : this(style, new Bounds(position, size), maxDepth, initialCapacity, capacityIncreaseMultiplier, depth)
+            int depth = 0) : this(
+            style,
+            new Bounds(position, size),
+            maxDepth,
+            initialCapacity,
+            capacityIncreaseMultiplier,
+            depth
+        )
         {
         }
 
@@ -123,6 +130,10 @@ namespace Appalachia.Spatial.Octree.Segmented
             _treeLookup.Clear();
         }
 
-        protected abstract TT CreateFromVectors(OctreeStyle style, Vector3 position, Vector3 size, int depth);
+        protected abstract TT CreateFromVectors(
+            OctreeStyle style,
+            Vector3 position,
+            Vector3 size,
+            int depth);
     }
 }

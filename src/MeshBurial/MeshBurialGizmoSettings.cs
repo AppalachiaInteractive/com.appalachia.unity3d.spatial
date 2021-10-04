@@ -10,7 +10,8 @@ using UnityEngine;
 namespace Appalachia.Spatial.MeshBurial
 {
     [Serializable]
-    public class MeshBurialGizmoSettings : SelfSavingSingletonScriptableObject<MeshBurialGizmoSettings>
+    public class
+        MeshBurialGizmoSettings : SelfSavingSingletonScriptableObject<MeshBurialGizmoSettings>
     {
         public bool drawAllTriangles;
         public bool drawBorders = true;
@@ -28,10 +29,12 @@ namespace Appalachia.Spatial.MeshBurial
 
         public bool drawSpecificTriangles;
 
-        [ShowIf(nameof(drawSpecificTriangles)), PropertyRange(0, nameof(triangleLimit))]
+        [ShowIf(nameof(drawSpecificTriangles))]
+        [PropertyRange(0, nameof(triangleLimit))]
         public int triangle1;
 
-        [ShowIf(nameof(drawSpecificTriangles)), PropertyRange(0, nameof(triangleLimit))]
+        [ShowIf(nameof(drawSpecificTriangles))]
+        [PropertyRange(0, nameof(triangleLimit))]
         public int triangle2;
     }
 }

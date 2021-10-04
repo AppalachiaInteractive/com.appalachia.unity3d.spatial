@@ -28,12 +28,23 @@ namespace Appalachia.Spatial.MeshBurial.Processing
 
         private const string _PRF_PFX = nameof(MeshBurialJobManager) + ".";
 
-        private static readonly ProfilerMarker _PRF_ScheduleMeshBurialJobs = new ProfilerMarker(_PRF_PFX + nameof(ScheduleMeshBurialJobs));
-        private static readonly ProfilerMarker _PRF_ScheduleMeshBurialJobs_UpdateData = new ProfilerMarker(_PRF_PFX + nameof(ScheduleMeshBurialJobs) + ".UpdateData");
-        private static readonly ProfilerMarker _PRF_ScheduleMeshBurialJobs_SetupJobs = new ProfilerMarker(_PRF_PFX + nameof(ScheduleMeshBurialJobs) + ".SetupJobs");
-        private static readonly ProfilerMarker _PRF_ScheduleMeshBurialJobs_ScheduleOptimizationJobs = new ProfilerMarker(_PRF_PFX + nameof(ScheduleMeshBurialJobs) + ".ScheduleOptimizationJobs");
-        private static readonly ProfilerMarker _PRF_ScheduleMeshBurialJobs_ScheduleJobs = new ProfilerMarker(_PRF_PFX + nameof(ScheduleMeshBurialJobs) + ".ScheduleJobs");
-        
+        private static readonly ProfilerMarker _PRF_ScheduleMeshBurialJobs =
+            new(_PRF_PFX + nameof(ScheduleMeshBurialJobs));
+
+        private static readonly ProfilerMarker _PRF_ScheduleMeshBurialJobs_UpdateData =
+            new(_PRF_PFX + nameof(ScheduleMeshBurialJobs) + ".UpdateData");
+
+        private static readonly ProfilerMarker _PRF_ScheduleMeshBurialJobs_SetupJobs =
+            new(_PRF_PFX + nameof(ScheduleMeshBurialJobs) + ".SetupJobs");
+
+        private static readonly ProfilerMarker
+            _PRF_ScheduleMeshBurialJobs_ScheduleOptimizationJobs = new(_PRF_PFX +
+                nameof(ScheduleMeshBurialJobs) +
+                ".ScheduleOptimizationJobs");
+
+        private static readonly ProfilerMarker _PRF_ScheduleMeshBurialJobs_ScheduleJobs =
+            new(_PRF_PFX + nameof(ScheduleMeshBurialJobs) + ".ScheduleJobs");
+
         public static JobHandle ScheduleMeshBurialJobs(
             MeshBurialInstanceData resultData,
             MeshObject meshObject,
@@ -56,8 +67,12 @@ namespace Appalachia.Spatial.MeshBurial.Processing
 
                 using (_PRF_ScheduleMeshBurialJobs_UpdateData.Auto())
                 {
-
-                    resultData.Update(degreeAdjustment, instanceCount, iterationCount, adjustmentState);
+                    resultData.Update(
+                        degreeAdjustment,
+                        instanceCount,
+                        iterationCount,
+                        adjustmentState
+                    );
                 }
 
                 using (_PRF_ScheduleMeshBurialJobs_SetupJobs.Auto())
@@ -145,7 +160,8 @@ namespace Appalachia.Spatial.MeshBurial.Processing
         [BurstCompile]
         public struct PopulateLookupsJob : IJobParallelFor
         {
-            [ReadOnly, NativeDisableParallelForRestriction]
+            [ReadOnly]
+            [NativeDisableParallelForRestriction]
             public NativeArray<TerrainJobData> terrainLookup_Values;
 
             [ReadOnly] public MeshObject meshObject;
@@ -209,7 +225,13 @@ namespace Appalachia.Spatial.MeshBurial.Processing
 
                     if (foundError < .0000001)
                     {
-                        foundError = MeshBurialJobUtility.CalculateError(meshObject, foundLTW, terrainData, terrainIndex, terrainHeights);
+                        foundError = MeshBurialJobUtility.CalculateError(
+                            meshObject,
+                            foundLTW,
+                            terrainData,
+                            terrainIndex,
+                            terrainHeights
+                        );
                     }
 
                     lookupResults[index] = foundLTW;
@@ -229,7 +251,8 @@ namespace Appalachia.Spatial.MeshBurial.Processing
             [ReadOnly] public NativeArray<double> lookupError;
             [ReadOnly] public NativeArray<float4x4> lookupResults;
 
-            [ReadOnly, NativeDisableParallelForRestriction]
+            [ReadOnly]
+            [NativeDisableParallelForRestriction]
             public NativeKeyArray2D<int, float> terrainHeights;
 
             [ReadOnly] public NativeHashMap<int, TerrainJobData> terrainLookup;
@@ -253,7 +276,9 @@ namespace Appalachia.Spatial.MeshBurial.Processing
                 var lookupMatrixError = lookupError[instanceIndex];
                 var useLookup = lookupMatrixError < burialOptions.threshold;
 
-                if (matrix.Equals(float4x4.zero) || matrix.anyNaN() || (terrainHashCode == int.MinValue))
+                if (matrix.Equals(float4x4.zero) ||
+                    matrix.anyNaN() ||
+                    (terrainHashCode == int.MinValue))
                 {
                     exclusions[instanceIndex] = true;
 
@@ -306,7 +331,13 @@ namespace Appalachia.Spatial.MeshBurial.Processing
                         }
                     }
 
-                    mainInstance.initial.error = MeshBurialJobUtility.CalculateError(meshObject, matrix, terrainData, terrainIndex, terrainHeights);
+                    mainInstance.initial.error = MeshBurialJobUtility.CalculateError(
+                        meshObject,
+                        matrix,
+                        terrainData,
+                        terrainIndex,
+                        terrainHeights
+                    );
 
                     for (var iterationIndex = 1; iterationIndex < iterationCount; iterationIndex++)
                     {
@@ -346,7 +377,8 @@ namespace Appalachia.Spatial.MeshBurial.Processing
             [ReadOnly] public NativeArray<int> terrainHashCodes;
             [ReadOnly] public NativeHashMap<int, TerrainJobData> terrainLookup;
 
-            [ReadOnly, NativeDisableParallelForRestriction]
+            [ReadOnly]
+            [NativeDisableParallelForRestriction]
             public NativeKeyArray2D<int, float> terrainHeights;
 
             [NativeDisableParallelForRestriction]
@@ -368,7 +400,10 @@ namespace Appalachia.Spatial.MeshBurial.Processing
 
                         iteration.excluded = true;
 
-                        resultsCollection[instanceIndex, iterationIndex] = new OptimizationResult(iteration.proposed.error, iterationIndex);
+                        resultsCollection[instanceIndex, iterationIndex] = new OptimizationResult(
+                            iteration.proposed.error,
+                            iterationIndex
+                        );
 
                         instancesCollection[instanceIndex, iterationIndex] = iteration;
                     }
@@ -397,7 +432,10 @@ namespace Appalachia.Spatial.MeshBurial.Processing
 
                     if (iteration.excluded)
                     {
-                        resultsCollection[instanceIndex, iterationIndex] = new OptimizationResult(iteration.proposed.error, iterationIndex);
+                        resultsCollection[instanceIndex, iterationIndex] = new OptimizationResult(
+                            iteration.proposed.error,
+                            iterationIndex
+                        );
                         continue;
                     }
 
@@ -413,11 +451,18 @@ namespace Appalachia.Spatial.MeshBurial.Processing
                         iterationIndex
                     );
 
-                    var error = MeshBurialJobUtility.CalculateError(meshObject, iteration.proposed.matrix, terrainData, terrainIndex, terrainHeights);
+                    var error = MeshBurialJobUtility.CalculateError(
+                        meshObject,
+                        iteration.proposed.matrix,
+                        terrainData,
+                        terrainIndex,
+                        terrainHeights
+                    );
 
                     iteration.proposed.error = error;
 
-                    resultsCollection[instanceIndex, iterationIndex] = new OptimizationResult(error, iterationIndex);
+                    resultsCollection[instanceIndex, iterationIndex] =
+                        new OptimizationResult(error, iterationIndex);
 
                     instancesCollection[instanceIndex, iterationIndex] = iteration;
                 }
@@ -429,7 +474,8 @@ namespace Appalachia.Spatial.MeshBurial.Processing
         {
             [ReadOnly] public MeshBurialOptions burialOptions;
 
-            [ReadOnly, NativeDisableParallelForRestriction]
+            [ReadOnly]
+            [NativeDisableParallelForRestriction]
             public NativeArray2D<MeshBurialInstanceTracking> instances;
 
             [ReadOnly] public NativeArray<OptimizationResult> bestResults;
@@ -507,13 +553,16 @@ namespace Appalachia.Spatial.MeshBurial.Processing
                         summary.bounds.Encapsulate(bestInstance.proposed.matrix.c3.xyz);
                     }
 
-                    if ((burialOptions.permissiveness < 4) && (bestResult.error > burialOptions.threshold))
+                    if ((burialOptions.permissiveness < 4) &&
+                        (bestResult.error > burialOptions.threshold))
                     {
                         summary.requeue = true;
                     }
                 }
 
-                if (summary.requeue && ((summary.discard + summary.bad) == 1) && (summary.total > 10))
+                if (summary.requeue &&
+                    ((summary.discard + summary.bad) == 1) &&
+                    (summary.total > 10))
                 {
                     summary.requeue = false;
                 }

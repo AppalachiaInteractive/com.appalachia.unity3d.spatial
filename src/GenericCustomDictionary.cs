@@ -8,7 +8,7 @@ namespace Appalachia.Spatial
 {
     public abstract class GenericCustomDictionary<TKey, TValue>
     {
-        private Dictionary<TKey, TValue> _lookup = new Dictionary<TKey, TValue>();
+        private Dictionary<TKey, TValue> _lookup = new();
 
         protected Dictionary<TKey, TValue> lookup
         {

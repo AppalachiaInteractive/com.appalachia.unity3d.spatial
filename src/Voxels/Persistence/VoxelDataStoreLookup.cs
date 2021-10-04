@@ -12,10 +12,11 @@ using Appalachia.Spatial.Voxels.VoxelTypes;
 namespace Appalachia.Spatial.Voxels.Persistence
 {
     [Serializable]
-    public abstract class
-        VoxelDataStoreLookup<TVoxelData, TRaycastHit, TLookup, TIndex, TDataStore, TDataStoreList> : ScriptableObjectLookupCollection<TLookup, TIndex, string, TDataStore,
+    public abstract class VoxelDataStoreLookup<TVoxelData, TRaycastHit, TLookup, TIndex, TDataStore,
+                                               TDataStoreList> : ScriptableObjectLookupCollection<
+        TLookup, TIndex, string, TDataStore, AppaList_string, TDataStoreList>
+        where TLookup : ScriptableObjectLookupCollection<TLookup, TIndex, string, TDataStore,
             AppaList_string, TDataStoreList>
-        where TLookup : ScriptableObjectLookupCollection<TLookup, TIndex, string, TDataStore, AppaList_string, TDataStoreList>
         where TIndex : AppaLookup<string, TDataStore, AppaList_string, TDataStoreList>, new()
         where TDataStoreList : AppaList<TDataStore>, new()
         where TDataStore : VoxelPersistentDataStoreBase<TVoxelData, TDataStore, TRaycastHit>

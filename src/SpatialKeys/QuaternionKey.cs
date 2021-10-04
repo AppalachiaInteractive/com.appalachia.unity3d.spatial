@@ -35,6 +35,15 @@ namespace Appalachia.Spatial.SpatialKeys
             _w = GetRounded(vector.value.w, groupingScale);
         }
 
+        public bool Equals(QuaternionKey other)
+        {
+            return (_groupingScale == other._groupingScale) &&
+                   (_x == other._x) &&
+                   (_y == other._y) &&
+                   (_z == other._z) &&
+                   (_w == other._w);
+        }
+
         private static int GetRounded(float value, int scale)
         {
             return (int) math.round(value * scale);
@@ -56,11 +65,6 @@ namespace Appalachia.Spatial.SpatialKeys
         {
             var fScale = (float) _groupingScale;
             return new quaternion(_x / fScale, _y / fScale, _z / fScale, _w / fScale);
-        }
-
-        public bool Equals(QuaternionKey other)
-        {
-            return (_groupingScale == other._groupingScale) && (_x == other._x) && (_y == other._y) && (_z == other._z) && (_w == other._w);
         }
 
         public override bool Equals(object obj)

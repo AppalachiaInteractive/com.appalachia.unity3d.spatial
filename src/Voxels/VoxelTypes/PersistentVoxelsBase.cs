@@ -11,7 +11,9 @@ using UnityEngine;
 namespace Appalachia.Spatial.Voxels.VoxelTypes
 {
     [Serializable]
-    public abstract class PersistentVoxelsBase<TVoxelData, TDataStore, TRaycastHit> : VoxelsBase<TVoxelData, TRaycastHit>
+    public abstract class
+        PersistentVoxelsBase<TVoxelData, TDataStore, TRaycastHit> : VoxelsBase<TVoxelData,
+            TRaycastHit>
         where TVoxelData : PersistentVoxelsBase<TVoxelData, TDataStore, TRaycastHit>
         where TDataStore : VoxelPersistentDataStoreBase<TVoxelData, TDataStore, TRaycastHit>
         where TRaycastHit : struct, IVoxelRaycastHit
@@ -19,12 +21,12 @@ namespace Appalachia.Spatial.Voxels.VoxelTypes
         [SerializeField] public string identifier;
         [SerializeField] public TDataStore dataStore;
 
-        public override bool IsPersistent => true;
-
         protected PersistentVoxelsBase(string identifier)
         {
             this.identifier = identifier;
         }
+
+        public override bool IsPersistent => true;
 
         public override void OnInitialize()
         {
@@ -36,12 +38,16 @@ namespace Appalachia.Spatial.Voxels.VoxelTypes
 
         public override void InitializeDataStore()
         {
-            dataStore.Record((TVoxelData)this);
+            dataStore.Record((TVoxelData) this);
         }
 
-        public void RestoreFromDataStore(Transform transform, Collider[] colliders, MeshRenderer[] renderers, float activeRatio = 1.0f)
+        public void RestoreFromDataStore(
+            Transform transform,
+            Collider[] colliders,
+            MeshRenderer[] renderers,
+            float activeRatio = 1.0f)
         {
-            dataStore.Restore((TVoxelData)this);
+            dataStore.Restore((TVoxelData) this);
             _transform = transform;
             this.colliders = colliders;
             this.renderers = renderers;

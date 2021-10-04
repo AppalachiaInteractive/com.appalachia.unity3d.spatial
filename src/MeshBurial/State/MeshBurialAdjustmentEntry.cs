@@ -12,16 +12,21 @@ namespace Appalachia.Spatial.MeshBurial.State
     [Serializable]
     public struct MeshBurialAdjustmentEntry : IEquatable<MeshBurialAdjustmentEntry>
     {
-        [HorizontalGroup("A"), SmartLabel, ToggleLeft]
+        [HorizontalGroup("A")]
+        [SmartLabel]
+        [ToggleLeft]
         public bool adoptTerrainNormal;
 
-        [HorizontalGroup("A"), SmartLabel]
+        [HorizontalGroup("A")]
+        [SmartLabel]
         public double error;
 
-        [HorizontalGroup("B"), SmartLabel]
+        [HorizontalGroup("B")]
+        [SmartLabel]
         public Matrix4x4 input;
 
-        [HorizontalGroup("B"), SmartLabel]
+        [HorizontalGroup("B")]
+        [SmartLabel]
         public Matrix4x4 adjustment;
 
         public bool Equals(MeshBurialAdjustmentEntry other)
@@ -64,12 +69,16 @@ namespace Appalachia.Spatial.MeshBurial.State
             }
         }
 
-        public static bool operator ==(MeshBurialAdjustmentEntry left, MeshBurialAdjustmentEntry right)
+        public static bool operator ==(
+            MeshBurialAdjustmentEntry left,
+            MeshBurialAdjustmentEntry right)
         {
             return Equals(left, right);
         }
 
-        public static bool operator !=(MeshBurialAdjustmentEntry left, MeshBurialAdjustmentEntry right)
+        public static bool operator !=(
+            MeshBurialAdjustmentEntry left,
+            MeshBurialAdjustmentEntry right)
         {
             return !Equals(left, right);
         }

@@ -12,8 +12,15 @@ using UnityEngine;
 namespace Appalachia.Spatial.MeshBurial.Collections
 {
     [Serializable]
-    [ListDrawerSettings(Expanded = true, DraggableItems = false, HideAddButton = true, HideRemoveButton = true, NumberOfItemsPerPage = 5)]
-    public class MeshBurialSharedStateLookup : AppaLookup<int, MeshBurialSharedState, AppaList_int, AppaList_MeshBurialSharedState>
+    [ListDrawerSettings(
+        Expanded = true,
+        DraggableItems = false,
+        HideAddButton = true,
+        HideRemoveButton = true,
+        NumberOfItemsPerPage = 5
+    )]
+    public class MeshBurialSharedStateLookup : AppaLookup<int, MeshBurialSharedState, AppaList_int,
+        AppaList_MeshBurialSharedState>
     {
         protected override string GetDisplayTitle(int key, MeshBurialSharedState value)
         {

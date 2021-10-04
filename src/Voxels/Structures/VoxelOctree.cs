@@ -13,7 +13,9 @@ using UnityEngine;
 
 namespace Appalachia.Spatial.Voxels.Structures
 {
-    public sealed class VoxelOctree<TVoxelData, TVoxelRaycastHit, TValue> : Octree<VoxelOctree<TVoxelData, TVoxelRaycastHit, TValue>, int, TValue>
+    public sealed class
+        VoxelOctree<TVoxelData, TVoxelRaycastHit, TValue> : Octree<
+            VoxelOctree<TVoxelData, TVoxelRaycastHit, TValue>, int, TValue>
         where TValue : struct, IOctreeNodeGizmoDrawer
         where TVoxelData : VoxelsBase<TVoxelData, TVoxelRaycastHit>
         where TVoxelRaycastHit : struct, IVoxelRaycastHit
@@ -28,7 +30,15 @@ namespace Appalachia.Spatial.Voxels.Structures
             int maxDepth = _MAX_DEPTH,
             int initialCapacity = _INITIAL_CAPACITY,
             float capacityIncreaseMultiplier = _CAPACITY_INCREASE_MULTIPLIER,
-            int depth = 0) : base(style, position, size, maxDepth, initialCapacity, capacityIncreaseMultiplier, depth)
+            int depth = 0) : base(
+            style,
+            position,
+            size,
+            maxDepth,
+            initialCapacity,
+            capacityIncreaseMultiplier,
+            depth
+        )
         {
             _voxelData = voxelData;
         }
@@ -40,7 +50,14 @@ namespace Appalachia.Spatial.Voxels.Structures
             int maxDepth = _MAX_DEPTH,
             int initialCapacity = _INITIAL_CAPACITY,
             float capacityIncreaseMultiplier = _CAPACITY_INCREASE_MULTIPLIER,
-            int depth = 0) : base(style, bounds, maxDepth, initialCapacity, capacityIncreaseMultiplier, depth)
+            int depth = 0) : base(
+            style,
+            bounds,
+            maxDepth,
+            initialCapacity,
+            capacityIncreaseMultiplier,
+            depth
+        )
         {
             _voxelData = voxelData;
         }
@@ -58,7 +75,15 @@ namespace Appalachia.Spatial.Voxels.Structures
         {
             using (_PRF_CreateFromVectors.Auto())
             {
-                return new VoxelOctree<TVoxelData, TVoxelRaycastHit, TValue>(_voxelData, style, position, size, _maxDepth, _initialCapacity, depth);
+                return new VoxelOctree<TVoxelData, TVoxelRaycastHit, TValue>(
+                    _voxelData,
+                    style,
+                    position,
+                    size,
+                    _maxDepth,
+                    _initialCapacity,
+                    depth
+                );
             }
         }
 
@@ -120,14 +145,28 @@ namespace Appalachia.Spatial.Voxels.Structures
 
 #region Profiling
 
-        private const string _PRF_PFX = nameof(VoxelOctree<TVoxelData, TVoxelRaycastHit, TValue>) + ".";
-        private static readonly ProfilerMarker _PRF_CreateFromVectors = new ProfilerMarker(_PRF_PFX + nameof(CreateFromVectors));
-        private static readonly ProfilerMarker _PRF_ContainedInTree = new ProfilerMarker(_PRF_PFX + nameof(ContainedInTree));
-        private static readonly ProfilerMarker _PRF_GetAppropriateChildIndex = new ProfilerMarker(_PRF_PFX + nameof(GetAppropriateChildIndex));
-        private static readonly ProfilerMarker _PRF_NodeIsEligible = new ProfilerMarker(_PRF_PFX + nameof(NodeIsEligible));
-        private static readonly ProfilerMarker _PRF_Magnitude = new ProfilerMarker(_PRF_PFX + nameof(Magnitude));
-        private static readonly ProfilerMarker _PRF_MagnitudeSquared = new ProfilerMarker(_PRF_PFX + nameof(MagnitudeSquared));
-        private static readonly ProfilerMarker _PRF_DrawNodeGizmo = new ProfilerMarker(_PRF_PFX + nameof(DrawNodeGizmo));
+        private const string _PRF_PFX =
+            nameof(VoxelOctree<TVoxelData, TVoxelRaycastHit, TValue>) + ".";
+
+        private static readonly ProfilerMarker _PRF_CreateFromVectors =
+            new(_PRF_PFX + nameof(CreateFromVectors));
+
+        private static readonly ProfilerMarker _PRF_ContainedInTree =
+            new(_PRF_PFX + nameof(ContainedInTree));
+
+        private static readonly ProfilerMarker _PRF_GetAppropriateChildIndex =
+            new(_PRF_PFX + nameof(GetAppropriateChildIndex));
+
+        private static readonly ProfilerMarker _PRF_NodeIsEligible =
+            new(_PRF_PFX + nameof(NodeIsEligible));
+
+        private static readonly ProfilerMarker _PRF_Magnitude = new(_PRF_PFX + nameof(Magnitude));
+
+        private static readonly ProfilerMarker _PRF_MagnitudeSquared =
+            new(_PRF_PFX + nameof(MagnitudeSquared));
+
+        private static readonly ProfilerMarker _PRF_DrawNodeGizmo =
+            new(_PRF_PFX + nameof(DrawNodeGizmo));
 
 #endregion
     }

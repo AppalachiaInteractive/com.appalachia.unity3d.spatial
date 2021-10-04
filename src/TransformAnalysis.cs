@@ -44,8 +44,8 @@ namespace Appalachia.Spatial
                 maxWorld = Vector3.Max(maxWorld, worldPosition);
             }
 
-            avgLocal /= (float) children;
-            avgWorld /= (float) children;
+            avgLocal /= children;
+            avgWorld /= children;
         }
     }
 }

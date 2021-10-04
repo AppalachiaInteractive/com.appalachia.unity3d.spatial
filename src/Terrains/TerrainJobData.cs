@@ -13,6 +13,14 @@ namespace Appalachia.Spatial.Terrains
     [Serializable]
     public struct TerrainJobData : IEquatable<TerrainJobData>
     {
+        public readonly Allocator allocator;
+
+        public readonly int hashCode;
+        public readonly int resolution;
+        public readonly float3 scale;
+        public readonly float3 size;
+        public readonly float3 terrainPosition;
+
         public TerrainJobData(Terrain terrain, Allocator allocator)
         {
             var terrainData = terrain.terrainData;
@@ -25,27 +33,6 @@ namespace Appalachia.Spatial.Terrains
             this.allocator = allocator;
         }
 
-        public readonly int hashCode;
-        public readonly float3 terrainPosition;
-        public readonly int resolution;
-        public readonly float3 scale;
-        public readonly float3 size;
-        public readonly Allocator allocator;
-
-        [Pure]
-        public bool IsPositionValidForTerrain(float3 worldPos)
-        {
-            var terrainMin = terrainPosition;
-            var terrainMax = terrainMin + size;
-
-            if ((worldPos.x >= terrainMin.x) && (worldPos.x < terrainMax.x) && (worldPos.z >= terrainMin.z) && (worldPos.z < terrainMax.z))
-            {
-                return true;
-            }
-
-            return false;
-        }
-
         public bool Equals(TerrainJobData other)
         {
             return (hashCode == other.hashCode) &&
@@ -54,6 +41,23 @@ namespace Appalachia.Spatial.Terrains
                    scale.Equals(other.scale) &&
                    size.Equals(other.size) &&
                    (allocator == other.allocator);
+        }
+
+        [Pure]
+        public bool IsPositionValidForTerrain(float3 worldPos)
+        {
+            var terrainMin = terrainPosition;
+            var terrainMax = terrainMin + size;
+
+            if ((worldPos.x >= terrainMin.x) &&
+                (worldPos.x < terrainMax.x) &&
+                (worldPos.z >= terrainMin.z) &&
+                (worldPos.z < terrainMax.z))
+            {
+                return true;
+            }
+
+            return false;
         }
 
         public override bool Equals(object obj)

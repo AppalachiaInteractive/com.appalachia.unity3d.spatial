@@ -14,19 +14,29 @@ namespace Appalachia.Spatial.MeshBurial.State
     public class MeshBurialState
     {
         [FormerlySerializedAs("_optimizationState")]
-        [SerializeField, BoxGroup("Optimization"), InlineProperty, HideLabel]
+        [SerializeField]
+        [BoxGroup("Optimization")]
+        [InlineProperty]
+        [HideLabel]
         private MeshBurialOptimizationState _optimized;
 
-        [SerializeField, HideInInspector]
+        [SerializeField]
+        [HideInInspector]
         private Matrix4x4 _originalLocalToWorld;
 
-        [SerializeField, HideInInspector]
+        [SerializeField]
+        [HideInInspector]
         private Matrix4x4 _localToWorld;
 
-        [SerializeField, HideInInspector]
+        [SerializeField]
+        [HideInInspector]
         private TerrainMetadata _terrain;
 
-        [BoxGroup("Shared State"), InlineProperty, HideLabel, ShowInInspector, HideReferenceObjectPicker]
+        [BoxGroup("Shared State")]
+        [InlineProperty]
+        [HideLabel]
+        [ShowInInspector]
+        [HideReferenceObjectPicker]
         private MeshBurialSharedState _shared;
 
         public MeshBurialState(MeshBurialSharedState shared, Matrix4x4 ltw, int terrainHashCode)
@@ -66,6 +76,5 @@ namespace Appalachia.Spatial.MeshBurial.State
         }
 
         public MeshBurialSharedState shared => _shared;
-
     }
 }

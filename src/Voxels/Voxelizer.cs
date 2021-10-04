@@ -24,29 +24,39 @@ namespace Appalachia.Spatial.Voxels
 
         private const string _PRF_PFX = nameof(Voxelizer) + ".";
 
-        private static readonly ProfilerMarker _PRF_VoxelizeSingleInternal = new ProfilerMarker(_PRF_PFX + nameof(VoxelizeSingleInternal));
+        private static readonly ProfilerMarker _PRF_VoxelizeSingleInternal =
+            new(_PRF_PFX + nameof(VoxelizeSingleInternal));
 
-        private static readonly ProfilerMarker _PRF_VoxelizeSingle = new ProfilerMarker(_PRF_PFX + nameof(VoxelizeSingle));
+        private static readonly ProfilerMarker _PRF_VoxelizeSingle =
+            new(_PRF_PFX + nameof(VoxelizeSingle));
 
-        private static readonly ProfilerMarker _PRF_VoxelizeInternal = new ProfilerMarker(_PRF_PFX + nameof(VoxelizeInternal));
+        private static readonly ProfilerMarker _PRF_VoxelizeInternal =
+            new(_PRF_PFX + nameof(VoxelizeInternal));
 
-        private static readonly ProfilerMarker _PRF_Voxelize = new ProfilerMarker(_PRF_PFX + nameof(Voxelize));
+        private static readonly ProfilerMarker _PRF_Voxelize = new(_PRF_PFX + nameof(Voxelize));
 
-        private static readonly ProfilerMarker _PRF_CheckArguments = new ProfilerMarker(_PRF_PFX + nameof(CheckArguments));
+        private static readonly ProfilerMarker _PRF_CheckArguments =
+            new(_PRF_PFX + nameof(CheckArguments));
 
-        private static readonly ProfilerMarker _PRF_PopulateVoxels = new ProfilerMarker(_PRF_PFX + nameof(PopulateVoxels));
+        private static readonly ProfilerMarker _PRF_PopulateVoxels =
+            new(_PRF_PFX + nameof(PopulateVoxels));
 
-        private static readonly ProfilerMarker _PRF_SetFaceData = new ProfilerMarker(_PRF_PFX + nameof(SetFaceData));
+        private static readonly ProfilerMarker _PRF_SetFaceData =
+            new(_PRF_PFX + nameof(SetFaceData));
 
-        private static readonly ProfilerMarker _PRF_CheckFaceHit = new ProfilerMarker(_PRF_PFX + nameof(CheckFaceHit));
+        private static readonly ProfilerMarker _PRF_CheckFaceHit =
+            new(_PRF_PFX + nameof(CheckFaceHit));
 
-        private static readonly ProfilerMarker _PRF_SyncTransforms = new ProfilerMarker(_PRF_PFX + nameof(SyncTransforms));
+        private static readonly ProfilerMarker _PRF_SyncTransforms =
+            new(_PRF_PFX + nameof(SyncTransforms));
 
-        private static readonly ProfilerMarker _PRF_PointIsInsideCollider = new ProfilerMarker(_PRF_PFX + nameof(PointIsInsideCollider));
+        private static readonly ProfilerMarker _PRF_PointIsInsideCollider =
+            new(_PRF_PFX + nameof(PointIsInsideCollider));
 
-        private static readonly ProfilerMarker _PRF_VoxelBounds = new ProfilerMarker(_PRF_PFX + nameof(VoxelBounds));
+        private static readonly ProfilerMarker _PRF_VoxelBounds =
+            new(_PRF_PFX + nameof(VoxelBounds));
 
-        private static readonly ProfilerMarker _PRF_RoundFloat = new ProfilerMarker(_PRF_PFX + nameof(RoundFloat));
+        private static readonly ProfilerMarker _PRF_RoundFloat = new(_PRF_PFX + nameof(RoundFloat));
 
 #endregion
 
@@ -63,7 +73,13 @@ namespace Appalachia.Spatial.Voxels
         {
             using (_PRF_VoxelizeSingle.Auto())
             {
-                return VoxelizeSingleInternal<T, TRaycastHit>(voxelData, transform, voxelBounds, samplePoint, allocator);
+                return VoxelizeSingleInternal<T, TRaycastHit>(
+                    voxelData,
+                    transform,
+                    voxelBounds,
+                    samplePoint,
+                    allocator
+                );
             }
         }
 
@@ -78,7 +94,15 @@ namespace Appalachia.Spatial.Voxels
         {
             using (_PRF_Voxelize.Auto())
             {
-                return Voxelize<T, TRaycastHit>(voxelData, transform, VoxelPopulationStyle.Colliders, colliders, null, resolution, allocator);
+                return Voxelize<T, TRaycastHit>(
+                    voxelData,
+                    transform,
+                    VoxelPopulationStyle.Colliders,
+                    colliders,
+                    null,
+                    resolution,
+                    allocator
+                );
             }
         }
 
@@ -93,7 +117,15 @@ namespace Appalachia.Spatial.Voxels
         {
             using (_PRF_Voxelize.Auto())
             {
-                return Voxelize<T, TRaycastHit>(voxelData, transform, VoxelPopulationStyle.Meshes, null, renderers, resolution, allocator);
+                return Voxelize<T, TRaycastHit>(
+                    voxelData,
+                    transform,
+                    VoxelPopulationStyle.Meshes,
+                    null,
+                    renderers,
+                    resolution,
+                    allocator
+                );
             }
         }
 
@@ -110,7 +142,15 @@ namespace Appalachia.Spatial.Voxels
         {
             using (_PRF_Voxelize.Auto())
             {
-                return VoxelizeInternal<T, TRaycastHit>(voxelData, transform, style, colliders, renderers, resolution, allocator);
+                return VoxelizeInternal<T, TRaycastHit>(
+                    voxelData,
+                    transform,
+                    style,
+                    colliders,
+                    renderers,
+                    resolution,
+                    allocator
+                );
             }
         }
 
@@ -126,7 +166,13 @@ namespace Appalachia.Spatial.Voxels
             {
                 var voxelData = new T();
 
-                return VoxelizeSingleInternal<T, TRaycastHit>(voxelData, transform, voxelBounds, samplePoint, allocator);
+                return VoxelizeSingleInternal<T, TRaycastHit>(
+                    voxelData,
+                    transform,
+                    voxelBounds,
+                    samplePoint,
+                    allocator
+                );
             }
         }
 
@@ -140,7 +186,14 @@ namespace Appalachia.Spatial.Voxels
         {
             using (_PRF_Voxelize.Auto())
             {
-                return Voxelize<T, TRaycastHit>(transform, VoxelPopulationStyle.Colliders, colliders, null, resolution, allocator);
+                return Voxelize<T, TRaycastHit>(
+                    transform,
+                    VoxelPopulationStyle.Colliders,
+                    colliders,
+                    null,
+                    resolution,
+                    allocator
+                );
             }
         }
 
@@ -154,7 +207,14 @@ namespace Appalachia.Spatial.Voxels
         {
             using (_PRF_Voxelize.Auto())
             {
-                return Voxelize<T, TRaycastHit>(transform, VoxelPopulationStyle.Meshes, null, renderers, resolution, allocator);
+                return Voxelize<T, TRaycastHit>(
+                    transform,
+                    VoxelPopulationStyle.Meshes,
+                    null,
+                    renderers,
+                    resolution,
+                    allocator
+                );
             }
         }
 
@@ -171,7 +231,15 @@ namespace Appalachia.Spatial.Voxels
             using (_PRF_Voxelize.Auto())
             {
                 var voxelData = new T();
-                return VoxelizeInternal<T, TRaycastHit>(voxelData, transform, style, colliders, renderers, resolution, allocator);
+                return VoxelizeInternal<T, TRaycastHit>(
+                    voxelData,
+                    transform,
+                    style,
+                    colliders,
+                    renderers,
+                    resolution,
+                    allocator
+                );
             }
         }
 
@@ -202,13 +270,20 @@ namespace Appalachia.Spatial.Voxels
                 voxelData.UpdateBounds(voxelBounds, voxelBounds);
                 voxelData.Synchronize();
 
-                var time = (samplePoint - (float3) voxelBounds.min) / (voxelBounds.max - voxelBounds.min);
+                var time = (samplePoint - (float3) voxelBounds.min) /
+                           (voxelBounds.max - voxelBounds.min);
 
-                var voxelSamplePoint = new VoxelSamplePoint {populated = true, position = samplePoint, time = time};
+                var voxelSamplePoint = new VoxelSamplePoint
+                {
+                    populated = true, position = samplePoint, time = time
+                };
 
                 voxelData.samplePoints[0] = voxelSamplePoint;
 
-                var voxel = new Voxel {position = samplePoint, faceData = VoxelFaceData.FullyExposed()};
+                var voxel = new Voxel
+                {
+                    position = samplePoint, faceData = VoxelFaceData.FullyExposed()
+                };
 
                 voxelData.voxels[0] = voxel;
 
@@ -248,7 +323,9 @@ namespace Appalachia.Spatial.Voxels
 
                     SyncTransforms(4);
 
-                    var rawBounds = style == VoxelPopulationStyle.Colliders ? VoxelBounds(colliders) : VoxelBounds(renderers);
+                    var rawBounds = style == VoxelPopulationStyle.Colliders
+                        ? VoxelBounds(colliders)
+                        : VoxelBounds(renderers);
 
                     var voxelBounds = rawBounds;
 
@@ -283,7 +360,7 @@ namespace Appalachia.Spatial.Voxels
                     {
                         voxelData.InitializeDataStore();
                     }
-                    
+
                     return voxelData;
                 }
                 catch (Exception ex)
@@ -302,30 +379,41 @@ namespace Appalachia.Spatial.Voxels
 
 #region Helpers
 
-        private static void CheckArguments(float3 resolution, VoxelPopulationStyle style, Collider[] colliders, MeshRenderer[] renderers)
+        private static void CheckArguments(
+            float3 resolution,
+            VoxelPopulationStyle style,
+            Collider[] colliders,
+            MeshRenderer[] renderers)
         {
             using (_PRF_CheckArguments.Auto())
             {
                 if ((resolution.x <= 0f) || (resolution.y <= 0f) || (resolution.z <= 0f))
                 {
-                    throw new NotSupportedException($"Voxel resolution must be positive!  Provided: {resolution}");
+                    throw new NotSupportedException(
+                        $"Voxel resolution must be positive!  Provided: {resolution}"
+                    );
                 }
 
-                if ((style == VoxelPopulationStyle.Meshes) && ((renderers == null) || (renderers.Length == 0)))
+                if ((style == VoxelPopulationStyle.Meshes) &&
+                    ((renderers == null) || (renderers.Length == 0)))
                 {
                     throw new NotSupportedException("Must provide renderers!");
                 }
 
-                if ((style == VoxelPopulationStyle.Colliders) && ((colliders == null) || (colliders.Length == 0)))
+                if ((style == VoxelPopulationStyle.Colliders) &&
+                    ((colliders == null) || (colliders.Length == 0)))
                 {
                     throw new NotSupportedException("Must provide colliders!");
                 }
             }
         }
 
-        private static readonly ProfilerMarker _PRF_PopulateSamplePoints = new ProfilerMarker(_PRF_PFX + nameof(PopulateSamplePoints));
+        private static readonly ProfilerMarker _PRF_PopulateSamplePoints =
+            new(_PRF_PFX + nameof(PopulateSamplePoints));
 
-        public static void PopulateSamplePoints<T, TRaycastHit>(T voxelData, Allocator allocator = Allocator.Persistent)
+        public static void PopulateSamplePoints<T, TRaycastHit>(
+            T voxelData,
+            Allocator allocator = Allocator.Persistent)
             where T : VoxelsBase<T, TRaycastHit>
             where TRaycastHit : struct, IVoxelRaycastHit
         {
@@ -347,7 +435,9 @@ namespace Appalachia.Spatial.Voxels
 
                 if ((x == 0) || (y == 0) || (z == 0) || (x < 0) || (y < 0) || (z < 0))
                 {
-                    throw new NotSupportedException($"Voxels not possible, bounds: [{voxelData.voxelBounds}]");
+                    throw new NotSupportedException(
+                        $"Voxels not possible, bounds: [{voxelData.voxelBounds}]"
+                    );
                 }
 
                 voxelData.samplePoints = new NativeArray3D<VoxelSamplePoint>(x, y, z, allocator);
@@ -363,9 +453,18 @@ namespace Appalachia.Spatial.Voxels
                             var samplePoint = new VoxelSamplePoint();
 
                             samplePoint.position = new float3(
-                                -boundsExtents.x + halfRez.x + (indexX * voxelData.resolution.x) + boundsCenter.x,
-                                -boundsExtents.y + halfRez.y + (indexY * voxelData.resolution.y) + boundsCenter.y,
-                                -boundsExtents.z + halfRez.z + (indexZ * voxelData.resolution.z) + boundsCenter.z
+                                -boundsExtents.x +
+                                halfRez.x +
+                                (indexX * voxelData.resolution.x) +
+                                boundsCenter.x,
+                                -boundsExtents.y +
+                                halfRez.y +
+                                (indexY * voxelData.resolution.y) +
+                                boundsCenter.y,
+                                -boundsExtents.z +
+                                halfRez.z +
+                                (indexZ * voxelData.resolution.z) +
+                                boundsCenter.z
                             );
 
                             samplePoint.time = new float3(
@@ -386,7 +485,10 @@ namespace Appalachia.Spatial.Voxels
             }
         }
 
-        public static void PopulateVoxels<T, TRaycastHit>(T voxelData, Collider[] colliders, Allocator allocator = Allocator.Persistent)
+        public static void PopulateVoxels<T, TRaycastHit>(
+            T voxelData,
+            Collider[] colliders,
+            Allocator allocator = Allocator.Persistent)
             where T : VoxelsBase<T, TRaycastHit>
             where TRaycastHit : struct, IVoxelRaycastHit
         {
@@ -402,7 +504,9 @@ namespace Appalachia.Spatial.Voxels
                         {
                             var samplePoint = voxelData.samplePoints[indexX, indexY, indexZ];
 
-                            for (var colliderIndex = 0; colliderIndex < colliders.Length; colliderIndex++)
+                            for (var colliderIndex = 0;
+                                colliderIndex < colliders.Length;
+                                colliderIndex++)
                             {
                                 var testingCollider = colliders[colliderIndex];
 
@@ -457,7 +561,11 @@ namespace Appalachia.Spatial.Voxels
 
                             if (samplePoint.populated)
                             {
-                                var voxel = new Voxel {position = samplePoint.position, indices = new int3(indexX, indexY, indexZ)};
+                                var voxel = new Voxel
+                                {
+                                    position = samplePoint.position,
+                                    indices = new int3(indexX, indexY, indexZ)
+                                };
 
                                 voxelData.voxels[populationIndex] = voxel;
                                 populationIndex += 1;
@@ -468,7 +576,10 @@ namespace Appalachia.Spatial.Voxels
             }
         }
 
-        public static void PopulateVoxels<T, TRaycastHit>(T voxelData, MeshRenderer[] renderers, Allocator allocator = Allocator.Persistent)
+        public static void PopulateVoxels<T, TRaycastHit>(
+            T voxelData,
+            MeshRenderer[] renderers,
+            Allocator allocator = Allocator.Persistent)
             where T : VoxelsBase<T, TRaycastHit>
             where TRaycastHit : struct, IVoxelRaycastHit
         {
@@ -512,7 +623,8 @@ namespace Appalachia.Spatial.Voxels
 
                                     if (!populatedSamplePointIndices.Contains(xyz))
                                     {
-                                        var samplePoint = voxelData.samplePoints[indexX, indexY, indexZ];
+                                        var samplePoint =
+                                            voxelData.samplePoints[indexX, indexY, indexZ];
 
                                         samplePointBounds.center = samplePoint.position;
                                         samplePointBounds.size = voxelData.resolution;
@@ -543,8 +655,14 @@ namespace Appalachia.Spatial.Voxels
                     voxelData.voxelsActiveCount.SafeDispose();
                 }
 
-                voxelData.voxels = new NativeArray<Voxel>(populatedSamplePointIndices.Count, allocator);
-                voxelData.voxelsActive = new NativeBitArray(populatedSamplePointIndices.Count, allocator);
+                voxelData.voxels = new NativeArray<Voxel>(
+                    populatedSamplePointIndices.Count,
+                    allocator
+                );
+                voxelData.voxelsActive = new NativeBitArray(
+                    populatedSamplePointIndices.Count,
+                    allocator
+                );
                 voxelData.voxelsActiveCount = new NativeIntPtr(Allocator.Persistent, 1);
                 voxelData.InitializeElements(populatedSamplePointIndices.Count);
 
@@ -555,7 +673,10 @@ namespace Appalachia.Spatial.Voxels
                     var spi = samplePointIndices;
 
                     var samplePoint = voxelData.samplePoints[spi.x, spi.y, spi.z];
-                    var voxel = new Voxel {position = samplePoint.position, indices = new int3(spi.x, spi.y, spi.z)};
+                    var voxel = new Voxel
+                    {
+                        position = samplePoint.position, indices = new int3(spi.x, spi.y, spi.z)
+                    };
 
                     samplePoint.populated = true;
                     samplePoint.index = populationIndex;
@@ -594,7 +715,9 @@ namespace Appalachia.Spatial.Voxels
 
                             var samplePoint = voxelData.samplePoints[indexX, indexY, indexZ];
 
-                            for (var colliderIndex = 0; colliderIndex < colliders.Length; colliderIndex++)
+                            for (var colliderIndex = 0;
+                                colliderIndex < colliders.Length;
+                                colliderIndex++)
                             {
                                 var testingCollider = colliders[colliderIndex];
 
@@ -650,12 +773,14 @@ namespace Appalachia.Spatial.Voxels
 
                                     if (!populatedSamplePointIndices.Contains(xyz))
                                     {
-                                        var samplePoint = voxelData.samplePoints[indexX, indexY, indexZ];
+                                        var samplePoint =
+                                            voxelData.samplePoints[indexX, indexY, indexZ];
 
                                         if (Intersects(tri, samplePointBounds))
                                         {
                                             samplePoint.populated = true;
-                                            voxelData.samplePoints[indexX, indexY, indexZ] = samplePoint;
+                                            voxelData.samplePoints[indexX, indexY, indexZ] =
+                                                samplePoint;
                                             populatedSamplePointIndices.Add(xyz);
                                         }
                                     }
@@ -680,9 +805,18 @@ namespace Appalachia.Spatial.Voxels
                     voxelData.voxelsActiveCount.SafeDispose();
                 }
 
-                voxelData.voxels = new NativeArray<Voxel>(populatedSamplePointIndices.Count, allocator);
-                voxelData.voxelsActive = new NativeBitArray(populatedSamplePointIndices.Count, allocator);
-                voxelData.voxelsActiveCount = new NativeIntPtr(allocator, populatedSamplePointIndices.Count);
+                voxelData.voxels = new NativeArray<Voxel>(
+                    populatedSamplePointIndices.Count,
+                    allocator
+                );
+                voxelData.voxelsActive = new NativeBitArray(
+                    populatedSamplePointIndices.Count,
+                    allocator
+                );
+                voxelData.voxelsActiveCount = new NativeIntPtr(
+                    allocator,
+                    populatedSamplePointIndices.Count
+                );
                 voxelData.InitializeElements(populatedSamplePointIndices.Count);
 
                 var populationIndex = 0;
@@ -692,7 +826,10 @@ namespace Appalachia.Spatial.Voxels
                     var spi = samplePointIndices;
 
                     var samplePoint = voxelData.samplePoints[spi.x, spi.y, spi.z];
-                    var voxel = new Voxel {position = samplePoint.position, indices = new int3(spi.x, spi.y, spi.z)};
+                    var voxel = new Voxel
+                    {
+                        position = samplePoint.position, indices = new int3(spi.x, spi.y, spi.z)
+                    };
 
                     samplePoint.populated = true;
                     samplePoint.index = populationIndex;
@@ -912,15 +1049,15 @@ namespace Appalachia.Spatial.Voxels
 
             float3 f0 = v1 - v0, f1 = v2 - v1, f2 = v0 - v2;
 
-            float3 a00 = new float3(0,     -f0.z, f0.y),
-                   a01 = new float3(0,     -f1.z, f1.y),
-                   a02 = new float3(0,     -f2.z, f2.y),
-                   a10 = new float3(f0.z,  0,     -f0.x),
-                   a11 = new float3(f1.z,  0,     -f1.x),
-                   a12 = new float3(f2.z,  0,     -f2.x),
-                   a20 = new float3(-f0.y, f0.x,  0),
-                   a21 = new float3(-f1.y, f1.x,  0),
-                   a22 = new float3(-f2.y, f2.x,  0);
+            float3 a00 = new(0, -f0.z, f0.y),
+                   a01 = new(0, -f1.z, f1.y),
+                   a02 = new(0, -f2.z, f2.y),
+                   a10 = new(f0.z, 0, -f0.x),
+                   a11 = new(f1.z, 0, -f1.x),
+                   a12 = new(f2.z, 0, -f2.x),
+                   a20 = new(-f0.y, f0.x, 0),
+                   a21 = new(-f1.y, f1.x, 0),
+                   a22 = new(-f2.y, f2.x, 0);
 
             // Test axis a00
             p0 = math.dot(v0, a00);
@@ -1020,17 +1157,20 @@ namespace Appalachia.Spatial.Voxels
                 return false;
             }
 
-            if ((mathex.max(v0.x, v1.x, v2.x) < -extents.x) || (mathex.min(v0.x, v1.x, v2.x) > extents.x))
+            if ((mathex.max(v0.x, v1.x, v2.x) < -extents.x) ||
+                (mathex.min(v0.x, v1.x, v2.x) > extents.x))
             {
                 return false;
             }
 
-            if ((mathex.max(v0.y, v1.y, v2.y) < -extents.y) || (mathex.min(v0.y, v1.y, v2.y) > extents.y))
+            if ((mathex.max(v0.y, v1.y, v2.y) < -extents.y) ||
+                (mathex.min(v0.y, v1.y, v2.y) > extents.y))
             {
                 return false;
             }
 
-            if ((mathex.max(v0.z, v1.z, v2.z) < -extents.z) || (mathex.min(v0.z, v1.z, v2.z) > extents.z))
+            if ((mathex.max(v0.z, v1.z, v2.z) < -extents.z) ||
+                (mathex.min(v0.z, v1.z, v2.z) > extents.z))
             {
                 return false;
             }
@@ -1045,7 +1185,9 @@ namespace Appalachia.Spatial.Voxels
             var center = aabb.center;
             var extents = aabb.max - center;
 
-            var r = (extents.x * math.abs(pl.normal.x)) + (extents.y * math.abs(pl.normal.y)) + (extents.z * math.abs(pl.normal.z));
+            var r = (extents.x * math.abs(pl.normal.x)) +
+                    (extents.y * math.abs(pl.normal.y)) +
+                    (extents.z * math.abs(pl.normal.z));
             var s = math.dot(pl.normal, center) - pl.distance;
 
             return math.abs(s) <= r;
@@ -1053,8 +1195,10 @@ namespace Appalachia.Spatial.Voxels
 
         private struct Triangle
         {
-            public float3 a, b, c;
-            public BoundsBurst bounds;
+            public readonly float3 a;
+            public readonly float3 b;
+            public readonly float3 c;
+            public readonly BoundsBurst bounds;
             public bool frontFacing;
 
             public Triangle(float3 a, float3 b, float3 c, float3 dir)

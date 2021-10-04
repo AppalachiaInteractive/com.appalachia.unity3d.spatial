@@ -21,38 +21,53 @@ namespace Appalachia.Spatial.MeshBurial.Processing
     public class MeshBurialInstanceData : InternalBase<MeshBurialInstanceData>
     {
         private const string _PRF_PFX = nameof(MeshBurialInstanceData) + ".";
-        
+
         private const int _BASE_CAPACITY = 8192;
         private const Allocator alloc = Allocator.Persistent;
 
-        public NativeArray2D<MeshBurialInstanceTracking> instances;
+        private static readonly ProfilerMarker _PRF_Dispose = new(_PRF_PFX + nameof(Dispose));
 
-        public NativeArray3D<double> parameterSets;
-        public NativeArray<ParameterSpecification> paramSpecs;
+        private static readonly ProfilerMarker _PRF_Update = new(_PRF_PFX + nameof(Update));
 
-        public NativeArray2D<OptimizationResult> results;
-        public NativeList<OptimizationResult> bestResults;
-        public NativeList<float4x4> bestMatrices;
-        public NativeList<float4x4> requeueableMatrices;
-        public NativeList<bool> exclusions;
-        public NativeList<MeshBurialSummaryData> summaries;
+        private static readonly ProfilerMarker _PRF_Update_Instances =
+            new(_PRF_PFX + nameof(Update_Instances));
 
-        public NativeHashMap<Matrix4x4Key, MeshBurialAdjustment> adjustmentLookup;
-        public NativeList<float4x4> lookupResults;
-        public NativeList<double> lookupError;
+        private static readonly ProfilerMarker _PRF_Update_Results =
+            new(_PRF_PFX + nameof(Update_Results));
 
-        public NativeHashMap<int, TerrainJobData> terrainLookup;
-        public NativeKeyArray2D<int, float> terrainHeights;
-        public NativeArray<TerrainJobData> terrainLookup_Values;
-        public NativeList<int> terrainHashCodes;
+        private static readonly ProfilerMarker _PRF_Update_Parameters =
+            new(_PRF_PFX + nameof(Update_Parameters));
+
+        private static readonly ProfilerMarker _PRF_Update_Lookups =
+            new(_PRF_PFX + nameof(Update_Lookups));
 
         public int instanceCount;
         public int iterationCount;
 
+        public NativeHashMap<Matrix4x4Key, MeshBurialAdjustment> adjustmentLookup;
+        public NativeList<float4x4> bestMatrices;
+        public NativeList<OptimizationResult> bestResults;
+        public NativeList<bool> exclusions;
+
+        public NativeArray2D<MeshBurialInstanceTracking> instances;
+        public NativeList<double> lookupError;
+        public NativeList<float4x4> lookupResults;
+
+        public NativeArray3D<double> parameterSets;
+        public NativeArray<ParameterSpecification> paramSpecs;
+        public NativeList<float4x4> requeueableMatrices;
+
+        public NativeArray2D<OptimizationResult> results;
+        public NativeList<MeshBurialSummaryData> summaries;
+        public NativeList<int> terrainHashCodes;
+        public NativeKeyArray2D<int, float> terrainHeights;
+
+        public NativeHashMap<int, TerrainJobData> terrainLookup;
+        public NativeArray<TerrainJobData> terrainLookup_Values;
+
         private int inst => instanceCount;
         private int iter => iterationCount;
 
-        private static readonly ProfilerMarker _PRF_Dispose = new ProfilerMarker(_PRF_PFX + nameof(Dispose));
         public void Dispose()
         {
             using (_PRF_Dispose.Auto())
@@ -76,8 +91,11 @@ namespace Appalachia.Spatial.MeshBurial.Processing
             adjustmentLookup = default;
         }
 
-        private static readonly ProfilerMarker _PRF_Update = new ProfilerMarker(_PRF_PFX + nameof(Update));
-        public void Update(double degreeAdjustment, int instCount, int iterations, MeshBurialAdjustmentState adjustmentState)
+        public void Update(
+            double degreeAdjustment,
+            int instCount,
+            int iterations,
+            MeshBurialAdjustmentState adjustmentState)
         {
             using (_PRF_Update.Auto())
             {
@@ -94,7 +112,6 @@ namespace Appalachia.Spatial.MeshBurial.Processing
             }
         }
 
-        private static readonly ProfilerMarker _PRF_Update_Instances = new ProfilerMarker(_PRF_PFX + nameof(Update_Instances));
         private void Update_Instances()
         {
             using (_PRF_Update_Instances.Auto())
@@ -103,7 +120,6 @@ namespace Appalachia.Spatial.MeshBurial.Processing
             }
         }
 
-        private static readonly ProfilerMarker _PRF_Update_Results = new ProfilerMarker(_PRF_PFX + nameof(Update_Results));
         private void Update_Results()
         {
             using (_PRF_Update_Results.Auto())
@@ -117,8 +133,6 @@ namespace Appalachia.Spatial.MeshBurial.Processing
             }
         }
 
-        private static readonly ProfilerMarker _PRF_Update_Parameters = new ProfilerMarker(_PRF_PFX + nameof(Update_Parameters));
-        
         private void Update_Parameters(double degAdjust)
         {
             using (_PRF_Update_Parameters.Auto())
@@ -128,14 +142,18 @@ namespace Appalachia.Spatial.MeshBurial.Processing
                     paramSpecs = new NativeArray<ParameterSpecification>(2, alloc);
                 }
 
-                paramSpecs[0] = new ParameterSpecification(TransformType.Linear, ParameterType.Continuous, -degAdjust, degAdjust);
+                paramSpecs[0] = new ParameterSpecification(
+                    TransformType.Linear,
+                    ParameterType.Continuous,
+                    -degAdjust,
+                    degAdjust
+                );
                 paramSpecs[1] = paramSpecs[0];
 
                 parameterSets.EnsureCapacityAndLength(inst, iter, paramSpecs.Length);
             }
         }
 
-        private static readonly ProfilerMarker _PRF_Update_Lookups = new ProfilerMarker(_PRF_PFX + nameof(Update_Lookups));
         private void Update_Lookups(MeshBurialAdjustmentState adjustmentState)
         {
             using (_PRF_Update_Lookups.Auto())

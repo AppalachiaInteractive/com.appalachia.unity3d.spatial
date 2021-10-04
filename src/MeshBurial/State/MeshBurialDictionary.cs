@@ -8,7 +8,11 @@ namespace Appalachia.Spatial.MeshBurial.State
 {
     public class MeshBurialDictionary : GenericCustomDictionary<int, MeshBurialState>
     {
-        public MeshBurialState GetOrCreate(int key, Matrix4x4 ltw, GameObject instanceOrPrefab, int terrainHashCode)
+        public MeshBurialState GetOrCreate(
+            int key,
+            Matrix4x4 ltw,
+            GameObject instanceOrPrefab,
+            int terrainHashCode)
         {
             var l = lookup;
 
@@ -26,7 +30,11 @@ namespace Appalachia.Spatial.MeshBurial.State
             return newState;
         }
 
-        public MeshBurialState GetOrCreate(int key, Matrix4x4 ltw, MeshBurialSharedState sharedState, int terrainHashCode)
+        public MeshBurialState GetOrCreate(
+            int key,
+            Matrix4x4 ltw,
+            MeshBurialSharedState sharedState,
+            int terrainHashCode)
         {
             var l = lookup;
 

@@ -30,7 +30,10 @@ namespace Appalachia.Spatial.MeshBurial.Processing
         {
             if (burialOptions.matchTerrainNormal)
             {
-                ltw = math.mul(ltw, MatchTerrainNormal(ltw, terrainData, terrainIndex, terrainHeights));
+                ltw = math.mul(
+                    ltw,
+                    MatchTerrainNormal(ltw, terrainData, terrainIndex, terrainHeights)
+                );
             }
 
             if (burialOptions.accountForMeshNormal)
@@ -40,12 +43,24 @@ namespace Appalachia.Spatial.MeshBurial.Processing
 
             if (burialOptions.applyParameters)
             {
-                ltw = math.mul(ltw, AdjustForParameters(parameterSets, instanceIndex, iterationIndex));
+                ltw = math.mul(
+                    ltw,
+                    AdjustForParameters(parameterSets, instanceIndex, iterationIndex)
+                );
             }
 
             if (burialOptions.adjustHeight)
             {
-                ltw = math.mul(ltw, AdjustForBurialMovement(ltw, meshObject, terrainData, terrainIndex, terrainHeights));
+                ltw = math.mul(
+                    ltw,
+                    AdjustForBurialMovement(
+                        ltw,
+                        meshObject,
+                        terrainData,
+                        terrainIndex,
+                        terrainHeights
+                    )
+                );
             }
 
             if (burialOptions.applyTestValue)
@@ -70,7 +85,12 @@ namespace Appalachia.Spatial.MeshBurial.Processing
             NativeKeyArray2D<int, float> heights)
         {
             var position_W = localToWorldMatrix.GetPositionFromMatrix();
-            var terrainN_W = TerrainJobHelper.GetTerrainNormal(position_W, terrainData, terrainIndex, heights);
+            var terrainN_W = TerrainJobHelper.GetTerrainNormal(
+                position_W,
+                terrainData,
+                terrainIndex,
+                heights
+            );
             var wtl = localToWorldMatrix.Inverse();
             var terrainN_L = wtl.MultiplyVector(terrainN_W);
 
@@ -79,7 +99,10 @@ namespace Appalachia.Spatial.MeshBurial.Processing
             return new float4x4(adjustment, float3.zero);
         }
 
-        public static float4x4 MatchTerrainNormal(float4x4 localToWorldMatrix, TerrainJobData terrainData, NativeArray<float> heights)
+        public static float4x4 MatchTerrainNormal(
+            float4x4 localToWorldMatrix,
+            TerrainJobData terrainData,
+            NativeArray<float> heights)
         {
             var position_W = localToWorldMatrix.GetPositionFromMatrix();
             var terrainN_W = TerrainJobHelper.GetTerrainNormal(position_W, terrainData, heights);
@@ -91,7 +114,10 @@ namespace Appalachia.Spatial.MeshBurial.Processing
             return new float4x4(adjustment, float3.zero);
         }
 
-        public static float4x4 AdjustForParameters(NativeArray3D<double> parameterSets, int instanceIndex, int iterationIndex)
+        public static float4x4 AdjustForParameters(
+            NativeArray3D<double> parameterSets,
+            int instanceIndex,
+            int iterationIndex)
         {
             var x = (float) parameterSets[instanceIndex, iterationIndex, 0];
             var z = (float) parameterSets[instanceIndex, iterationIndex, 1];
@@ -125,7 +151,12 @@ namespace Appalachia.Spatial.MeshBurial.Processing
 
                 var positionA_W = localToWorldMatrix.MultiplyPoint3x4(vertexA.position);
 
-                var heightDifferenceA = TerrainJobHelper.CalculateHeightDifference(positionA_W, terrainData, terrainIndex, terrainheights);
+                var heightDifferenceA = TerrainJobHelper.CalculateHeightDifference(
+                    positionA_W,
+                    terrainData,
+                    terrainIndex,
+                    terrainheights
+                );
 
                 maximumOffset = math.max(heightDifferenceA, maximumOffset);
             }
@@ -160,7 +191,8 @@ namespace Appalachia.Spatial.MeshBurial.Processing
 
                 var positionA_W = localToWorldMatrix.MultiplyPoint3x4(vertexA.position);
 
-                var heightDifferenceA = TerrainJobHelper.CalculateHeightDifference(positionA_W, terrainData, heights);
+                var heightDifferenceA =
+                    TerrainJobHelper.CalculateHeightDifference(positionA_W, terrainData, heights);
 
                 maximumOffset = math.max(heightDifferenceA, maximumOffset);
             }
@@ -206,7 +238,12 @@ namespace Appalachia.Spatial.MeshBurial.Processing
                 var vertexA = meshObject.vertices[edge.aIndex];
 
                 var positionA_W = localToWorldMatrix.MultiplyPoint3x4(vertexA.position);
-                var heightDifferenceA = TerrainJobHelper.CalculateHeightDifference(positionA_W, terrainData, terrainIndex, heights);
+                var heightDifferenceA = TerrainJobHelper.CalculateHeightDifference(
+                    positionA_W,
+                    terrainData,
+                    terrainIndex,
+                    heights
+                );
 
                 if (edge.triangleCount == 1)
                 {

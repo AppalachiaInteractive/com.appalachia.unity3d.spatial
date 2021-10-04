@@ -22,7 +22,8 @@ namespace Appalachia.Spatial.Voxels.Gizmos
         public bool drawBounds;
 
         [FoldoutGroup("Bounds")]
-        [EnableIf(nameof(drawBounds)), SmartLabel]
+        [EnableIf(nameof(drawBounds))]
+        [SmartLabel]
         public Color boundsColor = Color.white;
 
         [FoldoutGroup("Bounds")]
@@ -30,7 +31,8 @@ namespace Appalachia.Spatial.Voxels.Gizmos
         public bool drawBoundsSubdivisions;
 
         [FoldoutGroup("Bounds")]
-        [EnableIf(nameof(drawBoundsSubdivisions)), SmartLabel]
+        [EnableIf(nameof(drawBoundsSubdivisions))]
+        [SmartLabel]
         public Color boundsSubdivisionColor = Color.white;
 
         //[SmartLabel(Postfix = true)] public bool drawBoundsGrid;
@@ -45,7 +47,8 @@ namespace Appalachia.Spatial.Voxels.Gizmos
         public bool colorGridWithTime;
 
         [FoldoutGroup("Grid")]
-        [EnableIf(nameof(drawGrid)), SmartLabel]
+        [EnableIf(nameof(drawGrid))]
+        [SmartLabel]
         public Color gridColor = Color.white;
 
         [FoldoutGroup("Samples")]
@@ -53,7 +56,9 @@ namespace Appalachia.Spatial.Voxels.Gizmos
         public bool drawSamplePoints;
 
         [FoldoutGroup("Samples")]
-        [EnableIf(nameof(drawSamplePoints)), SmartLabel, PropertyRange(0f, 1f)]
+        [EnableIf(nameof(drawSamplePoints))]
+        [SmartLabel]
+        [PropertyRange(0f, 1f)]
         public float samplePointsGizmoScale;
 
         [FoldoutGroup("Samples")]
@@ -61,11 +66,13 @@ namespace Appalachia.Spatial.Voxels.Gizmos
         public bool colorSamplePointsWithTime;
 
         [FoldoutGroup("Samples")]
-        [EnableIf(nameof(drawSamplePoints)), SmartLabel]
+        [EnableIf(nameof(drawSamplePoints))]
+        [SmartLabel]
         public Color samplePointsColor = Color.white;
 
         [FoldoutGroup("Samples")]
-        [EnableIf(nameof(drawSamplePoints)), SmartLabel(Postfix = true)]
+        [EnableIf(nameof(drawSamplePoints))]
+        [SmartLabel(Postfix = true)]
         public bool drawPopulatedSamplePoints;
 
         [FoldoutGroup("Voxels")]
@@ -73,7 +80,9 @@ namespace Appalachia.Spatial.Voxels.Gizmos
         public bool drawVoxels;
 
         [FoldoutGroup("Voxels")]
-        [EnableIf(nameof(drawVoxels)), SmartLabel, PropertyRange(0f, 1f)]
+        [EnableIf(nameof(drawVoxels))]
+        [SmartLabel]
+        [PropertyRange(0f, 1f)]
         public float voxelsGizmoScale;
 
         [FoldoutGroup("Voxels")]
@@ -81,11 +90,13 @@ namespace Appalachia.Spatial.Voxels.Gizmos
         public bool colorVoxelsWithTime;
 
         [FoldoutGroup("Voxels")]
-        [EnableIf(nameof(drawVoxels)), SmartLabel]
+        [EnableIf(nameof(drawVoxels))]
+        [SmartLabel]
         public Color voxelsColor = Color.white;
 
         [FoldoutGroup("Voxels")]
-        [EnableIf(nameof(drawVoxels)), SmartLabel(Postfix = true)]
+        [EnableIf(nameof(drawVoxels))]
+        [SmartLabel(Postfix = true)]
         public bool drawFaceVoxels;
 
         [FoldoutGroup("Faces")]
@@ -93,7 +104,9 @@ namespace Appalachia.Spatial.Voxels.Gizmos
         public bool drawFaces;
 
         [FoldoutGroup("Faces")]
-        [EnableIf(nameof(drawFaces)), SmartLabel, PropertyRange(0f, 1f)]
+        [EnableIf(nameof(drawFaces))]
+        [SmartLabel]
+        [PropertyRange(0f, 1f)]
         public float facesGizmoScale;
 
         [FoldoutGroup("Faces")]
@@ -101,7 +114,8 @@ namespace Appalachia.Spatial.Voxels.Gizmos
         public bool colorFacesWithTime;
 
         [FoldoutGroup("Faces")]
-        [EnableIf(nameof(drawFaces)), SmartLabel]
+        [EnableIf(nameof(drawFaces))]
+        [SmartLabel]
         public Color facesColor = Color.white;
 
         [FoldoutGroup("Normals")]
@@ -109,7 +123,9 @@ namespace Appalachia.Spatial.Voxels.Gizmos
         public bool drawNormals;
 
         [FoldoutGroup("Normals")]
-        [EnableIf(nameof(drawNormals)), SmartLabel, PropertyRange(0f, 1f)]
+        [EnableIf(nameof(drawNormals))]
+        [SmartLabel]
+        [PropertyRange(0f, 1f)]
         public float normalsGizmoScale;
 
         [FoldoutGroup("Normals")]
@@ -117,7 +133,8 @@ namespace Appalachia.Spatial.Voxels.Gizmos
         public bool colorNormalsWithNormal;
 
         [FoldoutGroup("Normals")]
-        [EnableIf(nameof(drawNormals)), SmartLabel]
+        [EnableIf(nameof(drawNormals))]
+        [SmartLabel]
         public Color normalsColor = Color.white;
 
         [FoldoutGroup("Normal Faces")]
@@ -125,11 +142,15 @@ namespace Appalachia.Spatial.Voxels.Gizmos
         public bool drawNormalFaces;
 
         [FoldoutGroup("Normal Faces")]
-        [EnableIf(nameof(drawNormalFaces)), SmartLabel, PropertyRange(0f, 1f)]
+        [EnableIf(nameof(drawNormalFaces))]
+        [SmartLabel]
+        [PropertyRange(0f, 1f)]
         public float normalFacesGizmoScale;
 
         [FoldoutGroup("Normal Faces")]
-        [EnableIf(nameof(drawNormalFaces)), SmartLabel, PropertyRange(0f, 1f)]
+        [EnableIf(nameof(drawNormalFaces))]
+        [SmartLabel]
+        [PropertyRange(0f, 1f)]
         public float normalFacesGizmoOffset;
 
         [FoldoutGroup("Normal Faces")]
@@ -137,7 +158,8 @@ namespace Appalachia.Spatial.Voxels.Gizmos
         public bool colorNormalFacesWithNormal;
 
         [FoldoutGroup("Normal Faces")]
-        [EnableIf(nameof(drawNormalFaces)), SmartLabel]
+        [EnableIf(nameof(drawNormalFaces))]
+        [SmartLabel]
         public Color normalFacesColor = Color.white;
 
         [FoldoutGroup("Raycast")]
@@ -145,39 +167,49 @@ namespace Appalachia.Spatial.Voxels.Gizmos
         public bool testRaycast;
 
         [FoldoutGroup("Raycast")]
-        [EnableIf(nameof(testRaycast)), SmartLabel]
+        [EnableIf(nameof(testRaycast))]
+        [SmartLabel]
         public Space raySpace;
 
         [FoldoutGroup("Raycast")]
-        [EnableIf(nameof(testRaycast)), SmartLabel]
+        [EnableIf(nameof(testRaycast))]
+        [SmartLabel]
         public float3 rayOrigin;
 
         [FoldoutGroup("Raycast")]
-        [EnableIf(nameof(testRaycast)), SmartLabel]
+        [EnableIf(nameof(testRaycast))]
+        [SmartLabel]
         public float3 rayDirection = float3c.forward;
 
         [FoldoutGroup("Raycast")]
-        [EnableIf(nameof(testRaycast)), SmartLabel(Postfix = true)]
+        [EnableIf(nameof(testRaycast))]
+        [SmartLabel(Postfix = true)]
         public bool autoAimAtCenter = true;
 
         [FoldoutGroup("Raycast")]
-        [EnableIf(nameof(testRaycast)), SmartLabel]
+        [EnableIf(nameof(testRaycast))]
+        [SmartLabel]
         public float rayMaximumDistance = 128f;
 
         [FoldoutGroup("Raycast")]
-        [EnableIf(nameof(testRaycast)), SmartLabel]
+        [EnableIf(nameof(testRaycast))]
+        [SmartLabel]
         public Color rayHitColor = Color.green;
 
         [FoldoutGroup("Raycast")]
-        [EnableIf(nameof(testRaycast)), SmartLabel]
+        [EnableIf(nameof(testRaycast))]
+        [SmartLabel]
         public Color rayMissColor = Color.red;
 
         [FoldoutGroup("Raycast")]
-        [EnableIf(nameof(testRaycast)), SmartLabel]
+        [EnableIf(nameof(testRaycast))]
+        [SmartLabel]
         public Color rayHitVoxelColor = Color.yellow;
 
         [FoldoutGroup("Raycast")]
-        [EnableIf(nameof(testRaycast)), SmartLabel, PropertyRange(0f, 1f)]
+        [EnableIf(nameof(testRaycast))]
+        [SmartLabel]
+        [PropertyRange(0f, 1f)]
         public float rayHitGizmoSize;
     }
 }

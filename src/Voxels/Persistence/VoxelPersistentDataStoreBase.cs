@@ -19,7 +19,8 @@ namespace Appalachia.Spatial.Voxels.Persistence
 {
     [Serializable]
     public abstract class
-        VoxelPersistentDataStoreBase<TVoxelData, TDataStore, TRaycastHit> : SelfNamingSavingAndIdentifyingScriptableObject<TDataStore>
+        VoxelPersistentDataStoreBase<TVoxelData, TDataStore, TRaycastHit> :
+            SelfNamingSavingAndIdentifyingScriptableObject<TDataStore>
         where TVoxelData : PersistentVoxelsBase<TVoxelData, TDataStore, TRaycastHit>
         where TDataStore : VoxelPersistentDataStoreBase<TVoxelData, TDataStore, TRaycastHit>
         where TRaycastHit : struct, IVoxelRaycastHit
@@ -77,7 +78,11 @@ namespace Appalachia.Spatial.Voxels.Persistence
             data.centerOfMass = centerOfMass;
             data.faceCount = faceCount;
             data.resolution = resolution;
-            data.samplePoints = new NativeArray3D<VoxelSamplePoint>(samplePoints, samplePointDimensions, Allocator.Persistent);
+            data.samplePoints = new NativeArray3D<VoxelSamplePoint>(
+                samplePoints,
+                samplePointDimensions,
+                Allocator.Persistent
+            );
             data.voxels = new NativeArray<Voxel>(voxels, Allocator.Persistent);
             data.voxelsActive = voxelsActive.FromArray();
             data.voxelsActiveCount = new NativeIntPtr(Allocator.Persistent, voxelsActiveCount);
@@ -89,35 +94,55 @@ namespace Appalachia.Spatial.Voxels.Persistence
 
         protected abstract void RestoreAdditional(TVoxelData data);
 
-        public bool ShouldRestore(float3 resolution, VoxelPopulationStyle style, Collider[] colliders, MeshRenderer[] renderers)
+        public bool ShouldRestore(
+            float3 resolution,
+            VoxelPopulationStyle style,
+            Collider[] colliders,
+            MeshRenderer[] renderers)
         {
             if (!Equals(this.resolution, resolution))
             {
-                Debug.LogWarning($"Cannot reuse voxel data store.  Resolution has changed from [{this.resolution}] to [{resolution}]");
+                Debug.LogWarning(
+                    $"Cannot reuse voxel data store.  Resolution has changed from [{this.resolution}] to [{resolution}]"
+                );
                 return false;
             }
 
             if (style != this.style)
             {
-                Debug.LogWarning($"Cannot reuse voxel data store.  Style has changed from [{this.style}] to [{style}]");
+                Debug.LogWarning(
+                    $"Cannot reuse voxel data store.  Style has changed from [{this.style}] to [{style}]"
+                );
                 return false;
             }
 
-            if (((colliders == null) || (colliders.Length == 0)) && (colliderEqualityStates != null) && (colliderEqualityStates.Length > 0))
+            if (((colliders == null) || (colliders.Length == 0)) &&
+                (colliderEqualityStates != null) &&
+                (colliderEqualityStates.Length > 0))
             {
-                Debug.LogWarning($"Cannot reuse voxel data store.  Collider amount has changed from [{colliderEqualityStates?.Length ?? 0}] to [{colliders?.Length ?? 0}]");
+                Debug.LogWarning(
+                    $"Cannot reuse voxel data store.  Collider amount has changed from [{colliderEqualityStates?.Length ?? 0}] to [{colliders?.Length ?? 0}]"
+                );
                 return false;
             }
 
-            if (((colliderEqualityStates == null) || (colliderEqualityStates.Length == 0)) && (colliders != null) && (colliders.Length > 0))
+            if (((colliderEqualityStates == null) || (colliderEqualityStates.Length == 0)) &&
+                (colliders != null) &&
+                (colliders.Length > 0))
             {
-                Debug.LogWarning($"Cannot reuse voxel data store.  Collider amount has changed from [{colliderEqualityStates?.Length ?? 0}] to [{colliders?.Length ?? 0}]");
+                Debug.LogWarning(
+                    $"Cannot reuse voxel data store.  Collider amount has changed from [{colliderEqualityStates?.Length ?? 0}] to [{colliders?.Length ?? 0}]"
+                );
                 return false;
             }
 
-            if ((colliderEqualityStates != null) && (colliders != null) && (colliderEqualityStates.Length != colliders.Length))
+            if ((colliderEqualityStates != null) &&
+                (colliders != null) &&
+                (colliderEqualityStates.Length != colliders.Length))
             {
-                Debug.LogWarning($"Cannot reuse voxel data store.  Collider amount has changed from [{colliderEqualityStates?.Length ?? 0}] to [{colliders?.Length ?? 0}]");
+                Debug.LogWarning(
+                    $"Cannot reuse voxel data store.  Collider amount has changed from [{colliderEqualityStates?.Length ?? 0}] to [{colliders?.Length ?? 0}]"
+                );
                 return false;
             }
 
@@ -125,26 +150,40 @@ namespace Appalachia.Spatial.Voxels.Persistence
             {
                 if (!colliderEqualityStates[i].Equals(colliders[i]))
                 {
-                    Debug.LogWarning($"Cannot reuse voxel data store.  Collider [{i}] has changed.");
+                    Debug.LogWarning(
+                        $"Cannot reuse voxel data store.  Collider [{i}] has changed."
+                    );
                     return false;
                 }
             }
 
-            if (((renderers == null) || (renderers.Length == 0)) && (meshEqualityStates != null) && (meshEqualityStates.Length > 0))
+            if (((renderers == null) || (renderers.Length == 0)) &&
+                (meshEqualityStates != null) &&
+                (meshEqualityStates.Length > 0))
             {
-                Debug.LogWarning($"Cannot reuse voxel data store.  Renderer amount has changed from [{meshEqualityStates?.Length ?? 0}] to [{renderers?.Length ?? 0}]");
+                Debug.LogWarning(
+                    $"Cannot reuse voxel data store.  Renderer amount has changed from [{meshEqualityStates?.Length ?? 0}] to [{renderers?.Length ?? 0}]"
+                );
                 return false;
             }
 
-            if (((meshEqualityStates == null) || (meshEqualityStates.Length == 0)) && (renderers != null) && (renderers.Length > 0))
+            if (((meshEqualityStates == null) || (meshEqualityStates.Length == 0)) &&
+                (renderers != null) &&
+                (renderers.Length > 0))
             {
-                Debug.LogWarning($"Cannot reuse voxel data store.  Renderer amount has changed from [{meshEqualityStates?.Length ?? 0}] to [{renderers?.Length ?? 0}]");
+                Debug.LogWarning(
+                    $"Cannot reuse voxel data store.  Renderer amount has changed from [{meshEqualityStates?.Length ?? 0}] to [{renderers?.Length ?? 0}]"
+                );
                 return false;
             }
 
-            if ((meshEqualityStates != null) && (renderers != null) && (meshEqualityStates.Length != renderers.Length))
+            if ((meshEqualityStates != null) &&
+                (renderers != null) &&
+                (meshEqualityStates.Length != renderers.Length))
             {
-                Debug.LogWarning($"Cannot reuse voxel data store.  Renderer amount has changed from [{meshEqualityStates?.Length ?? 0}] to [{renderers?.Length ?? 0}]");
+                Debug.LogWarning(
+                    $"Cannot reuse voxel data store.  Renderer amount has changed from [{meshEqualityStates?.Length ?? 0}] to [{renderers?.Length ?? 0}]"
+                );
                 return false;
             }
 

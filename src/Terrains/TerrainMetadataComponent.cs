@@ -20,8 +20,8 @@ namespace Appalachia.Spatial.Terrains
     public class TerrainMetadataComponent : MonoBehaviour
     {
         public Terrain terrain;
-        
-        [FormerlySerializedAs("terrainThreadsafeData")] 
+
+        [FormerlySerializedAs("terrainThreadsafeData")]
         public TerrainMetadata terrainMetadata;
 
         [FoldoutGroup("Gizmos")] public bool gizmosEnabled;
@@ -37,13 +37,27 @@ namespace Appalachia.Spatial.Terrains
 
         [FoldoutGroup("Gizmos")] public Color interpolated;
 
-        public void SetGizmoParameters(Vector3 center, float radius, float size, Color color, Color interpolated)
+        private void OnEnable()
         {
-            this.center = center;
-            this.radius = radius;
-            this.size = size;
-            this.color = color;
-            this.interpolated = interpolated;
+            if (terrain == null)
+            {
+                terrain = GetComponent<Terrain>();
+            }
+
+            if (terrainMetadata == null)
+            {
+                TerrainMetadataManager.Initialize();
+            }
+        }
+
+        private void OnDisable()
+        {
+            if (terrain == null)
+            {
+                terrain = GetComponent<Terrain>();
+            }
+
+            TerrainMetadataManager.Remove(terrain);
         }
 
         public void OnDrawGizmos()
@@ -52,6 +66,7 @@ namespace Appalachia.Spatial.Terrains
             {
                 return;
             }
+
             if (!GizmoCameraChecker.ShouldRenderGizmos())
             {
                 return;
@@ -66,12 +81,27 @@ namespace Appalachia.Spatial.Terrains
             {
                 return;
             }
+
             if (!GizmoCameraChecker.ShouldRenderGizmos())
             {
                 return;
             }
 
             DrawGizmos();
+        }
+
+        public void SetGizmoParameters(
+            Vector3 center,
+            float radius,
+            float size,
+            Color color,
+            Color interpolated)
+        {
+            this.center = center;
+            this.radius = radius;
+            this.size = size;
+            this.color = color;
+            this.interpolated = interpolated;
         }
 
         public void DrawGizmos()
@@ -101,8 +131,10 @@ namespace Appalachia.Spatial.Terrains
 
                     var realworldHeight = terrainMetadata.terrainPosition.y + scaledHeight;
 
-                    var realworldX = terrainMetadata.terrainPosition.x + (xIndex * terrainMetadata.scale.x);
-                    var realworldZ = terrainMetadata.terrainPosition.z + (yIndex * terrainMetadata.scale.z);
+                    var realworldX = terrainMetadata.terrainPosition.x +
+                                     (xIndex * terrainMetadata.scale.x);
+                    var realworldZ = terrainMetadata.terrainPosition.z +
+                                     (yIndex * terrainMetadata.scale.z);
 
                     var pos = new Vector3(realworldX, realworldHeight, realworldZ);
 
@@ -117,27 +149,47 @@ namespace Appalachia.Spatial.Terrains
             }
         }
 
-        private void OnEnable()
+        public static List<TerrainMetadata> GetFromAllTerrains()
         {
-            if (terrain == null)
+            var results = new List<TerrainMetadata>();
+
+            var terrains = FindObjectsOfType<Terrain>();
+
+            for (var i = 0; i < terrains.Length; i++)
             {
-                terrain = GetComponent<Terrain>();
+                try
+                {
+                    var terrain = terrains[i];
+
+                    var comp = terrain.GetComponent<TerrainMetadataComponent>();
+
+                    if (comp == null)
+                    {
+                        throw new NotSupportedException(
+                            $"Missing {nameof(TerrainMetadataComponent)}!"
+                        );
+                    }
+
+                    var terrainThreadsafeData = comp.terrainMetadata;
+
+                    if (terrainThreadsafeData == null)
+                    {
+                        throw new NotSupportedException($"Missing {nameof(TerrainMetadata)}!");
+                    }
+
+                    terrainThreadsafeData.Initialize(terrain, Allocator.Persistent);
+
+                    comp.terrainMetadata = terrainThreadsafeData;
+
+                    results.Add(terrainThreadsafeData);
+                }
+                catch (Exception ex)
+                {
+                    Debug.LogError($"Failed to create terrain job data: {ex}");
+                }
             }
 
-            if (terrainMetadata == null)
-            {
-                TerrainMetadataManager.Initialize();
-            }
-        }
-
-        private void OnDisable()
-        {
-            if (terrain == null)
-            {
-                terrain = GetComponent<Terrain>();
-            }
-
-            TerrainMetadataManager.Remove(terrain);
+            return results;
         }
 
 #if UNITY_EDITOR
@@ -148,7 +200,6 @@ namespace Appalachia.Spatial.Terrains
             AddToAllTerrains();
         }
 
-        
         [Button]
         public static List<TerrainMetadata> AddToAllTerrains()
         {
@@ -169,7 +220,11 @@ namespace Appalachia.Spatial.Terrains
                         comp = terrain.gameObject.AddComponent<TerrainMetadataComponent>();
                     }
 
-                    AssetDatabase.TryGetGUIDAndLocalFileIdentifier(terrain.terrainData, out var guid, out long _);
+                    AssetDatabase.TryGetGUIDAndLocalFileIdentifier(
+                        terrain.terrainData,
+                        out var guid,
+                        out long _
+                    );
 
                     var terrainName = $"{terrain.terrainData.name}_{guid}";
                     terrain.name = terrainName;
@@ -199,46 +254,5 @@ namespace Appalachia.Spatial.Terrains
             return results;
         }
 #endif
-        
-        public static List<TerrainMetadata> GetFromAllTerrains()
-        {
-            var results = new List<TerrainMetadata>();
-
-            var terrains = FindObjectsOfType<Terrain>();
-
-            for (var i = 0; i < terrains.Length; i++)
-            {
-                try
-                {
-                    var terrain = terrains[i];
-
-                    var comp = terrain.GetComponent<TerrainMetadataComponent>();
-
-                    if (comp == null)
-                    {
-                        throw new NotSupportedException($"Missing {nameof(TerrainMetadataComponent)}!");
-                    }
-
-                    var terrainThreadsafeData = comp.terrainMetadata;
-
-                    if (terrainThreadsafeData == null)
-                    {
-                        throw new NotSupportedException($"Missing {nameof(TerrainMetadata)}!");
-                    }
-
-                    terrainThreadsafeData.Initialize(terrain, Allocator.Persistent);
-
-                    comp.terrainMetadata = terrainThreadsafeData;
-
-                    results.Add(terrainThreadsafeData);
-                }
-                catch (Exception ex)
-                {
-                    Debug.LogError($"Failed to create terrain job data: {ex}");
-                }
-            }
-
-            return results;
-        }
     }
 }

@@ -14,11 +14,10 @@ namespace Appalachia.Spatial.Terrains.Collections
         {
         }
 
-        public AppaList_TerrainMetadata(int capacity, float capacityIncreaseMultiplier = 2, bool noTracking = false) : base(
-            capacity,
-            capacityIncreaseMultiplier,
-            noTracking
-        )
+        public AppaList_TerrainMetadata(
+            int capacity,
+            float capacityIncreaseMultiplier = 2,
+            bool noTracking = false) : base(capacity, capacityIncreaseMultiplier, noTracking)
         {
         }
 

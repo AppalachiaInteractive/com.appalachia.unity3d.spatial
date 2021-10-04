@@ -29,6 +29,11 @@ namespace Appalachia.Spatial.SpatialKeys
             _y = GetRounded(vector.y, groupingScale);
         }
 
+        public bool Equals(Vector2Key other)
+        {
+            return (_groupingScale == other._groupingScale) && (_x == other._x) && (_y == other._y);
+        }
+
         private static int GetRounded(float value, int scale)
         {
             return (int) math.round(value * scale);
@@ -44,11 +49,6 @@ namespace Appalachia.Spatial.SpatialKeys
         {
             var fScale = (float) _groupingScale;
             return new float2(_x / fScale, _y / fScale);
-        }
-
-        public bool Equals(Vector2Key other)
-        {
-            return (_groupingScale == other._groupingScale) && (_x == other._x) && (_y == other._y);
         }
 
         public override bool Equals(object obj)

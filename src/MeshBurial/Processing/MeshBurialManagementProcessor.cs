@@ -23,71 +23,18 @@ namespace Appalachia.Spatial.MeshBurial.Processing
     public static partial class MeshBurialManagementProcessor
     {
         private const string _PRF_PFX = nameof(MeshBurialManagementProcessor) + ".";
-        
+
         private static VegetationSystemPro _vegetationSystem;
 
-        private static MeshBurialManagementQueue QUEUES => MeshBurialManagementQueue.instance;
+        private static readonly ProfilerMarker _PRF_Reset = new(_PRF_PFX + nameof(Reset));
 
-        private static readonly ProfilerMarker _PRF_Reset = new ProfilerMarker(_PRF_PFX + nameof(Reset));
-        public static void Reset(GameObject go)
-        {
-            using (_PRF_Reset.Auto())
-            {
-                var lookup = MeshBurialAdjustmentCollection.instance.GetByPrefab(go);
+        private static readonly ProfilerMarker _PRF_InitializeVSP =
+            new(_PRF_PFX + nameof(InitializeVSP));
 
-                if (lookup == null)
-                {
-                    return;
-                }
+        private static readonly ProfilerMarker _PRF_Initialize = new(_PRF_PFX + nameof(Initialize));
 
-                lookup.Reset();
-            }
-        }
-
-        private static readonly ProfilerMarker _PRF_InitializeVSP = new ProfilerMarker(_PRF_PFX + nameof(InitializeVSP));
-        private static void InitializeVSP()
-        {
-            using (_PRF_InitializeVSP.Auto())
-            {
-                if (_vegetationSystem == null)
-                {
-                    _vegetationSystem = Object.FindObjectOfType<VegetationSystemPro>();
-                }
-            }
-        }
-
-        private static readonly ProfilerMarker _PRF_Initialize = new ProfilerMarker(_PRF_PFX + nameof(Initialize));
-
-        [ExecuteOnEnable]
-        private static void Initialize()
-        {
-            using (_PRF_Initialize.Auto())
-            {
-                QUEUES.Initialize();
-                
-                _vspMeshBurialEnabled = false;
-                EditorApplication.delayCall += ToggleEnableVSPMeshBurials;
-                MeshBurialExecutionManager.InitializeEnableMeshBurials();
-            }
-        }
-
-        private static readonly ProfilerMarker _PRF_RequeueAllCells = new ProfilerMarker(_PRF_PFX + nameof(RequeueAllCells));
-        public static void RequeueAllCells(VegetationSystemPro vsp)
-        {
-            using (_PRF_RequeueAllCells.Auto())
-            {
-                InitializeVSP();
-
-                for (var h = 0; h < vsp.VegetationCellList.Count; h++)
-                {
-                    var cell = vsp.VegetationCellList[h];
-
-                    _vegetationSystem.SpawnVegetationCell(cell);
-
-                    EnqueueCell(cell);
-                }
-            }
-        }
+        private static readonly ProfilerMarker _PRF_RequeueAllCells =
+            new(_PRF_PFX + nameof(RequeueAllCells));
 
         /*private static readonly ProfilerMarker _PRF_RefreshPrefabRenderingSets = new ProfilerMarker(_PRF_PFX + nameof(RefreshPrefabRenderingSets));
         public static void RefreshPrefabRenderingSets()
@@ -105,8 +52,106 @@ namespace Appalachia.Spatial.MeshBurial.Processing
             }
         }*/
 
-        private static readonly ProfilerMarker _PRF_EnqueueCell = new ProfilerMarker(_PRF_PFX + nameof(EnqueueCell));
-        public static void EnqueueCell(VegetationCell cell, int packageIndex = -1, int itemIndex = -1)
+        private static readonly ProfilerMarker _PRF_EnqueueCell =
+            new(_PRF_PFX + nameof(EnqueueCell));
+
+        /*
+        private static readonly ProfilerMarker _PRF_EnqueuePrefabRenderingSet = new ProfilerMarker(_PRF_PFX + nameof(EnqueuePrefabRenderingSet));
+        public static void EnqueuePrefabRenderingSet(PrefabRenderingSet renderingSet)
+        {
+            using (_PRF_EnqueuePrefabRenderingSet.Auto())
+            {
+                renderingSet.SyncExternalParameters(PrefabRenderingManager.instance.prefabSource);
+
+                if (renderingSet.instanceManager.nextState != RuntimeStateCode.Enabled)
+                {
+                    return;
+                }
+
+                var physical = renderingSet.modelOptions.burialOptions;
+
+                if (!physical.buryMesh)
+                {
+                    return;
+                }
+
+                renderingSet.instanceManager.transferOriginalToCurrent = false;
+
+                var queueItem = new MeshBurialRuntimePrefabRenderingSetQueueItem(renderingSet);
+
+                PrepareAndEnqueue(queueItem, QUEUES.runtimePrefabRenderingSets);
+            }
+        }
+        */
+
+        private static readonly ProfilerMarker _PRF_ShouldAdoptTerrainNormal =
+            new(_PRF_PFX + nameof(ShouldAdoptTerrainNormal));
+
+        private static readonly ProfilerMarker _PRF_PrepareAndEnqueue =
+            new(_PRF_PFX + nameof(PrepareAndEnqueue));
+
+        private static MeshBurialManagementQueue QUEUES => MeshBurialManagementQueue.instance;
+
+        public static void Reset(GameObject go)
+        {
+            using (_PRF_Reset.Auto())
+            {
+                var lookup = MeshBurialAdjustmentCollection.instance.GetByPrefab(go);
+
+                if (lookup == null)
+                {
+                    return;
+                }
+
+                lookup.Reset();
+            }
+        }
+
+        private static void InitializeVSP()
+        {
+            using (_PRF_InitializeVSP.Auto())
+            {
+                if (_vegetationSystem == null)
+                {
+                    _vegetationSystem = Object.FindObjectOfType<VegetationSystemPro>();
+                }
+            }
+        }
+
+        [ExecuteOnEnable]
+        private static void Initialize()
+        {
+            using (_PRF_Initialize.Auto())
+            {
+                QUEUES.Initialize();
+
+                _vspMeshBurialEnabled = false;
+                EditorApplication.delayCall += ToggleEnableVSPMeshBurials;
+                MeshBurialExecutionManager.InitializeEnableMeshBurials();
+            }
+        }
+
+        public static void RequeueAllCells(VegetationSystemPro vsp)
+        {
+            using (_PRF_RequeueAllCells.Auto())
+            {
+                InitializeVSP();
+
+                for (var h = 0; h < vsp.VegetationCellList.Count; h++)
+                {
+                    var cell = vsp.VegetationCellList[h];
+
+                    _vegetationSystem.SpawnVegetationCell(cell);
+
+                    EnqueueCell(cell);
+                }
+            }
+        }
+
+        public static void EnqueueCell(
+            VegetationCell cell,
+            int packageIndex = -1,
+            int itemIndex = -1)
         {
             using (_PRF_EnqueueCell.Auto())
             {
@@ -170,7 +215,9 @@ namespace Appalachia.Spatial.MeshBurial.Processing
 
                         var item = package.VegetationInfoList[j];
 
-                        if (!item.EnableRuntimeSpawn || item.EnableExternalRendering || !item.EnableMeshBurying)
+                        if (!item.EnableRuntimeSpawn ||
+                            item.EnableExternalRendering ||
+                            !item.EnableMeshBurying)
                         {
                             continue;
                         }
@@ -199,49 +246,19 @@ namespace Appalachia.Spatial.MeshBurial.Processing
             }
         }
 
-        /*
-        private static readonly ProfilerMarker _PRF_EnqueuePrefabRenderingSet = new ProfilerMarker(_PRF_PFX + nameof(EnqueuePrefabRenderingSet));
-        public static void EnqueuePrefabRenderingSet(PrefabRenderingSet renderingSet)
-        {
-            using (_PRF_EnqueuePrefabRenderingSet.Auto())
-            {
-                renderingSet.SyncExternalParameters(PrefabRenderingManager.instance.prefabSource);
-
-                if (renderingSet.instanceManager.nextState != RuntimeStateCode.Enabled)
-                {
-                    return;
-                }
-
-                var physical = renderingSet.modelOptions.burialOptions;
-
-                if (!physical.buryMesh)
-                {
-                    return;
-                }
-
-                renderingSet.instanceManager.transferOriginalToCurrent = false;
-
-                var queueItem = new MeshBurialRuntimePrefabRenderingSetQueueItem(renderingSet);
-
-                PrepareAndEnqueue(queueItem, QUEUES.runtimePrefabRenderingSets);
-            }
-        }
-        */
-
-        private static readonly ProfilerMarker _PRF_ShouldAdoptTerrainNormal = new ProfilerMarker(_PRF_PFX + nameof(ShouldAdoptTerrainNormal));
         public static bool ShouldAdoptTerrainNormal(this VegetationItemInfoPro veggie)
         {
             using (_PRF_ShouldAdoptTerrainNormal.Auto())
             {
-                var doNotAdoptTerrainRotation = (veggie.Rotation == VegetationRotationType.NoRotation) ||
-                                                (veggie.Rotation == VegetationRotationType.RotateY) ||
-                                                (veggie.Rotation == VegetationRotationType.RotateXYZ);
+                var doNotAdoptTerrainRotation =
+                    (veggie.Rotation == VegetationRotationType.NoRotation) ||
+                    (veggie.Rotation == VegetationRotationType.RotateY) ||
+                    (veggie.Rotation == VegetationRotationType.RotateXYZ);
 
                 return !doNotAdoptTerrainRotation;
             }
         }
 
-        private static readonly ProfilerMarker _PRF_PrepareAndEnqueue = new ProfilerMarker(_PRF_PFX + nameof(PrepareAndEnqueue));
         private static void PrepareAndEnqueue<T>(T item, AppaTemporalQueue<T> queue)
             where T : MeshBurialQueueItem
         {

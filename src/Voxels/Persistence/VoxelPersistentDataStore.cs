@@ -9,7 +9,8 @@ using Appalachia.Spatial.Voxels.VoxelTypes;
 namespace Appalachia.Spatial.Voxels.Persistence
 {
     [Serializable]
-    public sealed class VoxelPersistentDataStore : VoxelPersistentDataStoreBase<PersistentVoxels, VoxelPersistentDataStore, VoxelRaycastHit>
+    public sealed class VoxelPersistentDataStore : VoxelPersistentDataStoreBase<PersistentVoxels,
+        VoxelPersistentDataStore, VoxelRaycastHit>
     {
         protected override void RecordAdditional(PersistentVoxels data)
         {

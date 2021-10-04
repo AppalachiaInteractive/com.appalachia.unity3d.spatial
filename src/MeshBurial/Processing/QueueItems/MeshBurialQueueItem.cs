@@ -15,9 +15,19 @@ namespace Appalachia.Spatial.MeshBurial.Processing.QueueItems
     public abstract class MeshBurialQueueItem : InternalBase<MeshBurialQueueItem>
     {
         private const string _PRF_PFX = nameof(MeshBurialQueueItem) + ".";
-        
-        private bool _initialized;
+
+        private static readonly ProfilerMarker _PRF_Initialize = new(_PRF_PFX + nameof(Initialize));
+
+        private static readonly ProfilerMarker _PRF_GetMeshBurialSharedState =
+            new(_PRF_PFX + nameof(GetMeshBurialSharedState));
+
+        private static readonly ProfilerMarker _PRF_GetMeshBurialAdjustmentState =
+            new(_PRF_PFX + nameof(GetMeshBurialAdjustmentState));
+
+        private static readonly ProfilerMarker _PRF_Complete = new(_PRF_PFX + nameof(Complete));
         private bool _completed;
+
+        private bool _initialized;
 
         //private int _current;
 
@@ -40,7 +50,6 @@ namespace Appalachia.Spatial.MeshBurial.Processing.QueueItems
 
         public string name { get; }
 
-        private static readonly ProfilerMarker _PRF_Initialize = new ProfilerMarker(_PRF_PFX + nameof(Initialize));
         private void Initialize()
         {
             if (_initialized)
@@ -67,14 +76,13 @@ namespace Appalachia.Spatial.MeshBurial.Processing.QueueItems
             Initialize();
             return GetAdoptTerrainNormalInternal();
         }
-        
+
         public float GetDegreeAdjustmentStrength()
         {
             Initialize();
             return GetDegreeAdjustmentStrengthInternal();
         }
 
-        private static readonly ProfilerMarker _PRF_GetMeshBurialSharedState = new ProfilerMarker(_PRF_PFX + nameof(GetMeshBurialSharedState));
         public MeshBurialSharedState GetMeshBurialSharedState()
         {
             using (_PRF_GetMeshBurialSharedState.Auto())
@@ -87,7 +95,6 @@ namespace Appalachia.Spatial.MeshBurial.Processing.QueueItems
             }
         }
 
-        private static readonly ProfilerMarker _PRF_GetMeshBurialAdjustmentState = new ProfilerMarker(_PRF_PFX + nameof(GetMeshBurialAdjustmentState));
         public MeshBurialAdjustmentState GetMeshBurialAdjustmentState()
         {
             using (_PRF_GetMeshBurialAdjustmentState.Auto())
@@ -100,7 +107,6 @@ namespace Appalachia.Spatial.MeshBurial.Processing.QueueItems
             }
         }
 
-        private static readonly ProfilerMarker _PRF_Complete = new ProfilerMarker(_PRF_PFX + nameof(Complete));
         public void Complete()
         {
             using (_PRF_Complete.Auto())

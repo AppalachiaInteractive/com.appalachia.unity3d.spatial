@@ -10,10 +10,17 @@ using UnityEngine;
 
 namespace Appalachia.Spatial.Terrains
 {
-    public class TerrainMetadataDictionary : SelfSavingSingletonScriptableObject<TerrainMetadataDictionary>
+    public class
+        TerrainMetadataDictionary : SelfSavingSingletonScriptableObject<TerrainMetadataDictionary>
     {
         [SerializeField]
-        [ListDrawerSettings(Expanded = true, DraggableItems = false, HideAddButton = true, HideRemoveButton = true, NumberOfItemsPerPage = 1)]
+        [ListDrawerSettings(
+            Expanded = true,
+            DraggableItems = false,
+            HideAddButton = true,
+            HideRemoveButton = true,
+            NumberOfItemsPerPage = 1
+        )]
         private TerrainMetadataLookup _state;
 
         public IAppaLookup<int, TerrainMetadata, AppaList_TerrainMetadata> Lookup

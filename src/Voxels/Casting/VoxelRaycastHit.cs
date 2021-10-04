@@ -22,9 +22,9 @@ namespace Appalachia.Spatial.Voxels.Casting
         public Voxel voxel;
         public T data;
         public float distance;
+        public T Data => data;
 
         public Voxel Voxel => voxel;
-        public T Data => data;
         public float Distance => distance;
     }
 }

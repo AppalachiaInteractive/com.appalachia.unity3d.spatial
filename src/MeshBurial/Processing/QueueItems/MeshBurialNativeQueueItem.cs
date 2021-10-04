@@ -14,7 +14,10 @@ namespace Appalachia.Spatial.MeshBurial.Processing.QueueItems
     {
         private NativeList<float4x4> _matrices;
 
-        public MeshBurialNativeQueueItem(GameObject model, NativeList<float4x4> matrices, bool adoptTerrainNormal = true) : base(
+        public MeshBurialNativeQueueItem(
+            GameObject model,
+            NativeList<float4x4> matrices,
+            bool adoptTerrainNormal = true) : base(
             $"NativeList: {model.name}",
             model,
             matrices.Length,

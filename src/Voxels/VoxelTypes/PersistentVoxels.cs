@@ -9,23 +9,42 @@ using UnityEngine;
 
 namespace Appalachia.Spatial.Voxels.VoxelTypes
 {
-    public sealed class PersistentVoxels : PersistentVoxelsBase<PersistentVoxels, VoxelPersistentDataStore, VoxelRaycastHit>
+    public sealed class PersistentVoxels : PersistentVoxelsBase<PersistentVoxels,
+        VoxelPersistentDataStore, VoxelRaycastHit>
     {
         private PersistentVoxels(string identifier) : base(identifier)
         {
         }
 
-        protected override VoxelRaycastHit PrepareRaycastHit(int voxelIndex, Voxel voxel, float distance)
+        protected override VoxelRaycastHit PrepareRaycastHit(
+            int voxelIndex,
+            Voxel voxel,
+            float distance)
         {
-            return new VoxelRaycastHit {distance = distance, voxel = voxel};
+            return new() {distance = distance, voxel = voxel};
         }
 
-        public static PersistentVoxels VoxelizeSingle(string identifier, Transform t, Bounds b, float3 p)
+        public static PersistentVoxels VoxelizeSingle(
+            string identifier,
+            Transform t,
+            Bounds b,
+            float3 p)
         {
-            return Voxelizer.VoxelizeSingle<PersistentVoxels, VoxelRaycastHit>(new PersistentVoxels(identifier), t, b, p);
+            return Voxelizer.VoxelizeSingle<PersistentVoxels, VoxelRaycastHit>(
+                new PersistentVoxels(identifier),
+                t,
+                b,
+                p
+            );
         }
 
-        public static PersistentVoxels Voxelize(string identifier, VoxelPopulationStyle style, Transform t, Collider[] c, MeshRenderer[] r, float3 res)
+        public static PersistentVoxels Voxelize(
+            string identifier,
+            VoxelPopulationStyle style,
+            Transform t,
+            Collider[] c,
+            MeshRenderer[] r,
+            float3 res)
         {
             return Voxelizer.Voxelize<PersistentVoxels, VoxelRaycastHit>(
                 new PersistentVoxels(identifier),

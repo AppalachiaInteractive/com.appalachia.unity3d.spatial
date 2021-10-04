@@ -19,59 +19,15 @@ namespace Appalachia.Spatial
 {
     public class SimpleGridPositioner : MonoBehaviour
     {
-        private void Awake()
+        public enum GridObjectTypes
         {
-            /*
-            if (PrefabUtility.IsPartOfPrefabAsset(this))
-            {
-                for (var i = 0; i < objectsToCenter.Length; i++)
-                {
-                    var objectToCenter = objectsToCenter[i];
-
-                    if (PrefabUtility.IsAnyPrefabInstanceRoot(objectToCenter))
-                    {
-                        objectsToCenter[i] = AssetDatabaseHelper.GetPrefabAsset(objectToCenter);
-                    }
-                }
-            }
-            else
-            {
-                for (var i = 0; i < objectsToCenter.Length; i++)
-                {
-                    var objectToCenter = objectsToCenter[i];
-
-                    if (PrefabUtility.IsPartOfPrefabAsset(objectToCenter))
-                    {
-                        objectsToCenter[i] = objectToCenter.InstantiatePrefab();
-                    }
-                }
-                
-                BuildGrid();
-            }
-            */
-            
-            
-        }
-
-        [MenuItem("GameObject/Chris/Organization/Add SimpleGridPositioner", false, -10)]
-        public static void AddSimpleGridPositioner(MenuCommand menuCommand)
-        {
-            //Create the spawner
-            var gridGo = new GameObject("Simple Grid");
-            gridGo.AddComponent<SimpleGridPositioner>();
-
-            var parent = menuCommand.context as GameObject;
-            if (parent != null)
-            {
-                // Reparent it
-                GameObjectUtility.SetParentAndAlign(gridGo, parent);
-            }
-
-            // Register the creation in the undo system
-            Undo.RegisterCreatedObjectUndo(gridGo, "Created " + gridGo.name);
-
-            //Make it active
-            Selection.activeObject = gridGo;
+            All,
+            Tree,
+            LODGroup,
+            MeshFilter,
+            Camera,
+            Light,
+            Grid
         }
 
         public bool locked;
@@ -124,6 +80,59 @@ namespace Appalachia.Spatial
         [SceneObjectsOnly]
         [DisableIf(nameof(locked))]
         public GameObject[] objectsToCenter = new GameObject[0];
+
+        private void Awake()
+        {
+            /*
+            if (PrefabUtility.IsPartOfPrefabAsset(this))
+            {
+                for (var i = 0; i < objectsToCenter.Length; i++)
+                {
+                    var objectToCenter = objectsToCenter[i];
+
+                    if (PrefabUtility.IsAnyPrefabInstanceRoot(objectToCenter))
+                    {
+                        objectsToCenter[i] = AssetDatabaseHelper.GetPrefabAsset(objectToCenter);
+                    }
+                }
+            }
+            else
+            {
+                for (var i = 0; i < objectsToCenter.Length; i++)
+                {
+                    var objectToCenter = objectsToCenter[i];
+
+                    if (PrefabUtility.IsPartOfPrefabAsset(objectToCenter))
+                    {
+                        objectsToCenter[i] = objectToCenter.InstantiatePrefab();
+                    }
+                }
+                
+                BuildGrid();
+            }
+            */
+        }
+
+        [MenuItem("GameObject/Chris/Organization/Add SimpleGridPositioner", false, -10)]
+        public static void AddSimpleGridPositioner(MenuCommand menuCommand)
+        {
+            //Create the spawner
+            var gridGo = new GameObject("Simple Grid");
+            gridGo.AddComponent<SimpleGridPositioner>();
+
+            var parent = menuCommand.context as GameObject;
+            if (parent != null)
+            {
+                // Reparent it
+                GameObjectUtility.SetParentAndAlign(gridGo, parent);
+            }
+
+            // Register the creation in the undo system
+            Undo.RegisterCreatedObjectUndo(gridGo, "Created " + gridGo.name);
+
+            //Make it active
+            Selection.activeObject = gridGo;
+        }
 
         [Button(Name = "Clear, Search, Build")]
         [DisableIf(nameof(locked))]
@@ -235,11 +244,15 @@ namespace Appalachia.Spatial
 
                     for (var i = 0; i < centering.Count; i++)
                     {
-                        var stringToCheck = string.Format(styles[matchingStyle], matchingLod.ToString());
-                        var lod0String = string.Format(styles[matchingStyle],    0);
+                        var stringToCheck = string.Format(
+                            styles[matchingStyle],
+                            matchingLod.ToString()
+                        );
+                        var lod0String = string.Format(styles[matchingStyle], 0);
 
                         var searchTerm = lowerName.Replace(stringToCheck, lod0String).ToLower();
-                        if ((centering[i] != null) && (centering[i][0].name.ToLower() == searchTerm))
+                        if ((centering[i] != null) &&
+                            (centering[i][0].name.ToLower() == searchTerm))
                         {
                             centering[i].Add(obj);
                         }
@@ -336,7 +349,10 @@ namespace Appalachia.Spatial
                                     {
                                         var terrainRight = math.cross(terrainNormal, Vector3.up);
                                         lookForward = math.cross(terrainNormal, terrainRight);
-                                        finalRotation = Quaternion.LookRotation(lookForward, terrainNormal);
+                                        finalRotation = Quaternion.LookRotation(
+                                            lookForward,
+                                            terrainNormal
+                                        );
                                     }
                                 }
                             }
@@ -348,7 +364,8 @@ namespace Appalachia.Spatial
                         finalRotation *= Quaternion.Euler(0.0f, Random.Range(-180f, 180f), 0.0f);
                     }
 
-                    centeringCollection[iteration][0].transform.position = finalPosition + localOffset;
+                    centeringCollection[iteration][0].transform.position =
+                        finalPosition + localOffset;
                     centeringCollection[iteration][0].transform.rotation = finalRotation;
 
                     var rb = centeringCollection[iteration][0].transform.GetComponent<Rigidbody>();
@@ -363,11 +380,13 @@ namespace Appalachia.Spatial
                     {
                         for (var k = 1; k < centeringCollection[iteration].Length; k++)
                         {
-                            var pos = finalPosition + new Vector3(lodGridSize * k, 0, lodGridSize * k);
+                            var pos = finalPosition +
+                                      new Vector3(lodGridSize * k, 0, lodGridSize * k);
 
                             centeringCollection[iteration][k].transform.position = pos;
-                            
-                            rb = centeringCollection[iteration][k].transform.GetComponent<Rigidbody>();
+
+                            rb = centeringCollection[iteration][k]
+                                .transform.GetComponent<Rigidbody>();
 
                             if (rb != null)
                             {
@@ -400,38 +419,54 @@ namespace Appalachia.Spatial
             {
                 case GridObjectTypes.All:
                     gameObjects = childrenOnly
-                        ? transform.GetComponentsInChildren<Transform>().Select(t => t.gameObject).ToArray()
+                        ? transform.GetComponentsInChildren<Transform>()
+                                   .Select(t => t.gameObject)
+                                   .ToArray()
                         : FindObjectsOfType<Transform>().Select(t => t.gameObject).ToArray();
                     break;
                 case GridObjectTypes.Tree:
                     gameObjects = childrenOnly
-                        ? transform.GetComponentsInChildren<Tree>().Select(t => t.gameObject).ToArray()
+                        ? transform.GetComponentsInChildren<Tree>()
+                                   .Select(t => t.gameObject)
+                                   .ToArray()
                         : FindObjectsOfType<Tree>().Select(t => t.gameObject).ToArray();
                     break;
                 case GridObjectTypes.LODGroup:
                     gameObjects = childrenOnly
-                        ? transform.GetComponentsInChildren<LODGroup>().Select(t => t.gameObject).ToArray()
+                        ? transform.GetComponentsInChildren<LODGroup>()
+                                   .Select(t => t.gameObject)
+                                   .ToArray()
                         : FindObjectsOfType<LODGroup>().Select(t => t.gameObject).ToArray();
                     break;
                 case GridObjectTypes.MeshFilter:
                     gameObjects = childrenOnly
-                        ? transform.GetComponentsInChildren<MeshFilter>().Select(t => t.gameObject).ToArray()
+                        ? transform.GetComponentsInChildren<MeshFilter>()
+                                   .Select(t => t.gameObject)
+                                   .ToArray()
                         : FindObjectsOfType<MeshFilter>().Select(t => t.gameObject).ToArray();
                     break;
                 case GridObjectTypes.Camera:
                     gameObjects = childrenOnly
-                        ? transform.GetComponentsInChildren<Camera>().Select(t => t.gameObject).ToArray()
+                        ? transform.GetComponentsInChildren<Camera>()
+                                   .Select(t => t.gameObject)
+                                   .ToArray()
                         : FindObjectsOfType<Camera>().Select(t => t.gameObject).ToArray();
                     break;
                 case GridObjectTypes.Light:
                     gameObjects = childrenOnly
-                        ? transform.GetComponentsInChildren<Light>().Select(t => t.gameObject).ToArray()
+                        ? transform.GetComponentsInChildren<Light>()
+                                   .Select(t => t.gameObject)
+                                   .ToArray()
                         : FindObjectsOfType<Light>().Select(t => t.gameObject).ToArray();
                     break;
                 case GridObjectTypes.Grid:
                     gameObjects = childrenOnly
-                        ? transform.GetComponentsInChildren<SimpleGridPositioner>().Select(t => t.gameObject).ToArray()
-                        : FindObjectsOfType<SimpleGridPositioner>().Select(t => t.gameObject).ToArray();
+                        ? transform.GetComponentsInChildren<SimpleGridPositioner>()
+                                   .Select(t => t.gameObject)
+                                   .ToArray()
+                        : FindObjectsOfType<SimpleGridPositioner>()
+                         .Select(t => t.gameObject)
+                         .ToArray();
                     break;
             }
 
@@ -444,7 +479,9 @@ namespace Appalachia.Spatial
 
             foreach (var obj in objectsToCenter)
             {
-                if ((obj == null) || (oneLevelOnly && (obj.transform.parent != transform)) || (ignoreSelf && (obj.transform == transform)))
+                if ((obj == null) ||
+                    (oneLevelOnly && (obj.transform.parent != transform)) ||
+                    (ignoreSelf && (obj.transform == transform)))
                 {
                     continue;
                 }
@@ -454,7 +491,9 @@ namespace Appalachia.Spatial
 
             foreach (var obj in gameObjects)
             {
-                if ((obj == null) || (oneLevelOnly && (obj.transform.parent != transform)) || (ignoreSelf && (obj.transform == transform)))
+                if ((obj == null) ||
+                    (oneLevelOnly && (obj.transform.parent != transform)) ||
+                    (ignoreSelf && (obj.transform == transform)))
                 {
                     continue;
                 }
@@ -475,22 +514,31 @@ namespace Appalachia.Spatial
                     objectsToCenter = new GameObject[0];
                     break;
                 case GridObjectTypes.Tree:
-                    objectsToCenter = objectsToCenter.Where(obj => obj.GetType() != typeof(Tree)).ToArray();
+                    objectsToCenter = objectsToCenter.Where(obj => obj.GetType() != typeof(Tree))
+                                                     .ToArray();
                     break;
                 case GridObjectTypes.LODGroup:
-                    objectsToCenter = objectsToCenter.Where(obj => obj.GetType() != typeof(LODGroup)).ToArray();
+                    objectsToCenter = objectsToCenter
+                                     .Where(obj => obj.GetType() != typeof(LODGroup))
+                                     .ToArray();
                     break;
                 case GridObjectTypes.MeshFilter:
-                    objectsToCenter = objectsToCenter.Where(obj => obj.GetType() != typeof(MeshFilter)).ToArray();
+                    objectsToCenter = objectsToCenter
+                                     .Where(obj => obj.GetType() != typeof(MeshFilter))
+                                     .ToArray();
                     break;
                 case GridObjectTypes.Camera:
-                    objectsToCenter = objectsToCenter.Where(obj => obj.GetType() != typeof(Camera)).ToArray();
+                    objectsToCenter = objectsToCenter.Where(obj => obj.GetType() != typeof(Camera))
+                                                     .ToArray();
                     break;
                 case GridObjectTypes.Light:
-                    objectsToCenter = objectsToCenter.Where(obj => obj.GetType() != typeof(Light)).ToArray();
+                    objectsToCenter = objectsToCenter.Where(obj => obj.GetType() != typeof(Light))
+                                                     .ToArray();
                     break;
                 case GridObjectTypes.Grid:
-                    objectsToCenter = objectsToCenter.Where(obj => obj.GetType() != typeof(SimpleGridPositioner)).ToArray();
+                    objectsToCenter = objectsToCenter
+                                     .Where(obj => obj.GetType() != typeof(SimpleGridPositioner))
+                                     .ToArray();
                     break;
             }
         }
@@ -514,7 +562,10 @@ namespace Appalachia.Spatial
                     SortChildrenByBounds(sortMode);
                     break;
                 case SortMode.Mass:
-                    SortChildrenByComponentsDetail<Rigidbody, float>(rigidbody1 => rigidbody1.mass, (a, b) => a + b);
+                    SortChildrenByComponentsDetail<Rigidbody, float>(
+                        rigidbody1 => rigidbody1.mass,
+                        (a, b) => a + b
+                    );
                     break;
                 case SortMode.Components:
                     SortChildrenByComponents<Component>();
@@ -526,13 +577,22 @@ namespace Appalachia.Spatial
                     SortChildrenByComponents<Renderer>();
                     break;
                 case SortMode.LODLevels:
-                    SortChildrenByComponentsDetail<LODGroup, int>(lod => lod.GetLODs().Length, (a, b) => a + b);
+                    SortChildrenByComponentsDetail<LODGroup, int>(
+                        lod => lod.GetLODs().Length,
+                        (a, b) => a + b
+                    );
                     break;
                 case SortMode.Vertices:
-                    SortChildrenByComponentsDetail<MeshFilter, int>(meshFilter => meshFilter.sharedMesh.vertexCount, Mathf.Max);
+                    SortChildrenByComponentsDetail<MeshFilter, int>(
+                        meshFilter => meshFilter.sharedMesh.vertexCount,
+                        Mathf.Max
+                    );
                     break;
                 case SortMode.Triangles:
-                    SortChildrenByComponentsDetail<MeshFilter, int>(meshFilter => meshFilter.sharedMesh.triangles.Length / 3, Mathf.Max);
+                    SortChildrenByComponentsDetail<MeshFilter, int>(
+                        meshFilter => meshFilter.sharedMesh.triangles.Length / 3,
+                        Mathf.Max
+                    );
                     break;
                 case SortMode.VerticesLOD0:
                     SortChildrenByComponentsDetail<LODGroup, int>(
@@ -542,7 +602,8 @@ namespace Appalachia.Spatial
                     break;
                 case SortMode.TrianglesLOD0:
                     SortChildrenByComponentsDetail<LODGroup, int>(
-                        lodGroup => lodGroup.GetLODs()[0].renderers[0].GetSharedMesh().triangles.Length / 3,
+                        lodGroup =>
+                            lodGroup.GetLODs()[0].renderers[0].GetSharedMesh().triangles.Length / 3,
                         Mathf.Max
                     );
                     break;
@@ -621,7 +682,9 @@ namespace Appalachia.Spatial
                     lastWasNumber = true;
                     newString.Append(testChar);
                 }
-                else if (char.IsPunctuation(testChar) || char.IsSeparator(testChar) || char.IsSymbol(testChar))
+                else if (char.IsPunctuation(testChar) ||
+                         char.IsSeparator(testChar) ||
+                         char.IsSymbol(testChar))
                 {
                     if (lastWasNumber || (i == 0))
                     {
@@ -709,7 +772,9 @@ namespace Appalachia.Spatial
                     switch (sort)
                     {
                         case SortMode.Bounds:
-                            sortVal = bounds2.size.sqrMagnitude.CompareTo(bounds1.size.sqrMagnitude);
+                            sortVal = bounds2.size.sqrMagnitude.CompareTo(
+                                bounds1.size.sqrMagnitude
+                            );
                             break;
 
                         case SortMode.Width:
@@ -810,7 +875,9 @@ namespace Appalachia.Spatial
             }
         }
 
-        private void SortChildrenByComponentsDetail<T, TV>(Func<T, TV> valueGenerator, Func<TV, TV, TV> add)
+        private void SortChildrenByComponentsDetail<T, TV>(
+            Func<T, TV> valueGenerator,
+            Func<TV, TV, TV> add)
             where TV : IComparable<TV>
         {
             var children = new List<Transform>();
@@ -915,17 +982,6 @@ namespace Appalachia.Spatial
             {
                 child.parent = transform;
             }
-        }
-
-        public enum GridObjectTypes
-        {
-            All,
-            Tree,
-            LODGroup,
-            MeshFilter,
-            Camera,
-            Light,
-            Grid
         }
     }
 }

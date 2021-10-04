@@ -11,10 +11,12 @@ namespace Appalachia.Spatial.Voxels.Persistence
 {
     [Serializable]
     public abstract class
-        VoxelPersistentObjectAndElementsDataStore<TVoxelData, TDataStore, TObject, TElement> : VoxelPersistentDataStoreBase<TVoxelData, TDataStore,
-            VoxelRaycastHit<TElement>>
-        where TVoxelData : PersistentVoxelsObjectAndElementsBase<TVoxelData, TDataStore, TObject, TElement>
-        where TDataStore : VoxelPersistentObjectAndElementsDataStore<TVoxelData, TDataStore, TObject, TElement>
+        VoxelPersistentObjectAndElementsDataStore<TVoxelData, TDataStore, TObject, TElement> :
+            VoxelPersistentDataStoreBase<TVoxelData, TDataStore, VoxelRaycastHit<TElement>>
+        where TVoxelData : PersistentVoxelsObjectAndElementsBase<TVoxelData, TDataStore, TObject,
+            TElement>
+        where TDataStore : VoxelPersistentObjectAndElementsDataStore<TVoxelData, TDataStore, TObject
+            , TElement>
         where TObject : IVoxelsInit, new()
         where TElement : struct
     {

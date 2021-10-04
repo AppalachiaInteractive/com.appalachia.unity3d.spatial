@@ -92,7 +92,8 @@ namespace Appalachia.Spatial.MeshBurial.Processing
 
         private const string MENU_DEBUGLOG_ = MENU_LOG + "Enable Debug Logging";
 
-        [NonSerialized] public static readonly PREF<bool> _DEBUGLOG = PREFS.REG(G_, "Enable Debug Logging", false);
+        [NonSerialized]
+        public static readonly PREF<bool> _DEBUGLOG = PREFS.REG(G_, "Enable Debug Logging", false);
 
         [MenuItem(MENU_DEBUGLOG_, true)]
         private static bool MENU_DEBUGLOG_VALIDATE()
@@ -113,7 +114,12 @@ namespace Appalachia.Spatial.MeshBurial.Processing
 
         private const string MENU_DEBUGZEROLOG_ = MENU_LOG + "Enable Zero Matrix Logging";
 
-        [NonSerialized] public static readonly PREF<bool> _DEBUGZEROLOG = PREFS.REG(G_, "Enable Zero Matrix Logging", false);
+        [NonSerialized]
+        public static readonly PREF<bool> _DEBUGZEROLOG = PREFS.REG(
+            G_,
+            "Enable Zero Matrix Logging",
+            false
+        );
 
         [MenuItem(MENU_DEBUGZEROLOG_, true)]
         private static bool MENU_DEBUGZEROLOG_VALIDATE()
@@ -134,7 +140,12 @@ namespace Appalachia.Spatial.MeshBurial.Processing
 
         private const string MENU_JOBS_MESH_NORMALS_ = MENU_JOBS_ + "Account for Mesh Normals";
 
-        [NonSerialized] public static readonly PREF<bool> _MESH_NORMALS = PREFS.REG(G_, "Account Mesh Normals", true);
+        [NonSerialized]
+        public static readonly PREF<bool> _MESH_NORMALS = PREFS.REG(
+            G_,
+            "Account Mesh Normals",
+            true
+        );
 
         [MenuItem(MENU_JOBS_MESH_NORMALS_, true)]
         private static bool MENU_JOBS_MESH_NORMALS_VALIDATE()
@@ -163,9 +174,11 @@ namespace Appalachia.Spatial.MeshBurial.Processing
 
 #region MENU_JOBS_TERRAIN_NORMALS_
 
-        private const string MENU_JOBS_TERRAIN_NORMALS_ = MENU_JOBS_ + "Compensate for Terrain Normals";
+        private const string MENU_JOBS_TERRAIN_NORMALS_ =
+            MENU_JOBS_ + "Compensate for Terrain Normals";
 
-        [NonSerialized] public static readonly PREF<bool> _TERRAIN_NORMALS = PREFS.REG(G_, "Terrain Normals", true);
+        [NonSerialized]
+        public static readonly PREF<bool> _TERRAIN_NORMALS = PREFS.REG(G_, "Terrain Normals", true);
 
         [MenuItem(MENU_JOBS_TERRAIN_NORMALS_, true)]
         private static bool MENU_JOBS_TERRAIN_NORMALS_VALIDATE()
@@ -196,7 +209,8 @@ namespace Appalachia.Spatial.MeshBurial.Processing
 
         private const string MENU_JOBS_HEIGHTS_ = MENU_JOBS_ + "Adjust Height To Terrain";
 
-        [NonSerialized] public static readonly PREF<bool> _HEIGHT = PREFS.REG(G_, "Adjust Height", true);
+        [NonSerialized]
+        public static readonly PREF<bool> _HEIGHT = PREFS.REG(G_, "Adjust Height", true);
 
         [MenuItem(MENU_JOBS_HEIGHTS_, true)]
         private static bool MENU_JOBS_HEIGHTS_VALIDATE()
@@ -227,7 +241,8 @@ namespace Appalachia.Spatial.MeshBurial.Processing
 
         private const string MENU_JOBS_PARAMS_ = MENU_JOBS_ + "Apply Parameterized Rotation";
 
-        [NonSerialized] public static readonly PREF<bool> _PARAMS = PREFS.REG(G_, "Apply Params", true);
+        [NonSerialized]
+        public static readonly PREF<bool> _PARAMS = PREFS.REG(G_, "Apply Params", true);
 
         [MenuItem(MENU_JOBS_PARAMS_, true)]
         private static bool MENU_JOBS_PARAMS_VALIDATE()
@@ -258,7 +273,8 @@ namespace Appalachia.Spatial.MeshBurial.Processing
 
         private const string MENU_JOBS_TESTS_ = MENU_JOBS_ + "Apply Fixed Test Value";
 
-        [NonSerialized] public static readonly PREF<bool> _TEST = PREFS.REG(G_, "Apply Fixed Test Value", false);
+        [NonSerialized]
+        public static readonly PREF<bool> _TEST = PREFS.REG(G_, "Apply Fixed Test Value", false);
 
         [MenuItem(MENU_JOBS_TESTS_, true)]
         private static bool MENU_JOBS_TESTS_validate()
@@ -287,36 +303,41 @@ namespace Appalachia.Spatial.MeshBurial.Processing
 
 #region Fixed Test Value
 
-        [NonSerialized] public static readonly PREF<float3> _TEST_VALUE = PREFS.REG(G_, "Fixed Test Value", float3.zero);
+        [NonSerialized]
+        public static readonly PREF<float3> _TEST_VALUE = PREFS.REG(
+            G_,
+            "Fixed Test Value",
+            float3.zero
+        );
 
         private const string _TEST_M = MENU_JOBS_ + "Test Value/";
 
-        private static readonly float3 _TS_z0_z0_z0v = new float3(0,  0,  0);
-        private static readonly float3 _TS_z0_z0_p1v = new float3(0,  0,  +1);
-        private static readonly float3 _TS_z0_z0_n1v = new float3(0,  0,  -1);
-        private static readonly float3 _TS_z0_p1_z0v = new float3(0,  +1, 0);
-        private static readonly float3 _TS_z0_p1_p1v = new float3(0,  +1, +1);
-        private static readonly float3 _TS_z0_p1_n1v = new float3(0,  +1, -1);
-        private static readonly float3 _TS_z0_n1_z0v = new float3(0,  -1, 0);
-        private static readonly float3 _TS_z0_n1_p1v = new float3(0,  -1, +1);
-        private static readonly float3 _TS_z0_n1_n1v = new float3(0,  -1, -1);
-        private static readonly float3 _TS_p1_z0_z0v = new float3(+1, 0,  0);
-        private static readonly float3 _TS_p1_z0_p1v = new float3(+1, 0,  +1);
-        private static readonly float3 _TS_p1_z0_n1v = new float3(+1, 0,  -1);
-        private static readonly float3 _TS_p1_p1_z0v = new float3(+1, +1, 0);
-        private static readonly float3 _TS_p1_p1_p1v = new float3(+1, +1, +1);
-        private static readonly float3 _TS_p1_p1_n1v = new float3(+1, +1, -1);
-        private static readonly float3 _TS_p1_n1_z0v = new float3(+1, -1, 0);
-        private static readonly float3 _TS_p1_n1_p1v = new float3(+1, -1, +1);
-        private static readonly float3 _TS_p1_n1_n1v = new float3(+1, -1, -1);
-        private static readonly float3 _TS_n1_z0_z0v = new float3(-1, 0,  0);
-        private static readonly float3 _TS_n1_z0_p1v = new float3(-1, 0,  +1);
-        private static readonly float3 _TS_n1_z0_n1v = new float3(-1, 0,  -1);
-        private static readonly float3 _TS_n1_p1_z0v = new float3(-1, +1, 0);
-        private static readonly float3 _TS_n1_p1_p1v = new float3(-1, +1, +1);
-        private static readonly float3 _TS_n1_p1_n1v = new float3(-1, +1, -1);
-        private static readonly float3 _TS_n1_n1_z0v = new float3(-1, -1, 0);
-        private static readonly float3 _TS_n1_n1_p1v = new float3(-1, -1, +1);
+        private static readonly float3 _TS_z0_z0_z0v = new(0, 0, 0);
+        private static readonly float3 _TS_z0_z0_p1v = new(0, 0, +1);
+        private static readonly float3 _TS_z0_z0_n1v = new(0, 0, -1);
+        private static readonly float3 _TS_z0_p1_z0v = new(0, +1, 0);
+        private static readonly float3 _TS_z0_p1_p1v = new(0, +1, +1);
+        private static readonly float3 _TS_z0_p1_n1v = new(0, +1, -1);
+        private static readonly float3 _TS_z0_n1_z0v = new(0, -1, 0);
+        private static readonly float3 _TS_z0_n1_p1v = new(0, -1, +1);
+        private static readonly float3 _TS_z0_n1_n1v = new(0, -1, -1);
+        private static readonly float3 _TS_p1_z0_z0v = new(+1, 0, 0);
+        private static readonly float3 _TS_p1_z0_p1v = new(+1, 0, +1);
+        private static readonly float3 _TS_p1_z0_n1v = new(+1, 0, -1);
+        private static readonly float3 _TS_p1_p1_z0v = new(+1, +1, 0);
+        private static readonly float3 _TS_p1_p1_p1v = new(+1, +1, +1);
+        private static readonly float3 _TS_p1_p1_n1v = new(+1, +1, -1);
+        private static readonly float3 _TS_p1_n1_z0v = new(+1, -1, 0);
+        private static readonly float3 _TS_p1_n1_p1v = new(+1, -1, +1);
+        private static readonly float3 _TS_p1_n1_n1v = new(+1, -1, -1);
+        private static readonly float3 _TS_n1_z0_z0v = new(-1, 0, 0);
+        private static readonly float3 _TS_n1_z0_p1v = new(-1, 0, +1);
+        private static readonly float3 _TS_n1_z0_n1v = new(-1, 0, -1);
+        private static readonly float3 _TS_n1_p1_z0v = new(-1, +1, 0);
+        private static readonly float3 _TS_n1_p1_p1v = new(-1, +1, +1);
+        private static readonly float3 _TS_n1_p1_n1v = new(-1, +1, -1);
+        private static readonly float3 _TS_n1_n1_z0v = new(-1, -1, 0);
+        private static readonly float3 _TS_n1_n1_p1v = new(-1, -1, +1);
 
         private static bool _TS_z0_z0_z0 => _TEST_VALUE.Value.Equals(_TS_z0_z0_z0v);
         private static bool _TS_z0_z0_p1 => _TEST_VALUE.Value.Equals(_TS_z0_z0_p1v);
@@ -714,7 +735,8 @@ namespace Appalachia.Spatial.MeshBurial.Processing
 
 #region Timing (Milliseconds)
 
-        [NonSerialized] public static readonly PREF<int> _TIME = PREFS.REG(G_, "Frame Time", _T_030v);
+        [NonSerialized]
+        public static readonly PREF<int> _TIME = PREFS.REG(G_, "Frame Time", _T_030v);
 
         private const string TIME = MENU_BASE_ + "Timing (Milliseconds)/";
 
@@ -861,7 +883,12 @@ namespace Appalachia.Spatial.MeshBurial.Processing
 
         private const string MENU_TIMELOG_ = MENU_LOG + "Enable Long Item Logging";
 
-        [NonSerialized] public static readonly PREF<bool> _TIMELOG = PREFS.REG(G_, "Enable Long Item Logging", true);
+        [NonSerialized]
+        public static readonly PREF<bool> _TIMELOG = PREFS.REG(
+            G_,
+            "Enable Long Item Logging",
+            true
+        );
 
         [MenuItem(MENU_TIMELOG_, true)]
         private static bool MENU_TIMELOG_VALIDATE()
@@ -876,7 +903,8 @@ namespace Appalachia.Spatial.MeshBurial.Processing
             _TIMELOG.v = !_TIMELOG.v;
         }
 
-        [NonSerialized] public static readonly PREF<int> _TIMELOGTIME = PREFS.REG(G_, "Frame Time", _TLT_030v);
+        [NonSerialized]
+        public static readonly PREF<int> _TIMELOGTIME = PREFS.REG(G_, "Frame Time", _TLT_030v);
 
         private const string TIMELOGTIME = MENU_BASE_ + "Item Timing Log Threshold (Seconds)/";
 
@@ -1337,7 +1365,8 @@ namespace Appalachia.Spatial.MeshBurial.Processing
 
 #region Allowed Error
 
-        [NonSerialized] public static readonly PREF<double> _ERROR = PREFS.REG(G_, "Allowed Error", _E_030v);
+        [NonSerialized]
+        public static readonly PREF<double> _ERROR = PREFS.REG(G_, "Allowed Error", _E_030v);
 
         private const string ERROR = MENU_BASE_ + "Allowed Error/";
 
@@ -1542,7 +1571,8 @@ namespace Appalachia.Spatial.MeshBurial.Processing
 
 #region Allowed Iterations
 
-        [NonSerialized] public static readonly PREF<int> _ITER = PREFS.REG(G_, "Allowed Iterations", _I_0010v);
+        [NonSerialized]
+        public static readonly PREF<int> _ITER = PREFS.REG(G_, "Allowed Iterations", _I_0010v);
 
         private const string _IT_ = MENU_BASE_ + "Allowed Iterations/";
 
@@ -1702,7 +1732,12 @@ namespace Appalachia.Spatial.MeshBurial.Processing
 
 #region Instance Iterations
 
-        [NonSerialized] public static readonly PREF<int> _INST_ITER = PREFS.REG(G_, "Instance Iterations", _II_01024v);
+        [NonSerialized]
+        public static readonly PREF<int> _INST_ITER = PREFS.REG(
+            G_,
+            "Instance Iterations",
+            _II_01024v
+        );
 
         private const string _II = MENU_BASE_ + "Instance Iterations/";
 

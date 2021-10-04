@@ -15,11 +15,10 @@ namespace Appalachia.Spatial.MeshBurial.Collections
         {
         }
 
-        public AppaList_MeshBurialSharedState(int capacity, float capacityIncreaseMultiplier = 2, bool noTracking = false) : base(
-            capacity,
-            capacityIncreaseMultiplier,
-            noTracking
-        )
+        public AppaList_MeshBurialSharedState(
+            int capacity,
+            float capacityIncreaseMultiplier = 2,
+            bool noTracking = false) : base(capacity, capacityIncreaseMultiplier, noTracking)
         {
         }
 

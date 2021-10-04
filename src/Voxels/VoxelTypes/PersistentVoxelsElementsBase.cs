@@ -13,7 +13,8 @@ using UnityEngine;
 namespace Appalachia.Spatial.Voxels.VoxelTypes
 {
     public abstract class
-        PersistentVoxelsElementsBase<TVoxelData, TDataStore, TElement> : PersistentVoxelsBase<TVoxelData, TDataStore, VoxelRaycastHit<TElement>>
+        PersistentVoxelsElementsBase<TVoxelData, TDataStore, TElement> : PersistentVoxelsBase<
+            TVoxelData, TDataStore, VoxelRaycastHit<TElement>>
         where TVoxelData : PersistentVoxelsElementsBase<TVoxelData, TDataStore, TElement>
         where TDataStore : VoxelPersistentElementsDataStore<TVoxelData, TDataStore, TElement>
         where TElement : struct
@@ -30,9 +31,12 @@ namespace Appalachia.Spatial.Voxels.VoxelTypes
             elementDatas = new NativeArray<TElement>(elementCount, Allocator.Persistent);
         }
 
-        protected override VoxelRaycastHit<TElement> PrepareRaycastHit(int voxelIndex, Voxel voxel, float distance)
+        protected override VoxelRaycastHit<TElement> PrepareRaycastHit(
+            int voxelIndex,
+            Voxel voxel,
+            float distance)
         {
-            return new VoxelRaycastHit<TElement> {data = elementDatas[voxelIndex], voxel = voxel, distance = distance};
+            return new() {data = elementDatas[voxelIndex], voxel = voxel, distance = distance};
         }
 
         protected override void Dispose(bool disposing)
@@ -46,14 +50,36 @@ namespace Appalachia.Spatial.Voxels.VoxelTypes
             }
         }
 
-        public static TVoxelData VoxelizeSingle(TVoxelData instance, Transform t, Bounds b, float3 p)
+        public static TVoxelData VoxelizeSingle(
+            TVoxelData instance,
+            Transform t,
+            Bounds b,
+            float3 p)
         {
-            return Voxelizer.VoxelizeSingle<TVoxelData, VoxelRaycastHit<TElement>>(instance, t, b, p);
+            return Voxelizer.VoxelizeSingle<TVoxelData, VoxelRaycastHit<TElement>>(
+                instance,
+                t,
+                b,
+                p
+            );
         }
 
-        public static TVoxelData Voxelize(TVoxelData instance, VoxelPopulationStyle style, Transform t, Collider[] c, MeshRenderer[] r, float3 res)
+        public static TVoxelData Voxelize(
+            TVoxelData instance,
+            VoxelPopulationStyle style,
+            Transform t,
+            Collider[] c,
+            MeshRenderer[] r,
+            float3 res)
         {
-            return Voxelizer.Voxelize<TVoxelData, VoxelRaycastHit<TElement>>(instance, t, VoxelPopulationStyle.CollidersAndMeshes, c, r, res);
+            return Voxelizer.Voxelize<TVoxelData, VoxelRaycastHit<TElement>>(
+                instance,
+                t,
+                VoxelPopulationStyle.CollidersAndMeshes,
+                c,
+                r,
+                res
+            );
         }
     }
 }

@@ -86,6 +86,55 @@ namespace Appalachia.Spatial.SpatialKeys
             _m33 = GetRounded(matrix.c3.w, groupingScale);
         }
 
+        public bool Equals(Matrix4x4Key other)
+        {
+            return (_groupingScale == other._groupingScale) &&
+                   (_m00 == other._m00) &&
+                   (_m01 == other._m01) &&
+                   (_m02 == other._m02) &&
+                   (_m03 == other._m03) &&
+                   (_m10 == other._m10) &&
+                   (_m11 == other._m11) &&
+                   (_m12 == other._m12) &&
+                   (_m13 == other._m13) &&
+                   (_m20 == other._m20) &&
+                   (_m21 == other._m21) &&
+                   (_m22 == other._m22) &&
+                   (_m23 == other._m23) &&
+                   (_m30 == other._m30) &&
+                   (_m31 == other._m31) &&
+                   (_m32 == other._m32) &&
+                   (_m33 == other._m33);
+        }
+
+        public void OnBeforeSerialize()
+        {
+        }
+
+        public void OnAfterDeserialize()
+        {
+            if ((_groupingScale == 0) && !original.Equals(default))
+            {
+                _groupingScale = CONSTANTS.MatrixKeyGrouping;
+                _m00 = GetRounded(original.c0.x, _groupingScale);
+                _m01 = GetRounded(original.c1.x, _groupingScale);
+                _m02 = GetRounded(original.c2.x, _groupingScale);
+                _m03 = GetRounded(original.c3.x, _groupingScale);
+                _m10 = GetRounded(original.c0.y, _groupingScale);
+                _m11 = GetRounded(original.c1.y, _groupingScale);
+                _m12 = GetRounded(original.c2.y, _groupingScale);
+                _m13 = GetRounded(original.c3.y, _groupingScale);
+                _m20 = GetRounded(original.c0.z, _groupingScale);
+                _m21 = GetRounded(original.c1.z, _groupingScale);
+                _m22 = GetRounded(original.c2.z, _groupingScale);
+                _m23 = GetRounded(original.c3.z, _groupingScale);
+                _m30 = GetRounded(original.c0.w, _groupingScale);
+                _m31 = GetRounded(original.c1.w, _groupingScale);
+                _m32 = GetRounded(original.c2.w, _groupingScale);
+                _m33 = GetRounded(original.c3.w, _groupingScale);
+            }
+        }
+
         private static int GetRounded(float value, int scale)
         {
             return (int) math.round(value * scale);
@@ -138,27 +187,6 @@ namespace Appalachia.Spatial.SpatialKeys
             );
         }
 
-        public bool Equals(Matrix4x4Key other)
-        {
-            return (_groupingScale == other._groupingScale) &&
-                   (_m00 == other._m00) &&
-                   (_m01 == other._m01) &&
-                   (_m02 == other._m02) &&
-                   (_m03 == other._m03) &&
-                   (_m10 == other._m10) &&
-                   (_m11 == other._m11) &&
-                   (_m12 == other._m12) &&
-                   (_m13 == other._m13) &&
-                   (_m20 == other._m20) &&
-                   (_m21 == other._m21) &&
-                   (_m22 == other._m22) &&
-                   (_m23 == other._m23) &&
-                   (_m30 == other._m30) &&
-                   (_m31 == other._m31) &&
-                   (_m32 == other._m32) &&
-                   (_m33 == other._m33);
-        }
-
         public override bool Equals(object obj)
         {
             return obj is Matrix4x4Key other && Equals(other);
@@ -205,39 +233,17 @@ namespace Appalachia.Spatial.SpatialKeys
             const string float3format = "{0:F2}, {1:F2}, {2:F2}";
             const string float4format = float3format + ", {3:F2}";
 
-            var t = string.Format(float3format, translation.x,    translation.y,    translation.z);
-            var r = string.Format(float4format, rotation.value.x, rotation.value.y, rotation.value.z, rotation.value.w);
-            var s = string.Format(float3format, scale.x,          scale.y,          scale.z);
+            var t = string.Format(float3format, translation.x, translation.y, translation.z);
+            var r = string.Format(
+                float4format,
+                rotation.value.x,
+                rotation.value.y,
+                rotation.value.z,
+                rotation.value.w
+            );
+            var s = string.Format(float3format, scale.x, scale.y, scale.z);
 
             return $"T:[{t}] R:[{r}] S:[{s}]";
-        }
-
-        public void OnBeforeSerialize()
-        {
-        }
-
-        public void OnAfterDeserialize()
-        {
-            if ((_groupingScale == 0) && !original.Equals(default))
-            {
-                _groupingScale = CONSTANTS.MatrixKeyGrouping;
-                _m00 = GetRounded(original.c0.x, _groupingScale);
-                _m01 = GetRounded(original.c1.x, _groupingScale);
-                _m02 = GetRounded(original.c2.x, _groupingScale);
-                _m03 = GetRounded(original.c3.x, _groupingScale);
-                _m10 = GetRounded(original.c0.y, _groupingScale);
-                _m11 = GetRounded(original.c1.y, _groupingScale);
-                _m12 = GetRounded(original.c2.y, _groupingScale);
-                _m13 = GetRounded(original.c3.y, _groupingScale);
-                _m20 = GetRounded(original.c0.z, _groupingScale);
-                _m21 = GetRounded(original.c1.z, _groupingScale);
-                _m22 = GetRounded(original.c2.z, _groupingScale);
-                _m23 = GetRounded(original.c3.z, _groupingScale);
-                _m30 = GetRounded(original.c0.w, _groupingScale);
-                _m31 = GetRounded(original.c1.w, _groupingScale);
-                _m32 = GetRounded(original.c2.w, _groupingScale);
-                _m33 = GetRounded(original.c3.w, _groupingScale);
-            }
         }
     }
 }

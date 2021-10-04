@@ -10,7 +10,9 @@ namespace Appalachia.Spatial.MeshBurial.State
     [Serializable]
     public class MeshBurialAdjustmentEntryWrapper
     {
-        [InlineProperty, HideLabel, LabelWidth(0)]
+        [InlineProperty]
+        [HideLabel]
+        [LabelWidth(0)]
         public MeshBurialAdjustmentEntry entry;
 
         public override string ToString()

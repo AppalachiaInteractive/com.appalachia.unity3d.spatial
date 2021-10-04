@@ -10,7 +10,9 @@ using UnityEngine;
 namespace Appalachia.Spatial.Terrains.Collections
 {
     [Serializable]
-    public class TerrainMetadataLookup : AppaLookup<int, TerrainMetadata, AppaList_int, AppaList_TerrainMetadata>
+    public class
+        TerrainMetadataLookup : AppaLookup<int, TerrainMetadata, AppaList_int,
+            AppaList_TerrainMetadata>
     {
         protected override string GetDisplayTitle(int key, TerrainMetadata value)
         {

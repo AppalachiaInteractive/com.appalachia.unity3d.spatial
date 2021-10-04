@@ -14,19 +14,33 @@ namespace Appalachia.Spatial.MeshBurial.State
     {
         private static int _terrainFrameCountLastRender;
 
-        [SerializeField, HideInInspector]
+        [SerializeField]
+        [HideInInspector]
         private GameObject _obj;
 
-        [SerializeField, HideInInspector]
+        [SerializeField]
+        [HideInInspector]
         private Mesh _meshAsset;
 
-        [BoxGroup("Optimization"), InlineProperty, InlineEditor, HideLabel, ShowInInspector, HideReferenceObjectPicker]
-        private MeshBurialOptimizationParameters _optimizationParams;
-
-        [BoxGroup("Gizmos"), InlineProperty, InlineEditor, HideLabel, ShowInInspector, HideReferenceObjectPicker]
+        [BoxGroup("Gizmos")]
+        [InlineProperty]
+        [InlineEditor]
+        [HideLabel]
+        [ShowInInspector]
+        [HideReferenceObjectPicker]
         private MeshBurialGizmoSettings _gizmos;
 
-        public MeshBurialSharedState(GameObject instanceOrPrefab, MeshBurialOptimizationParameters op)
+        [BoxGroup("Optimization")]
+        [InlineProperty]
+        [InlineEditor]
+        [HideLabel]
+        [ShowInInspector]
+        [HideReferenceObjectPicker]
+        private MeshBurialOptimizationParameters _optimizationParams;
+
+        public MeshBurialSharedState(
+            GameObject instanceOrPrefab,
+            MeshBurialOptimizationParameters op)
         {
             _optimizationParams = op;
 

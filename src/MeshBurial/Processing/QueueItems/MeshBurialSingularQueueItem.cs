@@ -12,17 +12,21 @@ namespace Appalachia.Spatial.MeshBurial.Processing.QueueItems
     [Serializable]
     public abstract class MeshBurialSingularQueueItem : MeshBurialQueueItem
     {
-        protected GameObject _model;
-        private int _hashCode;
-        private MeshBurialSharedState _sharedState;
         private MeshBurialAdjustmentState _adjustmentState;
 
         private bool _adoptTerrainNormal;
+        private int _hashCode;
 
         //private int[] _terrainHashCode;
         private float4x4[] _matrices;
+        protected GameObject _model;
+        private MeshBurialSharedState _sharedState;
 
-        protected MeshBurialSingularQueueItem(string name, GameObject model, float4x4 matrix, bool adoptTerrainNormal = true) : base(name, 1)
+        protected MeshBurialSingularQueueItem(
+            string name,
+            GameObject model,
+            float4x4 matrix,
+            bool adoptTerrainNormal = true) : base(name, 1)
         {
             _model = model;
             _hashCode = _model.GetHashCode();

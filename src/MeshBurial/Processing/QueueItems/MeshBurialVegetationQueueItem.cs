@@ -20,6 +20,12 @@ namespace Appalachia.Spatial.MeshBurial.Processing.QueueItems
         private const string _PRF_PFX = nameof(MeshBurialVegetationQueueItem) + ".";
         private static VegetationSystemPro _system;
 
+        private static readonly ProfilerMarker _PRF_GetAllMatrices =
+            new(_PRF_PFX + nameof(GetAllMatrices));
+
+        private static readonly ProfilerMarker _PRF_SetAllMatrices =
+            new(_PRF_PFX + nameof(SetAllMatrices));
+
         public MeshBurialVegetationQueueItem(
             int cellIndex,
             int packageIndex,
@@ -81,7 +87,6 @@ namespace Appalachia.Spatial.MeshBurial.Processing.QueueItems
         {
         }
 
-        private static readonly ProfilerMarker _PRF_GetAllMatrices = new ProfilerMarker(_PRF_PFX + nameof(GetAllMatrices));
         public override void GetAllMatrices(NativeList<float4x4> matrices)
         {
             using (_PRF_GetAllMatrices.Auto())
@@ -92,11 +97,11 @@ namespace Appalachia.Spatial.MeshBurial.Processing.QueueItems
 
                 matrices.Length = items.Length;
 
-                new TransformationJob_MatrixInstance_float4x4 {input = items, output = matrices}.Run(items.Length);
+                new TransformationJob_MatrixInstance_float4x4 {input = items, output = matrices}
+                   .Run(items.Length);
             }
         }
 
-        private static readonly ProfilerMarker _PRF_SetAllMatrices = new ProfilerMarker(_PRF_PFX + nameof(SetAllMatrices));
         public override void SetAllMatrices(NativeArray<float4x4> matrices)
         {
             using (_PRF_SetAllMatrices.Auto())
@@ -105,13 +110,17 @@ namespace Appalachia.Spatial.MeshBurial.Processing.QueueItems
                 var packageInstances = cell.VegetationPackageInstancesList[packageIndex];
                 var items = packageInstances.VegetationItemMatrixList[itemIndex];
 
-                new TransformationJob_float4x4_MatrixInstance {input = matrices, output = items}.Run(items.Length);
+                new TransformationJob_float4x4_MatrixInstance {input = matrices, output = items}
+                   .Run(items.Length);
             }
         }
 
         public override string ToString()
         {
-            return _system.VegetationPackageProList[packageIndex].VegetationInfoList[itemIndex].VegetationPrefab.name + " Queue Item";
+            return _system.VegetationPackageProList[packageIndex]
+                          .VegetationInfoList[itemIndex]
+                          .VegetationPrefab.name +
+                   " Queue Item";
         }
     }
 }

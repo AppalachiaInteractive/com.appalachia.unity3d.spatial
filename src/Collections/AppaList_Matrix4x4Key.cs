@@ -15,11 +15,10 @@ namespace Appalachia.Spatial.Collections
         {
         }
 
-        public AppaList_Matrix4x4Key(int capacity, float capacityIncreaseMultiplier = 2, bool noTracking = false) : base(
-            capacity,
-            capacityIncreaseMultiplier,
-            noTracking
-        )
+        public AppaList_Matrix4x4Key(
+            int capacity,
+            float capacityIncreaseMultiplier = 2,
+            bool noTracking = false) : base(capacity, capacityIncreaseMultiplier, noTracking)
         {
         }
 

@@ -10,7 +10,9 @@ using Sirenix.OdinInspector;
 namespace Appalachia.Spatial.MeshBurial
 {
     [Serializable]
-    public class MeshBurialOptimizationParameters : SelfSavingSingletonScriptableObject<MeshBurialOptimizationParameters>
+    public class
+        MeshBurialOptimizationParameters : SelfSavingSingletonScriptableObject<
+            MeshBurialOptimizationParameters>
     {
         public OptimizerType optimizerType = OptimizerType.RandomSearch;
 
@@ -25,9 +27,12 @@ namespace Appalachia.Spatial.MeshBurial
         public bool overrideIterations;
 
         internal bool _showNormalIterationOverride =>
-            overrideIterations && (optimizerType == OptimizerType.GridSearch || optimizerType == OptimizerType.RandomSearch);
+            overrideIterations &&
+            ((optimizerType == OptimizerType.GridSearch) ||
+             (optimizerType == OptimizerType.RandomSearch));
 
-        internal bool _showMultiIterationOverride => overrideIterations && !_showNormalIterationOverride;
+        internal bool _showMultiIterationOverride =>
+            overrideIterations && !_showNormalIterationOverride;
 
         /*
         private bool _showBayesian => optimizerType == OptimizerType.Bayesian;

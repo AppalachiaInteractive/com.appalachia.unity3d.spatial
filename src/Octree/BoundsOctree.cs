@@ -14,21 +14,27 @@ namespace Appalachia.Spatial.Octree
     {
         private const string _PRF_PFX = nameof(BoundsOctree<T>) + ".";
 
-        private static readonly ProfilerMarker _PRF_GetRayHits = new ProfilerMarker(_PRF_PFX + nameof(GetRayHits));
+        private static readonly ProfilerMarker _PRF_GetRayHits = new(_PRF_PFX + nameof(GetRayHits));
 
-        private static readonly ProfilerMarker _PRF_GetRayHitsWhere = new ProfilerMarker(_PRF_PFX + nameof(GetRayHitsWhere));
+        private static readonly ProfilerMarker _PRF_GetRayHitsWhere =
+            new(_PRF_PFX + nameof(GetRayHitsWhere));
 
-        private static readonly ProfilerMarker _PRF_CreateFromVectors = new ProfilerMarker(_PRF_PFX + nameof(CreateFromVectors));
+        private static readonly ProfilerMarker _PRF_CreateFromVectors =
+            new(_PRF_PFX + nameof(CreateFromVectors));
 
-        private static readonly ProfilerMarker _PRF_ContainedInTree = new ProfilerMarker(_PRF_PFX + nameof(ContainedInTree));
+        private static readonly ProfilerMarker _PRF_ContainedInTree =
+            new(_PRF_PFX + nameof(ContainedInTree));
 
-        private static readonly ProfilerMarker _PRF_GetAppropriateChildIndex = new ProfilerMarker(_PRF_PFX + nameof(GetAppropriateChildIndex));
+        private static readonly ProfilerMarker _PRF_GetAppropriateChildIndex =
+            new(_PRF_PFX + nameof(GetAppropriateChildIndex));
 
-        private static readonly ProfilerMarker _PRF_NodeIsEligible = new ProfilerMarker(_PRF_PFX + nameof(NodeIsEligible));
+        private static readonly ProfilerMarker _PRF_NodeIsEligible =
+            new(_PRF_PFX + nameof(NodeIsEligible));
 
-        private static readonly ProfilerMarker _PRF_Magnitude = new ProfilerMarker(_PRF_PFX + nameof(Magnitude));
+        private static readonly ProfilerMarker _PRF_Magnitude = new(_PRF_PFX + nameof(Magnitude));
 
-        private static readonly ProfilerMarker _PRF_MagnitudeSquared = new ProfilerMarker(_PRF_PFX + nameof(MagnitudeSquared));
+        private static readonly ProfilerMarker _PRF_MagnitudeSquared =
+            new(_PRF_PFX + nameof(MagnitudeSquared));
 
         public BoundsOctree(
             OctreeStyle style,
@@ -37,7 +43,15 @@ namespace Appalachia.Spatial.Octree
             int maxDepth = _MAX_DEPTH,
             int initialCapacity = _INITIAL_CAPACITY,
             float capacityIncreaseMultiplier = _CAPACITY_INCREASE_MULTIPLIER,
-            int depth = 0) : base(style, position, size, maxDepth, initialCapacity, capacityIncreaseMultiplier, depth)
+            int depth = 0) : base(
+            style,
+            position,
+            size,
+            maxDepth,
+            initialCapacity,
+            capacityIncreaseMultiplier,
+            depth
+        )
         {
         }
 
@@ -47,7 +61,14 @@ namespace Appalachia.Spatial.Octree
             int maxDepth = _MAX_DEPTH,
             int initialCapacity = _INITIAL_CAPACITY,
             float capacityIncreaseMultiplier = _CAPACITY_INCREASE_MULTIPLIER,
-            int depth = 0) : base(style, bounds, maxDepth, initialCapacity, capacityIncreaseMultiplier, depth)
+            int depth = 0) : base(
+            style,
+            bounds,
+            maxDepth,
+            initialCapacity,
+            capacityIncreaseMultiplier,
+            depth
+        )
         {
         }
 
@@ -62,7 +83,11 @@ namespace Appalachia.Spatial.Octree
             }
         }
 
-        public void GetRayHitsWhere(Ray ray, Predicate<T> predicate, AppaList<Bounds> keys, AppaList<T> values)
+        public void GetRayHitsWhere(
+            Ray ray,
+            Predicate<T> predicate,
+            AppaList<Bounds> keys,
+            AppaList<T> values)
         {
             using (_PRF_GetRayHitsWhere.Auto())
             {
@@ -104,11 +129,22 @@ namespace Appalachia.Spatial.Octree
             }
         }
 
-        protected override BoundsOctree<T> CreateFromVectors(OctreeStyle style, Vector3 position, Vector3 size, int depth)
+        protected override BoundsOctree<T> CreateFromVectors(
+            OctreeStyle style,
+            Vector3 position,
+            Vector3 size,
+            int depth)
         {
             using (_PRF_CreateFromVectors.Auto())
             {
-                return new BoundsOctree<T>(style, position, size, _maxDepth, _initialCapacity, depth);
+                return new BoundsOctree<T>(
+                    style,
+                    position,
+                    size,
+                    _maxDepth,
+                    _initialCapacity,
+                    depth
+                );
             }
         }
 

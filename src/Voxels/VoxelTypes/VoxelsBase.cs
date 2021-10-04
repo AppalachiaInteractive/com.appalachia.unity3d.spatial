@@ -25,45 +25,41 @@ using UnityEngine;
 
 namespace Appalachia.Spatial.Voxels.VoxelTypes
 {
-    public abstract class VoxelsBase<T, TRaycastHit> : IDisposable, IEquatable<VoxelsBase<T, TRaycastHit>>
+    public abstract class VoxelsBase<T, TRaycastHit> : IDisposable,
+                                                       IEquatable<VoxelsBase<T, TRaycastHit>>
         where T : VoxelsBase<T, TRaycastHit>
         where TRaycastHit : struct, IVoxelRaycastHit
     {
-        protected Transform _transform;
+        protected float3 _centerOfMass;
 
         protected Bounds _rawBounds;
         protected Bounds _rawWorldBounds;
+        protected Transform _transform;
+        protected bool _voidCenterOfMassCalculation;
+        protected float _volume;
+
+        protected JobHandle _voxelBaseJobHandle;
         protected Bounds _voxelBounds;
         protected Bounds _voxelWorldBounds;
-        protected float _volume;
-        protected float _worldVolume;
         protected float3 _worldCenterOfMass;
-        protected float3 _centerOfMass;
-        protected bool _voidCenterOfMassCalculation;
-
-        public VoxelPopulationStyle style;
+        protected float _worldVolume;
+        public float activeRatio;
+        public Collider[] colliders;
         public int faceCount;
-        public float3 resolution;
+        public int JOB_LOOP_SIZE = JOB_SIZE._LARGE;
 
         protected NativeFloatPtr nativeVolume;
         protected NativeFloatPtr nativeWorldVolume;
+        public MeshRenderer[] renderers;
+        public float3 resolution;
         public NativeArray3D<VoxelSamplePoint> samplePoints;
+
+        public VoxelPopulationStyle style;
         public NativeArray<Voxel> voxels;
         public NativeBitArray voxelsActive;
         public NativeIntPtr voxelsActiveCount;
-        public float activeRatio;
-        public MeshRenderer[] renderers;
-        public Collider[] colliders;
 
-        protected JobHandle _voxelBaseJobHandle;
-        public int JOB_LOOP_SIZE = JOB_SIZE._LARGE;
-        
         public abstract bool IsPersistent { get; }
-
-        public virtual void InitializeDataStore()
-        {
-            
-        }
 
         public float3 worldResolution => resolution * _transform.lossyScale;
 
@@ -113,7 +109,10 @@ namespace Appalachia.Spatial.Voxels.VoxelTypes
             {
                 if (_rawWorldBounds == default)
                 {
-                    throw new ClassNotProperlyInitializedException(nameof(T), nameof(_rawWorldBounds));
+                    throw new ClassNotProperlyInitializedException(
+                        nameof(T),
+                        nameof(_rawWorldBounds)
+                    );
                 }
 
                 return _rawWorldBounds;
@@ -140,7 +139,10 @@ namespace Appalachia.Spatial.Voxels.VoxelTypes
             {
                 if (_voxelWorldBounds == default)
                 {
-                    throw new ClassNotProperlyInitializedException(nameof(T), nameof(_voxelWorldBounds));
+                    throw new ClassNotProperlyInitializedException(
+                        nameof(T),
+                        nameof(_voxelWorldBounds)
+                    );
                 }
 
                 return _voxelWorldBounds;
@@ -180,6 +182,10 @@ namespace Appalachia.Spatial.Voxels.VoxelTypes
 
         public int count => voxels.IsCreated ? voxels.Length : 0;
 
+        public virtual void InitializeDataStore()
+        {
+        }
+
 #region Spatial Query
 
         public bool TryGetSamplePointIndices(float3 localPosition, out int3 samplePointIndex)
@@ -206,7 +212,11 @@ namespace Appalachia.Spatial.Voxels.VoxelTypes
                 samplePointIndex.y -= 1;
                 samplePointIndex.z -= 1;
 
-                samplePointIndex = math.clamp(samplePointIndex, int3.zero, samplePoints.Length - int3c.one);
+                samplePointIndex = math.clamp(
+                    samplePointIndex,
+                    int3.zero,
+                    samplePoints.Length - int3c.one
+                );
 
                 return true;
             }
@@ -295,14 +305,19 @@ namespace Appalachia.Spatial.Voxels.VoxelTypes
         {
             using (_PRF_RoundVector.Auto())
             {
-                return new Vector3(RoundValue(vector.x, resolution.x), RoundValue(vector.y, resolution.y), RoundValue(vector.z, resolution.z));
+                return new Vector3(
+                    RoundValue(vector.x, resolution.x),
+                    RoundValue(vector.y, resolution.y),
+                    RoundValue(vector.z, resolution.z)
+                );
             }
         }
 
         protected void CalculateVoxelActiveRatio()
         {
-            activeRatio = voxelsActiveCount.Value / (float)count;
+            activeRatio = voxelsActiveCount.Value / (float) count;
         }
+
         public JobHandle UpdateVoxelActiveRatio(float ratio)
         {
             using (_PRF_UpdateVoxelActiveRatio.Auto())
@@ -379,7 +394,9 @@ namespace Appalachia.Spatial.Voxels.VoxelTypes
 
                 using (_PRF_SetupPhysical_CreateCenterOfMassSetupJob.Auto())
                 {
-                    _voxelBaseJobHandle = new CenterOfMassSetupJob {voxels = voxels, centerOfMass = centerOfMass}.Schedule(_voxelBaseJobHandle);
+                    _voxelBaseJobHandle =
+                        new CenterOfMassSetupJob {voxels = voxels, centerOfMass = centerOfMass}
+                           .Schedule(_voxelBaseJobHandle);
                 }
 
                 return _voxelBaseJobHandle;
@@ -420,7 +437,9 @@ namespace Appalachia.Spatial.Voxels.VoxelTypes
                 {
                     using (_PRF_UpdatePhysical_CreateCenterOfMassSetupJob.Auto())
                     {
-                        _voxelBaseJobHandle = new CenterOfMassSetupJob {voxels = voxels, centerOfMass = centerOfMass}.Schedule(_voxelBaseJobHandle);
+                        _voxelBaseJobHandle =
+                            new CenterOfMassSetupJob {voxels = voxels, centerOfMass = centerOfMass}
+                               .Schedule(_voxelBaseJobHandle);
                     }
                 }
 
@@ -497,7 +516,13 @@ namespace Appalachia.Spatial.Voxels.VoxelTypes
 
                     var voxel = voxels[i];
 
-                    voxel.UpdatePhysical(matrix, inverseMatrix, resolution, worldResolution, deltaTime);
+                    voxel.UpdatePhysical(
+                        matrix,
+                        inverseMatrix,
+                        resolution,
+                        worldResolution,
+                        deltaTime
+                    );
 
                     voxels[i] = voxel;
                 }
@@ -536,7 +561,8 @@ namespace Appalachia.Spatial.Voxels.VoxelTypes
                 {
                     var voxel = voxels[i];
 
-                    voxel.normalizedDistanceToCenterOfMass = (voxel.distanceToCenterOfMass - minDistance) / denom;
+                    voxel.normalizedDistanceToCenterOfMass =
+                        (voxel.distanceToCenterOfMass - minDistance) / denom;
                 }
             }
         }
@@ -592,7 +618,11 @@ namespace Appalachia.Spatial.Voxels.VoxelTypes
             }
         }
 
-        public bool Raycast(Vector3 origin, Vector3 direction, out TRaycastHit hitInfo, float maxDistance)
+        public bool Raycast(
+            Vector3 origin,
+            Vector3 direction,
+            out TRaycastHit hitInfo,
+            float maxDistance)
         {
             using (_PRF_Raycast.Auto())
             {
@@ -620,7 +650,12 @@ namespace Appalachia.Spatial.Voxels.VoxelTypes
         {
             using (_PRF_Raycast.Auto())
             {
-                return Internal_Raycast(ray.origin, ray.direction, out hitInfo, float.PositiveInfinity);
+                return Internal_Raycast(
+                    ray.origin,
+                    ray.direction,
+                    out hitInfo,
+                    float.PositiveInfinity
+                );
             }
         }
 
@@ -694,11 +729,20 @@ namespace Appalachia.Spatial.Voxels.VoxelTypes
         {
             using (_PRF_RaycastNonAlloc.Auto())
             {
-                return Internal_RaycastNonAlloc(ray.origin, ray.direction, results, float.PositiveInfinity);
+                return Internal_RaycastNonAlloc(
+                    ray.origin,
+                    ray.direction,
+                    results,
+                    float.PositiveInfinity
+                );
             }
         }
 
-        public int RaycastNonAlloc(Vector3 origin, Vector3 direction, TRaycastHit[] results, float maxDistance)
+        public int RaycastNonAlloc(
+            Vector3 origin,
+            Vector3 direction,
+            TRaycastHit[] results,
+            float maxDistance)
         {
             using (_PRF_RaycastNonAlloc.Auto())
             {
@@ -719,9 +763,12 @@ namespace Appalachia.Spatial.Voxels.VoxelTypes
 #region Raycast Internals
 
         private static readonly TRaycastHit[] _empty = new TRaycastHit[0];
-        private static readonly NonSerializedList<TRaycastHit> _hits = new NonSerializedList<TRaycastHit>();
+        private static readonly NonSerializedList<TRaycastHit> _hits = new();
 
-        protected TRaycastHit[] Internal_RaycastAll(float3 origin, float3 direction, float maxDistance)
+        protected TRaycastHit[] Internal_RaycastAll(
+            float3 origin,
+            float3 direction,
+            float maxDistance)
         {
             using (_PRF_Internal_RaycastAll.Auto())
             {
@@ -782,7 +829,11 @@ namespace Appalachia.Spatial.Voxels.VoxelTypes
             }
         }
 
-        protected int Internal_RaycastNonAlloc(float3 origin, float3 direction, TRaycastHit[] results, float maxDistance)
+        protected int Internal_RaycastNonAlloc(
+            float3 origin,
+            float3 direction,
+            TRaycastHit[] results,
+            float maxDistance)
         {
             using (_PRF_Internal_RaycastNonAlloc.Auto())
             {
@@ -823,7 +874,11 @@ namespace Appalachia.Spatial.Voxels.VoxelTypes
             }
         }
 
-        protected bool Internal_Raycast(float3 origin, float3 direction, out TRaycastHit hitInfo, float maxDistance)
+        protected bool Internal_Raycast(
+            float3 origin,
+            float3 direction,
+            out TRaycastHit hitInfo,
+            float maxDistance)
         {
             using (_PRF_Internal_Raycast.Auto())
             {
@@ -854,9 +909,17 @@ namespace Appalachia.Spatial.Voxels.VoxelTypes
             }
         }
 
-        protected abstract TRaycastHit PrepareRaycastHit(int voxelIndex, Voxel voxel, float distance);
+        protected abstract TRaycastHit PrepareRaycastHit(
+            int voxelIndex,
+            Voxel voxel,
+            float distance);
 
-        protected bool ShouldCastRay(float3 origin, float3 direction, out float3 localRayStart, out float3 localRayDirection, out float rayDistance)
+        protected bool ShouldCastRay(
+            float3 origin,
+            float3 direction,
+            out float3 localRayStart,
+            out float3 localRayDirection,
+            out float rayDistance)
         {
             using (_PRF_ShouldCastRay.Auto())
             {
@@ -875,7 +938,10 @@ namespace Appalachia.Spatial.Voxels.VoxelTypes
                 localRayStart = worldToLocal.MultiplyPoint3x4(origin);
                 localRayDirection = worldToLocal.MultiplyVector(direction);
 
-                if (!rawBounds.IntersectRay(new Ray(localRayStart, localRayDirection), out var distanceToBounds))
+                if (!rawBounds.IntersectRay(
+                    new Ray(localRayStart, localRayDirection),
+                    out var distanceToBounds
+                ))
                 {
                     localRayStart = float3.zero;
                     localRayDirection = float3.zero;
@@ -883,13 +949,22 @@ namespace Appalachia.Spatial.Voxels.VoxelTypes
                     return false;
                 }
 
-                localRayStart = RoundVector(localRayStart + (localRayDirection * distanceToBounds), resolution);
+                localRayStart = RoundVector(
+                    localRayStart + (localRayDirection * distanceToBounds),
+                    resolution
+                );
 
                 var maximumIntersectingRayLength = math.distance(voxelBounds.max, voxelBounds.min);
 
-                var oppositeSideRayStart = localRayStart + (localRayDirection * maximumIntersectingRayLength * -1.5f);
+                var oppositeSideRayStart = localRayStart +
+                                           (localRayDirection *
+                                            maximumIntersectingRayLength *
+                                            -1.5f);
 
-                if (!rawBounds.IntersectRay(new Ray(oppositeSideRayStart, -localRayDirection), out var oppositeDistanceToBounds))
+                if (!rawBounds.IntersectRay(
+                    new Ray(oppositeSideRayStart, -localRayDirection),
+                    out var oppositeDistanceToBounds
+                ))
                 {
                     localRayStart = float3.zero;
                     localRayDirection = float3.zero;
@@ -906,7 +981,7 @@ namespace Appalachia.Spatial.Voxels.VoxelTypes
             }
         }
 
-        private static readonly NonSerializedList<int3> _traversedVoxels = new NonSerializedList<int3>();
+        private static readonly NonSerializedList<int3> _traversedVoxels = new();
 
         protected NonSerializedList<int3> GetTraversedVoxels(float3 o, float3 v)
         {
@@ -914,7 +989,13 @@ namespace Appalachia.Spatial.Voxels.VoxelTypes
             {
                 _traversedVoxels.ClearFast();
 
-                if (!ShouldCastRay(o, v, out var rayStart, out var rayDirection, out var rayDistance))
+                if (!ShouldCastRay(
+                    o,
+                    v,
+                    out var rayStart,
+                    out var rayDirection,
+                    out var rayDistance
+                ))
                 {
                     return _traversedVoxels;
                 }
@@ -938,7 +1019,11 @@ namespace Appalachia.Spatial.Voxels.VoxelTypes
                 );
 
                 // In which direction the voxel ids are incremented.
-                var step = new int3(rayDirection.x >= 0 ? 1 : -1, rayDirection.y >= 0 ? 1 : -1, rayDirection.z >= 0 ? 1 : -1);
+                var step = new int3(
+                    rayDirection.x >= 0 ? 1 : -1,
+                    rayDirection.y >= 0 ? 1 : -1,
+                    rayDirection.z >= 0 ? 1 : -1
+                );
 
                 // Distance along the ray to the next voxel border from the current position (tMaxX, tMaxY, tMaxZ).
                 var nextVoxelBoundary = new float3(
@@ -950,9 +1035,15 @@ namespace Appalachia.Spatial.Voxels.VoxelTypes
                 // tMaxX, tMaxY, tMaxZ -- distance until next intersection with voxel-border
                 // the value of t at which the ray crosses the first vertical voxel boundary
                 var maximumTraversal = new float3(
-                    math.abs(rayDirection.x) > float.Epsilon ? (nextVoxelBoundary.x - rayStart.x) / rayDirection.x : float.MaxValue,
-                    math.abs(rayDirection.y) > float.Epsilon ? (nextVoxelBoundary.y - rayStart.y) / rayDirection.y : float.MaxValue,
-                    math.abs(rayDirection.z) > float.Epsilon ? (nextVoxelBoundary.z - rayStart.z) / rayDirection.z : float.MaxValue
+                    math.abs(rayDirection.x) > float.Epsilon
+                        ? (nextVoxelBoundary.x - rayStart.x) / rayDirection.x
+                        : float.MaxValue,
+                    math.abs(rayDirection.y) > float.Epsilon
+                        ? (nextVoxelBoundary.y - rayStart.y) / rayDirection.y
+                        : float.MaxValue,
+                    math.abs(rayDirection.z) > float.Epsilon
+                        ? (nextVoxelBoundary.z - rayStart.z) / rayDirection.z
+                        : float.MaxValue
                 );
 
                 // tDeltaX, tDeltaY, tDeltaZ --
@@ -960,9 +1051,15 @@ namespace Appalachia.Spatial.Voxels.VoxelTypes
                 // the direction in which we traverse the grid
                 // can only be FLT_MAX if we never go in that direction
                 var traversalDelta = new float3(
-                    math.abs(rayDirection.x) > float.Epsilon ? (resolution.x / rayDirection.x) * step.x : float.MaxValue,
-                    math.abs(rayDirection.y) > float.Epsilon ? (resolution.y / rayDirection.y) * step.y : float.MaxValue,
-                    math.abs(rayDirection.z) > float.Epsilon ? (resolution.z / rayDirection.z) * step.z : float.MaxValue
+                    math.abs(rayDirection.x) > float.Epsilon
+                        ? (resolution.x / rayDirection.x) * step.x
+                        : float.MaxValue,
+                    math.abs(rayDirection.y) > float.Epsilon
+                        ? (resolution.y / rayDirection.y) * step.y
+                        : float.MaxValue,
+                    math.abs(rayDirection.z) > float.Epsilon
+                        ? (resolution.z / rayDirection.z) * step.z
+                        : float.MaxValue
                 );
 
                 var diff = int3.zero;
@@ -1069,8 +1166,11 @@ namespace Appalachia.Spatial.Voxels.VoxelTypes
                    _voxelBaseJobHandle.Equals(other._voxelBaseJobHandle) &&
                    (JOB_LOOP_SIZE == other.JOB_LOOP_SIZE) &&
                    _gizmo_voxelBounds.Equals(other._gizmo_voxelBounds) &&
-                   Equals(_gizmo_voxelBoundsSubdivisionLineSegments, other._gizmo_voxelBoundsSubdivisionLineSegments) &&
-                   Equals(_testHits,                                 other._testHits);
+                   Equals(
+                       _gizmo_voxelBoundsSubdivisionLineSegments,
+                       other._gizmo_voxelBoundsSubdivisionLineSegments
+                   ) &&
+                   Equals(_testHits, other._testHits);
         }
 
         public override bool Equals(object obj)
@@ -1121,18 +1221,24 @@ namespace Appalachia.Spatial.Voxels.VoxelTypes
                 hashCode = (hashCode * 397) ^ JOB_LOOP_SIZE;
                 hashCode = (hashCode * 397) ^ _gizmo_voxelBounds.GetHashCode();
                 hashCode = (hashCode * 397) ^
-                           (_gizmo_voxelBoundsSubdivisionLineSegments != null ? _gizmo_voxelBoundsSubdivisionLineSegments.GetHashCode() : 0);
+                           (_gizmo_voxelBoundsSubdivisionLineSegments != null
+                               ? _gizmo_voxelBoundsSubdivisionLineSegments.GetHashCode()
+                               : 0);
                 hashCode = (hashCode * 397) ^ (_testHits != null ? _testHits.GetHashCode() : 0);
                 return hashCode;
             }
         }
 
-        public static bool operator ==(VoxelsBase<T, TRaycastHit> left, VoxelsBase<T, TRaycastHit> right)
+        public static bool operator ==(
+            VoxelsBase<T, TRaycastHit> left,
+            VoxelsBase<T, TRaycastHit> right)
         {
             return Equals(left, right);
         }
 
-        public static bool operator !=(VoxelsBase<T, TRaycastHit> left, VoxelsBase<T, TRaycastHit> right)
+        public static bool operator !=(
+            VoxelsBase<T, TRaycastHit> left,
+            VoxelsBase<T, TRaycastHit> right)
         {
             return !Equals(left, right);
         }
@@ -1222,56 +1328,86 @@ namespace Appalachia.Spatial.Voxels.VoxelTypes
 
         private const string _PRF_PFX = nameof(VoxelsBase<T, TRaycastHit>) + ".";
 
-        private static readonly ProfilerMarker _PRF_Initialize = new ProfilerMarker(_PRF_PFX + nameof(Initialize));
-        private static readonly ProfilerMarker _PRF_Synchronize = new ProfilerMarker(_PRF_PFX + nameof(Synchronize));
-        private static readonly ProfilerMarker _PRF_UpdateBounds = new ProfilerMarker(_PRF_PFX + nameof(UpdateBounds));
-        private static readonly ProfilerMarker _PRF_SynchronizeBounds = new ProfilerMarker(_PRF_PFX + nameof(SynchronizeBounds));
-        private static readonly ProfilerMarker _PRF_UpdateVoxelActiveRatio = new ProfilerMarker(_PRF_PFX + nameof(UpdateVoxelActiveRatio));
+        private static readonly ProfilerMarker _PRF_Initialize = new(_PRF_PFX + nameof(Initialize));
+
+        private static readonly ProfilerMarker _PRF_Synchronize =
+            new(_PRF_PFX + nameof(Synchronize));
+
+        private static readonly ProfilerMarker _PRF_UpdateBounds =
+            new(_PRF_PFX + nameof(UpdateBounds));
+
+        private static readonly ProfilerMarker _PRF_SynchronizeBounds =
+            new(_PRF_PFX + nameof(SynchronizeBounds));
+
+        private static readonly ProfilerMarker _PRF_UpdateVoxelActiveRatio =
+            new(_PRF_PFX + nameof(UpdateVoxelActiveRatio));
 
         private static readonly ProfilerMarker _PRF_UpdateVoxelActiveRatio_CreateUpdateActiveJob =
-            new ProfilerMarker(_PRF_PFX + nameof(UpdateVoxelActiveRatio) + ".CreateUpdateActiveJob");
+            new(_PRF_PFX + nameof(UpdateVoxelActiveRatio) + ".CreateUpdateActiveJob");
 
-        private static readonly ProfilerMarker _PRF_SetupPhysical = new ProfilerMarker(_PRF_PFX + nameof(SetupPhysical));
+        private static readonly ProfilerMarker _PRF_SetupPhysical =
+            new(_PRF_PFX + nameof(SetupPhysical));
 
         private static readonly ProfilerMarker _PRF_SetupPhysical_CreateCenterOfMassSetupJob =
-            new ProfilerMarker(_PRF_PFX + nameof(SetupPhysical) + ".CreateCenterOfMassSetupJob");
+            new(_PRF_PFX + nameof(SetupPhysical) + ".CreateCenterOfMassSetupJob");
 
-        private static readonly ProfilerMarker _PRF_UpdatePhysical = new ProfilerMarker(_PRF_PFX + nameof(UpdatePhysical));
+        private static readonly ProfilerMarker _PRF_UpdatePhysical =
+            new(_PRF_PFX + nameof(UpdatePhysical));
 
         private static readonly ProfilerMarker _PRF_UpdatePhysical_CompleteVoxelToWorldJob =
-            new ProfilerMarker(_PRF_PFX + nameof(UpdatePhysical) + ".CompleteVoxelToWorldJob");
+            new(_PRF_PFX + nameof(UpdatePhysical) + ".CompleteVoxelToWorldJob");
 
         private static readonly ProfilerMarker _PRF_UpdatePhysical_UpdateVolume =
-            new ProfilerMarker(_PRF_PFX + nameof(UpdatePhysical) + ".UpdateVolume");
+            new(_PRF_PFX + nameof(UpdatePhysical) + ".UpdateVolume");
 
         private static readonly ProfilerMarker _PRF_UpdatePhysical_CreateVoxelToWorldJob =
-            new ProfilerMarker(_PRF_PFX + nameof(UpdatePhysical) + ".CreateVoxelToWorldJob");
+            new(_PRF_PFX + nameof(UpdatePhysical) + ".CreateVoxelToWorldJob");
 
         private static readonly ProfilerMarker _PRF_UpdatePhysical_CreateVoxelVolumeUpdateJob =
-            new ProfilerMarker(_PRF_PFX + nameof(UpdatePhysical) + ".CreateVoxeVolumeUpdateJob");
+            new(_PRF_PFX + nameof(UpdatePhysical) + ".CreateVoxeVolumeUpdateJob");
 
         private static readonly ProfilerMarker _PRF_UpdatePhysical_ScheduleBatchedJobs =
-            new ProfilerMarker(_PRF_PFX + nameof(UpdatePhysical) + ".ScheduleBatchedJobs");
+            new(_PRF_PFX + nameof(UpdatePhysical) + ".ScheduleBatchedJobs");
 
         private static readonly ProfilerMarker _PRF_UpdatePhysical_UpdateVolumeParams =
-            new ProfilerMarker(_PRF_PFX + nameof(UpdatePhysical) + ".UpdateVolumeParams");
+            new(_PRF_PFX + nameof(UpdatePhysical) + ".UpdateVolumeParams");
 
         private static readonly ProfilerMarker _PRF_UpdatePhysical_CreateCenterOfMassSetupJob =
-            new ProfilerMarker(_PRF_PFX + nameof(UpdatePhysical) + ".CreateCenterOfMassSetupJob");
+            new(_PRF_PFX + nameof(UpdatePhysical) + ".CreateCenterOfMassSetupJob");
 
-        private static readonly ProfilerMarker _PRF_CompletePhysical = new ProfilerMarker(_PRF_PFX + nameof(CompletePhysical));
-        private static readonly ProfilerMarker _PRF_TryGetSamplePointIndices = new ProfilerMarker(_PRF_PFX + nameof(TryGetSamplePointIndices));
-        private static readonly ProfilerMarker _PRF_Raycast = new ProfilerMarker(_PRF_PFX + nameof(Raycast));
-        private static readonly ProfilerMarker _PRF_Linecast = new ProfilerMarker(_PRF_PFX + nameof(Linecast));
-        private static readonly ProfilerMarker _PRF_RaycastNonAlloc = new ProfilerMarker(_PRF_PFX + nameof(RaycastNonAlloc));
-        private static readonly ProfilerMarker _PRF_RaycastAll = new ProfilerMarker(_PRF_PFX + nameof(RaycastAll));
-        private static readonly ProfilerMarker _PRF_Internal_Raycast = new ProfilerMarker(_PRF_PFX + nameof(Internal_Raycast));
-        private static readonly ProfilerMarker _PRF_Internal_RaycastNonAlloc = new ProfilerMarker(_PRF_PFX + nameof(Internal_RaycastNonAlloc));
-        private static readonly ProfilerMarker _PRF_Internal_RaycastAll = new ProfilerMarker(_PRF_PFX + nameof(Internal_RaycastAll));
-        private static readonly ProfilerMarker _PRF_RoundVector = new ProfilerMarker(_PRF_PFX + nameof(RoundVector));
-        private static readonly ProfilerMarker _PRF_ShouldCastRay = new ProfilerMarker(_PRF_PFX + nameof(ShouldCastRay));
-        private static readonly ProfilerMarker _PRF_GetTraversedVoxels = new ProfilerMarker(_PRF_PFX + nameof(GetTraversedVoxels));
-        private static readonly ProfilerMarker _PRF_RoundValue = new ProfilerMarker(_PRF_PFX + nameof(RoundValue));
+        private static readonly ProfilerMarker _PRF_CompletePhysical =
+            new(_PRF_PFX + nameof(CompletePhysical));
+
+        private static readonly ProfilerMarker _PRF_TryGetSamplePointIndices =
+            new(_PRF_PFX + nameof(TryGetSamplePointIndices));
+
+        private static readonly ProfilerMarker _PRF_Raycast = new(_PRF_PFX + nameof(Raycast));
+        private static readonly ProfilerMarker _PRF_Linecast = new(_PRF_PFX + nameof(Linecast));
+
+        private static readonly ProfilerMarker _PRF_RaycastNonAlloc =
+            new(_PRF_PFX + nameof(RaycastNonAlloc));
+
+        private static readonly ProfilerMarker _PRF_RaycastAll = new(_PRF_PFX + nameof(RaycastAll));
+
+        private static readonly ProfilerMarker _PRF_Internal_Raycast =
+            new(_PRF_PFX + nameof(Internal_Raycast));
+
+        private static readonly ProfilerMarker _PRF_Internal_RaycastNonAlloc =
+            new(_PRF_PFX + nameof(Internal_RaycastNonAlloc));
+
+        private static readonly ProfilerMarker _PRF_Internal_RaycastAll =
+            new(_PRF_PFX + nameof(Internal_RaycastAll));
+
+        private static readonly ProfilerMarker _PRF_RoundVector =
+            new(_PRF_PFX + nameof(RoundVector));
+
+        private static readonly ProfilerMarker _PRF_ShouldCastRay =
+            new(_PRF_PFX + nameof(ShouldCastRay));
+
+        private static readonly ProfilerMarker _PRF_GetTraversedVoxels =
+            new(_PRF_PFX + nameof(GetTraversedVoxels));
+
+        private static readonly ProfilerMarker _PRF_RoundValue = new(_PRF_PFX + nameof(RoundValue));
 
 #endregion
 
@@ -1332,9 +1468,12 @@ namespace Appalachia.Spatial.Voxels.VoxelTypes
             }
         }
 
-        private static readonly ProfilerMarker _PRF_DrawSamplePoints = new ProfilerMarker(_PRF_PFX + nameof(DrawSamplePoints));
+        private static readonly ProfilerMarker _PRF_DrawSamplePoints =
+            new(_PRF_PFX + nameof(DrawSamplePoints));
 
-        protected void DrawSamplePoints(VoxelDataGizmoSettings settings, SmartHandles.UnifiedDrawingScope scope)
+        protected void DrawSamplePoints(
+            VoxelDataGizmoSettings settings,
+            SmartHandles.UnifiedDrawingScope scope)
         {
             using (_PRF_DrawSamplePoints.Auto())
             {
@@ -1371,9 +1510,11 @@ namespace Appalachia.Spatial.Voxels.VoxelTypes
             }
         }
 
-        private static readonly ProfilerMarker _PRF_DrawVoxels = new ProfilerMarker(_PRF_PFX + nameof(DrawVoxels));
+        private static readonly ProfilerMarker _PRF_DrawVoxels = new(_PRF_PFX + nameof(DrawVoxels));
 
-        protected void DrawVoxels(VoxelDataGizmoSettings settings, SmartHandles.UnifiedDrawingScope scope)
+        protected void DrawVoxels(
+            VoxelDataGizmoSettings settings,
+            SmartHandles.UnifiedDrawingScope scope)
         {
             using (_PRF_DrawVoxels.Auto())
             {
@@ -1410,9 +1551,11 @@ namespace Appalachia.Spatial.Voxels.VoxelTypes
             }
         }
 
-        private static readonly ProfilerMarker _PRF_DrawFaces = new ProfilerMarker(_PRF_PFX + nameof(DrawFaces));
+        private static readonly ProfilerMarker _PRF_DrawFaces = new(_PRF_PFX + nameof(DrawFaces));
 
-        protected void DrawFaces(VoxelDataGizmoSettings settings, SmartHandles.UnifiedDrawingScope scope)
+        protected void DrawFaces(
+            VoxelDataGizmoSettings settings,
+            SmartHandles.UnifiedDrawingScope scope)
         {
             using (_PRF_DrawFaces.Auto())
             {
@@ -1449,9 +1592,12 @@ namespace Appalachia.Spatial.Voxels.VoxelTypes
             }
         }
 
-        private static readonly ProfilerMarker _PRF_DrawNormals = new ProfilerMarker(_PRF_PFX + nameof(DrawNormals));
+        private static readonly ProfilerMarker _PRF_DrawNormals =
+            new(_PRF_PFX + nameof(DrawNormals));
 
-        protected void DrawNormals(VoxelDataGizmoSettings settings, SmartHandles.UnifiedDrawingScope scope)
+        protected void DrawNormals(
+            VoxelDataGizmoSettings settings,
+            SmartHandles.UnifiedDrawingScope scope)
         {
             using (_PRF_DrawNormals.Auto())
             {
@@ -1481,14 +1627,20 @@ namespace Appalachia.Spatial.Voxels.VoxelTypes
                         scope.color = gizmoColor;
                     }
 
-                    UnityEngine.Gizmos.DrawLine(voxel.position, voxel.position + (voxel.faceData.normal * gizmoSize));
+                    UnityEngine.Gizmos.DrawLine(
+                        voxel.position,
+                        voxel.position + (voxel.faceData.normal * gizmoSize)
+                    );
                 }
             }
         }
 
-        private static readonly ProfilerMarker _PRF_DrawNormalFaces = new ProfilerMarker(_PRF_PFX + nameof(DrawNormalFaces));
+        private static readonly ProfilerMarker _PRF_DrawNormalFaces =
+            new(_PRF_PFX + nameof(DrawNormalFaces));
 
-        protected void DrawNormalFaces(VoxelDataGizmoSettings settings, SmartHandles.UnifiedDrawingScope scope)
+        protected void DrawNormalFaces(
+            VoxelDataGizmoSettings settings,
+            SmartHandles.UnifiedDrawingScope scope)
         {
             using (_PRF_DrawNormalFaces.Auto())
             {
@@ -1520,40 +1672,60 @@ namespace Appalachia.Spatial.Voxels.VoxelTypes
 
                     if (voxel.faceData.forward)
                     {
-                        SmartHandles.DrawWireCube(voxel.position + (float3c.forward * settings.normalFacesGizmoOffset), gizmoSize);
+                        SmartHandles.DrawWireCube(
+                            voxel.position + (float3c.forward * settings.normalFacesGizmoOffset),
+                            gizmoSize
+                        );
                     }
 
                     if (voxel.faceData.back)
                     {
-                        SmartHandles.DrawWireCube(voxel.position + (float3c.back * settings.normalFacesGizmoOffset), gizmoSize);
+                        SmartHandles.DrawWireCube(
+                            voxel.position + (float3c.back * settings.normalFacesGizmoOffset),
+                            gizmoSize
+                        );
                     }
 
                     if (voxel.faceData.left)
                     {
-                        SmartHandles.DrawWireCube(voxel.position + (float3c.left * settings.normalFacesGizmoOffset), gizmoSize);
+                        SmartHandles.DrawWireCube(
+                            voxel.position + (float3c.left * settings.normalFacesGizmoOffset),
+                            gizmoSize
+                        );
                     }
 
                     if (voxel.faceData.right)
                     {
-                        SmartHandles.DrawWireCube(voxel.position + (float3c.right * settings.normalFacesGizmoOffset), gizmoSize);
+                        SmartHandles.DrawWireCube(
+                            voxel.position + (float3c.right * settings.normalFacesGizmoOffset),
+                            gizmoSize
+                        );
                     }
 
                     if (voxel.faceData.down)
                     {
-                        SmartHandles.DrawWireCube(voxel.position + (float3c.down * settings.normalFacesGizmoOffset), gizmoSize);
+                        SmartHandles.DrawWireCube(
+                            voxel.position + (float3c.down * settings.normalFacesGizmoOffset),
+                            gizmoSize
+                        );
                     }
 
                     if (voxel.faceData.up)
                     {
-                        SmartHandles.DrawWireCube(voxel.position + (float3c.up * settings.normalFacesGizmoOffset), gizmoSize);
+                        SmartHandles.DrawWireCube(
+                            voxel.position + (float3c.up * settings.normalFacesGizmoOffset),
+                            gizmoSize
+                        );
                     }
                 }
             }
         }
 
-        private static readonly ProfilerMarker _PRF_DrawBounds = new ProfilerMarker(_PRF_PFX + nameof(DrawBounds));
+        private static readonly ProfilerMarker _PRF_DrawBounds = new(_PRF_PFX + nameof(DrawBounds));
 
-        protected void DrawBounds(VoxelDataGizmoSettings settings, SmartHandles.UnifiedDrawingScope scope)
+        protected void DrawBounds(
+            VoxelDataGizmoSettings settings,
+            SmartHandles.UnifiedDrawingScope scope)
         {
             using (_PRF_DrawBounds.Auto())
             {
@@ -1570,9 +1742,12 @@ namespace Appalachia.Spatial.Voxels.VoxelTypes
         [NonSerialized] private Bounds _gizmo_voxelBounds;
         [NonSerialized] private Vector3[] _gizmo_voxelBoundsSubdivisionLineSegments;
 
-        private static readonly ProfilerMarker _PRF_DrawBoundsSubdivisions = new ProfilerMarker(_PRF_PFX + nameof(DrawBoundsSubdivisions));
+        private static readonly ProfilerMarker _PRF_DrawBoundsSubdivisions =
+            new(_PRF_PFX + nameof(DrawBoundsSubdivisions));
 
-        protected void DrawBoundsSubdivisions(VoxelDataGizmoSettings settings, SmartHandles.UnifiedDrawingScope scope)
+        protected void DrawBoundsSubdivisions(
+            VoxelDataGizmoSettings settings,
+            SmartHandles.UnifiedDrawingScope scope)
         {
             using (_PRF_DrawBoundsSubdivisions.Auto())
             {
@@ -1586,9 +1761,11 @@ namespace Appalachia.Spatial.Voxels.VoxelTypes
                     var gridCountZ = (int) (voxelBounds.size.z / resolution.z) + 1;
                     var gridCount = gridCountX + gridCountZ;
 
-                    if ((_gizmo_voxelBoundsSubdivisionLineSegments == null) || (_gizmo_voxelBoundsSubdivisionLineSegments.Length != (gridCount * 2)))
+                    if ((_gizmo_voxelBoundsSubdivisionLineSegments == null) ||
+                        (_gizmo_voxelBoundsSubdivisionLineSegments.Length != (gridCount * 2)))
                     {
-                        _gizmo_voxelBoundsSubdivisionLineSegments = new Vector3[4 + (gridCount * 2)];
+                        _gizmo_voxelBoundsSubdivisionLineSegments =
+                            new Vector3[4 + (gridCount * 2)];
                     }
 
                     var floor_y = -voxelBounds.extents.y;
@@ -1596,7 +1773,9 @@ namespace Appalachia.Spatial.Voxels.VoxelTypes
 
                     var index = 0;
 
-                    for (var grid_x = -voxelBounds.extents.x; grid_x <= voxelBounds.extents.x; grid_x += resolution.x)
+                    for (var grid_x = -voxelBounds.extents.x;
+                        grid_x <= voxelBounds.extents.x;
+                        grid_x += resolution.x)
                     {
                         var seg1 = new Vector3(grid_x, floor_y, -voxelBounds.extents.z);
                         var seg2 = new Vector3(grid_x, floor_y, voxelBounds.extents.z);
@@ -1607,7 +1786,9 @@ namespace Appalachia.Spatial.Voxels.VoxelTypes
                         index += 2;
                     }
 
-                    for (var grid_z = -voxelBounds.extents.z; grid_z <= voxelBounds.extents.z; grid_z += resolution.z)
+                    for (var grid_z = -voxelBounds.extents.z;
+                        grid_z <= voxelBounds.extents.z;
+                        grid_z += resolution.z)
                     {
                         var seg1 = new Vector3(-voxelBounds.extents.x, floor_y, grid_z);
                         var seg2 = new Vector3(voxelBounds.extents.x,  floor_y, grid_z);
@@ -1624,9 +1805,11 @@ namespace Appalachia.Spatial.Voxels.VoxelTypes
             }
         }
 
-        private static readonly ProfilerMarker _PRF_DrawGrid = new ProfilerMarker(_PRF_PFX + nameof(DrawGrid));
+        private static readonly ProfilerMarker _PRF_DrawGrid = new(_PRF_PFX + nameof(DrawGrid));
 
-        protected void DrawGrid(VoxelDataGizmoSettings settings, SmartHandles.UnifiedDrawingScope scope)
+        protected void DrawGrid(
+            VoxelDataGizmoSettings settings,
+            SmartHandles.UnifiedDrawingScope scope)
         {
             using (_PRF_DrawGrid.Auto())
             {
@@ -1658,10 +1841,14 @@ namespace Appalachia.Spatial.Voxels.VoxelTypes
             }
         }
 
-        private static readonly ProfilerMarker _PRF_TestRaycast = new ProfilerMarker(_PRF_PFX + nameof(TestRaycast));
+        private static readonly ProfilerMarker _PRF_TestRaycast =
+            new(_PRF_PFX + nameof(TestRaycast));
+
         [NonSerialized] private TRaycastHit[] _testHits;
 
-        protected void TestRaycast(VoxelDataGizmoSettings settings, SmartHandles.UnifiedDrawingScope scope)
+        protected void TestRaycast(
+            VoxelDataGizmoSettings settings,
+            SmartHandles.UnifiedDrawingScope scope)
         {
             using (_PRF_TestRaycast.Auto())
             {
@@ -1692,7 +1879,10 @@ namespace Appalachia.Spatial.Voxels.VoxelTypes
 
                 var hitCount = RaycastNonAlloc(ray, _testHits, rayDistance);
 
-                SmartHandles.DrawRay(ray, hitCount == 0 ? settings.rayMissColor : settings.rayHitColor);
+                SmartHandles.DrawRay(
+                    ray,
+                    hitCount == 0 ? settings.rayMissColor : settings.rayHitColor
+                );
 
                 for (var i = 0; i < hitCount; i++)
                 {

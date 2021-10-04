@@ -13,27 +13,32 @@ namespace Appalachia.Spatial.MeshBurial.Processing.QueueItems
     public abstract class MeshBurialManySameQueueItem : MeshBurialManyQueueItem
     {
         private const string _PRF_PFX = nameof(MeshBurialManySameQueueItem) + ".";
-        
+
+        private static readonly ProfilerMarker _PRF_OnInitializeInternal =
+            new(_PRF_PFX + nameof(OnInitializeInternal));
+
         [SerializeField] private GameObject _model;
         [SerializeField] private int _modelHashCode;
         [SerializeField] private bool _adoptTerrainNormal;
-        private MeshBurialSharedState _sharedState;
         private MeshBurialAdjustmentState _adjustmentState;
+        private MeshBurialSharedState _sharedState;
 
-        protected MeshBurialManySameQueueItem(string name, GameObject model, int length, bool adoptTerrainNormal = true) : base(name, length)
+        protected MeshBurialManySameQueueItem(
+            string name,
+            GameObject model,
+            int length,
+            bool adoptTerrainNormal = true) : base(name, length)
         {
             if (model == null)
             {
                 throw new ArgumentNullException(nameof(model));
             }
-            
+
             _model = model;
             _modelHashCode = _model.GetHashCode();
             _adoptTerrainNormal = adoptTerrainNormal;
         }
 
-        private static readonly ProfilerMarker _PRF_OnInitializeInternal = new ProfilerMarker(_PRF_PFX + nameof(OnInitializeInternal));
-        
         protected override void OnInitializeInternal()
         {
             using (_PRF_OnInitializeInternal.Auto())

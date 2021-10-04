@@ -17,7 +17,9 @@ namespace Appalachia.Spatial
             return scale;
         }
 
-        public static NativeArray<float> LoadHeightData(Texture2D heightmapTexture, Allocator allocator)
+        public static NativeArray<float> LoadHeightData(
+            Texture2D heightmapTexture,
+            Allocator allocator)
         {
             var heightmapSamples = new float[heightmapTexture.width, heightmapTexture.height];
 
@@ -42,11 +44,14 @@ namespace Appalachia.Spatial
         public static NativeArray<T> MirrorAndFlatten<T>(T[,] array2D, Allocator allocator)
             where T : struct
         {
-            var resultArray1D = new NativeArray<T>(array2D.GetLength(0) * array2D.GetLength(1), allocator);
+            var resultArray1D = new NativeArray<T>(
+                array2D.GetLength(0) * array2D.GetLength(1),
+                allocator
+            );
 
             var height = array2D.GetLength(0);
             var width = array2D.GetLength(1);
-            
+
             for (var y = 0; y < height; y++)
             {
                 for (var x = 0; x < width; x++)
@@ -66,7 +71,14 @@ namespace Appalachia.Spatial
             int heightmapHeight,
             float3 heightmapScale)
         {
-            var height = GetWorldSpaceHeight(worldPosition, terrainPosition, heights, heightmapWidth, heightmapHeight, heightmapScale);
+            var height = GetWorldSpaceHeight(
+                worldPosition,
+                terrainPosition,
+                heights,
+                heightmapWidth,
+                heightmapHeight,
+                heightmapScale
+            );
 
             var diff = worldPosition.y - height;
 
@@ -81,7 +93,14 @@ namespace Appalachia.Spatial
             int heightmapHeight,
             float3 heightmapScale)
         {
-            var height = GetWorldSpaceHeight(worldPosition, terrainPosition, heights, heightmapWidth, heightmapHeight, heightmapScale);
+            var height = GetWorldSpaceHeight(
+                worldPosition,
+                terrainPosition,
+                heights,
+                heightmapWidth,
+                heightmapHeight,
+                heightmapScale
+            );
 
             var diff = worldPosition.y - height;
 
@@ -109,10 +128,38 @@ namespace Appalachia.Spatial
             var xCoord = (int) x;
             var yCoord = (int) y;
 
-            var value00 = CalculateNormalSobel(heights, xCoord + 0, yCoord + 0, heightmapWidth, heightmapHeight, heightmapScale);
-            var value10 = CalculateNormalSobel(heights, xCoord + 1, yCoord + 0, heightmapWidth, heightmapHeight, heightmapScale);
-            var value01 = CalculateNormalSobel(heights, xCoord + 0, yCoord + 1, heightmapWidth, heightmapHeight, heightmapScale);
-            var value11 = CalculateNormalSobel(heights, xCoord + 1, yCoord + 1, heightmapWidth, heightmapHeight, heightmapScale);
+            var value00 = CalculateNormalSobel(
+                heights,
+                xCoord + 0,
+                yCoord + 0,
+                heightmapWidth,
+                heightmapHeight,
+                heightmapScale
+            );
+            var value10 = CalculateNormalSobel(
+                heights,
+                xCoord + 1,
+                yCoord + 0,
+                heightmapWidth,
+                heightmapHeight,
+                heightmapScale
+            );
+            var value01 = CalculateNormalSobel(
+                heights,
+                xCoord + 0,
+                yCoord + 1,
+                heightmapWidth,
+                heightmapHeight,
+                heightmapScale
+            );
+            var value11 = CalculateNormalSobel(
+                heights,
+                xCoord + 1,
+                yCoord + 1,
+                heightmapWidth,
+                heightmapHeight,
+                heightmapScale
+            );
 
             var xBlend = x - xCoord;
             var yBlend = y - yCoord;
@@ -146,10 +193,38 @@ namespace Appalachia.Spatial
             var xCoord = (int) x;
             var yCoord = (int) y;
 
-            var value00 = CalculateNormalSobel(heights, xCoord + 0, yCoord + 0, heightmapWidth, heightmapHeight, heightmapScale);
-            var value10 = CalculateNormalSobel(heights, xCoord + 1, yCoord + 0, heightmapWidth, heightmapHeight, heightmapScale);
-            var value01 = CalculateNormalSobel(heights, xCoord + 0, yCoord + 1, heightmapWidth, heightmapHeight, heightmapScale);
-            var value11 = CalculateNormalSobel(heights, xCoord + 1, yCoord + 1, heightmapWidth, heightmapHeight, heightmapScale);
+            var value00 = CalculateNormalSobel(
+                heights,
+                xCoord + 0,
+                yCoord + 0,
+                heightmapWidth,
+                heightmapHeight,
+                heightmapScale
+            );
+            var value10 = CalculateNormalSobel(
+                heights,
+                xCoord + 1,
+                yCoord + 0,
+                heightmapWidth,
+                heightmapHeight,
+                heightmapScale
+            );
+            var value01 = CalculateNormalSobel(
+                heights,
+                xCoord + 0,
+                yCoord + 1,
+                heightmapWidth,
+                heightmapHeight,
+                heightmapScale
+            );
+            var value11 = CalculateNormalSobel(
+                heights,
+                xCoord + 1,
+                yCoord + 1,
+                heightmapWidth,
+                heightmapHeight,
+                heightmapScale
+            );
 
             var xBlend = x - xCoord;
             var yBlend = y - yCoord;
@@ -161,7 +236,6 @@ namespace Appalachia.Spatial
 
             return math.normalizesafe(value);
         }
-
 
         public static float GetWorldSpaceHeight(
             float3 worldPosition,
@@ -184,10 +258,38 @@ namespace Appalachia.Spatial
             var xCoord = (int) x;
             var yCoord = (int) y;
 
-            var value00 = SampleHeightmap(heights, xCoord + 0, yCoord + 0, heightmapWidth, heightmapHeight, heightmapScale.y);
-            var value10 = SampleHeightmap(heights, xCoord + 1, yCoord + 0, heightmapWidth, heightmapHeight, heightmapScale.y);
-            var value01 = SampleHeightmap(heights, xCoord + 0, yCoord + 1, heightmapWidth, heightmapHeight, heightmapScale.y);
-            var value11 = SampleHeightmap(heights, xCoord + 1, yCoord + 1, heightmapWidth, heightmapHeight, heightmapScale.y);
+            var value00 = SampleHeightmap(
+                heights,
+                xCoord + 0,
+                yCoord + 0,
+                heightmapWidth,
+                heightmapHeight,
+                heightmapScale.y
+            );
+            var value10 = SampleHeightmap(
+                heights,
+                xCoord + 1,
+                yCoord + 0,
+                heightmapWidth,
+                heightmapHeight,
+                heightmapScale.y
+            );
+            var value01 = SampleHeightmap(
+                heights,
+                xCoord + 0,
+                yCoord + 1,
+                heightmapWidth,
+                heightmapHeight,
+                heightmapScale.y
+            );
+            var value11 = SampleHeightmap(
+                heights,
+                xCoord + 1,
+                yCoord + 1,
+                heightmapWidth,
+                heightmapHeight,
+                heightmapScale.y
+            );
 
             var xBlend = x - xCoord;
             var yBlend = y - yCoord;
@@ -221,10 +323,38 @@ namespace Appalachia.Spatial
             var xCoord = (int) x;
             var yCoord = (int) y;
 
-            var value00 = SampleHeightmap(heights, xCoord + 0, yCoord + 0, heightmapWidth, heightmapHeight, heightmapScale.y);
-            var value10 = SampleHeightmap(heights, xCoord + 1, yCoord + 0, heightmapWidth, heightmapHeight, heightmapScale.y);
-            var value01 = SampleHeightmap(heights, xCoord + 0, yCoord + 1, heightmapWidth, heightmapHeight, heightmapScale.y);
-            var value11 = SampleHeightmap(heights, xCoord + 1, yCoord + 1, heightmapWidth, heightmapHeight, heightmapScale.y);
+            var value00 = SampleHeightmap(
+                heights,
+                xCoord + 0,
+                yCoord + 0,
+                heightmapWidth,
+                heightmapHeight,
+                heightmapScale.y
+            );
+            var value10 = SampleHeightmap(
+                heights,
+                xCoord + 1,
+                yCoord + 0,
+                heightmapWidth,
+                heightmapHeight,
+                heightmapScale.y
+            );
+            var value01 = SampleHeightmap(
+                heights,
+                xCoord + 0,
+                yCoord + 1,
+                heightmapWidth,
+                heightmapHeight,
+                heightmapScale.y
+            );
+            var value11 = SampleHeightmap(
+                heights,
+                xCoord + 1,
+                yCoord + 1,
+                heightmapWidth,
+                heightmapHeight,
+                heightmapScale.y
+            );
 
             var xBlend = x - xCoord;
             var yBlend = y - yCoord;
@@ -246,21 +376,117 @@ namespace Appalachia.Spatial
             float3 heightmapScale)
         {
             float3 normal;
-            var dX = SampleHeightmap(heights, x - 1, y - 1, heightmapWidth, heightmapHeight, heightmapScale.y) * -1.0F;
-            dX += SampleHeightmap(heights, x - 1, y,     heightmapWidth, heightmapHeight, heightmapScale.y) * -2.0F;
-            dX += SampleHeightmap(heights, x - 1, y + 1, heightmapWidth, heightmapHeight, heightmapScale.y) * -1.0F;
-            dX += SampleHeightmap(heights, x + 1, y - 1, heightmapWidth, heightmapHeight, heightmapScale.y) * 1.0F;
-            dX += SampleHeightmap(heights, x + 1, y,     heightmapWidth, heightmapHeight, heightmapScale.y) * 2.0F;
-            dX += SampleHeightmap(heights, x + 1, y + 1, heightmapWidth, heightmapHeight, heightmapScale.y) * 1.0F;
+            var dX = SampleHeightmap(
+                         heights,
+                         x - 1,
+                         y - 1,
+                         heightmapWidth,
+                         heightmapHeight,
+                         heightmapScale.y
+                     ) *
+                     -1.0F;
+            dX += SampleHeightmap(
+                      heights,
+                      x - 1,
+                      y,
+                      heightmapWidth,
+                      heightmapHeight,
+                      heightmapScale.y
+                  ) *
+                  -2.0F;
+            dX += SampleHeightmap(
+                      heights,
+                      x - 1,
+                      y + 1,
+                      heightmapWidth,
+                      heightmapHeight,
+                      heightmapScale.y
+                  ) *
+                  -1.0F;
+            dX += SampleHeightmap(
+                      heights,
+                      x + 1,
+                      y - 1,
+                      heightmapWidth,
+                      heightmapHeight,
+                      heightmapScale.y
+                  ) *
+                  1.0F;
+            dX += SampleHeightmap(
+                      heights,
+                      x + 1,
+                      y,
+                      heightmapWidth,
+                      heightmapHeight,
+                      heightmapScale.y
+                  ) *
+                  2.0F;
+            dX += SampleHeightmap(
+                      heights,
+                      x + 1,
+                      y + 1,
+                      heightmapWidth,
+                      heightmapHeight,
+                      heightmapScale.y
+                  ) *
+                  1.0F;
 
             dX /= heightmapScale.x;
 
-            var dY = SampleHeightmap(heights, x - 1, y - 1, heightmapWidth, heightmapHeight, heightmapScale.y) * -1.0F;
-            dY += SampleHeightmap(heights, x,     y - 1, heightmapWidth, heightmapHeight, heightmapScale.y) * -2.0F;
-            dY += SampleHeightmap(heights, x + 1, y - 1, heightmapWidth, heightmapHeight, heightmapScale.y) * -1.0F;
-            dY += SampleHeightmap(heights, x - 1, y + 1, heightmapWidth, heightmapHeight, heightmapScale.y) * 1.0F;
-            dY += SampleHeightmap(heights, x,     y + 1, heightmapWidth, heightmapHeight, heightmapScale.y) * 2.0F;
-            dY += SampleHeightmap(heights, x + 1, y + 1, heightmapWidth, heightmapHeight, heightmapScale.y) * 1.0F;
+            var dY = SampleHeightmap(
+                         heights,
+                         x - 1,
+                         y - 1,
+                         heightmapWidth,
+                         heightmapHeight,
+                         heightmapScale.y
+                     ) *
+                     -1.0F;
+            dY += SampleHeightmap(
+                      heights,
+                      x,
+                      y - 1,
+                      heightmapWidth,
+                      heightmapHeight,
+                      heightmapScale.y
+                  ) *
+                  -2.0F;
+            dY += SampleHeightmap(
+                      heights,
+                      x + 1,
+                      y - 1,
+                      heightmapWidth,
+                      heightmapHeight,
+                      heightmapScale.y
+                  ) *
+                  -1.0F;
+            dY += SampleHeightmap(
+                      heights,
+                      x - 1,
+                      y + 1,
+                      heightmapWidth,
+                      heightmapHeight,
+                      heightmapScale.y
+                  ) *
+                  1.0F;
+            dY += SampleHeightmap(
+                      heights,
+                      x,
+                      y + 1,
+                      heightmapWidth,
+                      heightmapHeight,
+                      heightmapScale.y
+                  ) *
+                  2.0F;
+            dY += SampleHeightmap(
+                      heights,
+                      x + 1,
+                      y + 1,
+                      heightmapWidth,
+                      heightmapHeight,
+                      heightmapScale.y
+                  ) *
+                  1.0F;
             dY /= heightmapScale.z;
 
             normal.x = -dX;
@@ -278,21 +504,117 @@ namespace Appalachia.Spatial
             float3 heightmapScale)
         {
             float3 normal;
-            var dX = SampleHeightmap(heights, x - 1, y - 1, heightmapWidth, heightmapHeight, heightmapScale.y) * -1.0F;
-            dX += SampleHeightmap(heights, x - 1, y,     heightmapWidth, heightmapHeight, heightmapScale.y) * -2.0F;
-            dX += SampleHeightmap(heights, x - 1, y + 1, heightmapWidth, heightmapHeight, heightmapScale.y) * -1.0F;
-            dX += SampleHeightmap(heights, x + 1, y - 1, heightmapWidth, heightmapHeight, heightmapScale.y) * 1.0F;
-            dX += SampleHeightmap(heights, x + 1, y,     heightmapWidth, heightmapHeight, heightmapScale.y) * 2.0F;
-            dX += SampleHeightmap(heights, x + 1, y + 1, heightmapWidth, heightmapHeight, heightmapScale.y) * 1.0F;
+            var dX = SampleHeightmap(
+                         heights,
+                         x - 1,
+                         y - 1,
+                         heightmapWidth,
+                         heightmapHeight,
+                         heightmapScale.y
+                     ) *
+                     -1.0F;
+            dX += SampleHeightmap(
+                      heights,
+                      x - 1,
+                      y,
+                      heightmapWidth,
+                      heightmapHeight,
+                      heightmapScale.y
+                  ) *
+                  -2.0F;
+            dX += SampleHeightmap(
+                      heights,
+                      x - 1,
+                      y + 1,
+                      heightmapWidth,
+                      heightmapHeight,
+                      heightmapScale.y
+                  ) *
+                  -1.0F;
+            dX += SampleHeightmap(
+                      heights,
+                      x + 1,
+                      y - 1,
+                      heightmapWidth,
+                      heightmapHeight,
+                      heightmapScale.y
+                  ) *
+                  1.0F;
+            dX += SampleHeightmap(
+                      heights,
+                      x + 1,
+                      y,
+                      heightmapWidth,
+                      heightmapHeight,
+                      heightmapScale.y
+                  ) *
+                  2.0F;
+            dX += SampleHeightmap(
+                      heights,
+                      x + 1,
+                      y + 1,
+                      heightmapWidth,
+                      heightmapHeight,
+                      heightmapScale.y
+                  ) *
+                  1.0F;
 
             dX /= heightmapScale.x;
 
-            var dY = SampleHeightmap(heights, x - 1, y - 1, heightmapWidth, heightmapHeight, heightmapScale.y) * -1.0F;
-            dY += SampleHeightmap(heights, x,     y - 1, heightmapWidth, heightmapHeight, heightmapScale.y) * -2.0F;
-            dY += SampleHeightmap(heights, x + 1, y - 1, heightmapWidth, heightmapHeight, heightmapScale.y) * -1.0F;
-            dY += SampleHeightmap(heights, x - 1, y + 1, heightmapWidth, heightmapHeight, heightmapScale.y) * 1.0F;
-            dY += SampleHeightmap(heights, x,     y + 1, heightmapWidth, heightmapHeight, heightmapScale.y) * 2.0F;
-            dY += SampleHeightmap(heights, x + 1, y + 1, heightmapWidth, heightmapHeight, heightmapScale.y) * 1.0F;
+            var dY = SampleHeightmap(
+                         heights,
+                         x - 1,
+                         y - 1,
+                         heightmapWidth,
+                         heightmapHeight,
+                         heightmapScale.y
+                     ) *
+                     -1.0F;
+            dY += SampleHeightmap(
+                      heights,
+                      x,
+                      y - 1,
+                      heightmapWidth,
+                      heightmapHeight,
+                      heightmapScale.y
+                  ) *
+                  -2.0F;
+            dY += SampleHeightmap(
+                      heights,
+                      x + 1,
+                      y - 1,
+                      heightmapWidth,
+                      heightmapHeight,
+                      heightmapScale.y
+                  ) *
+                  -1.0F;
+            dY += SampleHeightmap(
+                      heights,
+                      x - 1,
+                      y + 1,
+                      heightmapWidth,
+                      heightmapHeight,
+                      heightmapScale.y
+                  ) *
+                  1.0F;
+            dY += SampleHeightmap(
+                      heights,
+                      x,
+                      y + 1,
+                      heightmapWidth,
+                      heightmapHeight,
+                      heightmapScale.y
+                  ) *
+                  2.0F;
+            dY += SampleHeightmap(
+                      heights,
+                      x + 1,
+                      y + 1,
+                      heightmapWidth,
+                      heightmapHeight,
+                      heightmapScale.y
+                  ) *
+                  1.0F;
             dY /= heightmapScale.z;
 
             normal.x = -dX;

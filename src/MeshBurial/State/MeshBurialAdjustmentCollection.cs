@@ -1,8 +1,6 @@
 #region
 
 using Appalachia.Base.Scriptables;
-using Appalachia.Core.Collections.Implementations.Lists;
-using Appalachia.Core.Collections.Implementations.Lookups;
 using Appalachia.Core.Collections.Interfaces;
 using Appalachia.Editing.Assets;
 using Appalachia.Spatial.MeshBurial.Collections;
@@ -18,15 +16,32 @@ using UnityEngine;
 
 namespace Appalachia.Spatial.MeshBurial.State
 {
-    public class MeshBurialAdjustmentCollection : SelfSavingSingletonScriptableObject<MeshBurialAdjustmentCollection>
+    public class
+        MeshBurialAdjustmentCollection : SelfSavingSingletonScriptableObject<
+            MeshBurialAdjustmentCollection>
     {
         private const string _PRF_PFX = nameof(MeshBurialAdjustmentCollection) + ".";
-        
+
+        private static readonly ProfilerMarker _PRF_WhenEnabled =
+            new(_PRF_PFX + nameof(WhenEnabled));
+
+        private static readonly ProfilerMarker _PRF_GetByPrefab =
+            new(_PRF_PFX + nameof(GetByPrefab));
+
+        private static readonly ProfilerMarker _PRF_Reset = new(_PRF_PFX + nameof(Reset));
+
         [SerializeField]
-        [ListDrawerSettings(Expanded = true, DraggableItems = false, HideAddButton = true, HideRemoveButton = true, NumberOfItemsPerPage = 1)]
+        [ListDrawerSettings(
+            Expanded = true,
+            DraggableItems = false,
+            HideAddButton = true,
+            HideRemoveButton = true,
+            NumberOfItemsPerPage = 1
+        )]
         private MeshBurialAdjustmentStateLookup _state;
 
-        public IAppaLookupReadOnly<GameObject, MeshBurialAdjustmentState, AppaList_MeshBurialAdjustmentState> State
+        public IAppaLookupReadOnly<GameObject, MeshBurialAdjustmentState,
+            AppaList_MeshBurialAdjustmentState> State
         {
             get
             {
@@ -42,7 +57,23 @@ namespace Appalachia.Spatial.MeshBurial.State
             }
         }
 
-        private static readonly ProfilerMarker _PRF_WhenEnabled = new ProfilerMarker(_PRF_PFX + nameof(WhenEnabled));
+        public void Reset()
+        {
+            using (_PRF_Reset.Auto())
+            {
+                for (var i = 0; i < _state.Count; i++)
+                {
+                    _state.at[i].Reset();
+                }
+
+                _state.Clear();
+
+                SetDirty();
+
+                AssetDatabaseSaveManager.SaveAssetsNextFrame();
+            }
+        }
+
         protected override void WhenEnabled()
         {
             using (_PRF_WhenEnabled.Auto())
@@ -57,7 +88,6 @@ namespace Appalachia.Spatial.MeshBurial.State
             }
         }
 
-        private static readonly ProfilerMarker _PRF_GetByPrefab = new ProfilerMarker(_PRF_PFX + nameof(GetByPrefab));
         public MeshBurialAdjustmentState GetByPrefab(GameObject prefab)
         {
             using (_PRF_GetByPrefab.Auto())
@@ -87,24 +117,6 @@ namespace Appalachia.Spatial.MeshBurial.State
                 SetDirty();
 
                 return newState;
-            }
-        }
-
-        private static readonly ProfilerMarker _PRF_Reset = new ProfilerMarker(_PRF_PFX + nameof(Reset));
-        public void Reset()
-        {
-            using (_PRF_Reset.Auto())
-            {
-                for (var i = 0; i < _state.Count; i++)
-                {
-                    _state.at[i].Reset();
-                }
-
-                _state.Clear();
-
-                SetDirty();
-
-                AssetDatabaseSaveManager.SaveAssetsNextFrame();
             }
         }
     }

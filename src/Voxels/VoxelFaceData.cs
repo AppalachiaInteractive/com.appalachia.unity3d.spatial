@@ -14,8 +14,6 @@ namespace Appalachia.Spatial.Voxels
     [Serializable]
     public struct VoxelFaceData : IEquatable<VoxelFaceData>
     {
-        public bool isFace => forward || back || left || right || up || down;
-
         [SerializeField] public bool forward;
         [SerializeField] public bool back;
         [SerializeField] public bool left;
@@ -30,6 +28,7 @@ namespace Appalachia.Spatial.Voxels
 
         [SerializeField] private float _area;
         [SerializeField] private float _worldArea;
+        public bool isFace => forward || back || left || right || up || down;
 
         public float3 normal
         {
@@ -170,7 +169,7 @@ namespace Appalachia.Spatial.Voxels
 
         public static VoxelFaceData FullyExposed()
         {
-            return new VoxelFaceData
+            return new()
             {
                 forward = true,
                 back = true,

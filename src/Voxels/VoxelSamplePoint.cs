@@ -19,14 +19,17 @@ namespace Appalachia.Spatial.Voxels
 
         public BoundsBurst ToBounds(float3 resolution)
         {
-            return new BoundsBurst(position, resolution);
+            return new(position, resolution);
         }
 
 #region IEquatable
 
         public bool Equals(VoxelSamplePoint other)
         {
-            return position.Equals(other.position) && (populated == other.populated) && (index == other.index) && time.Equals(other.time);
+            return position.Equals(other.position) &&
+                   (populated == other.populated) &&
+                   (index == other.index) &&
+                   time.Equals(other.time);
         }
 
         public override bool Equals(object obj)

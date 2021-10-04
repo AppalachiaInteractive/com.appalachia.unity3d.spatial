@@ -14,10 +14,13 @@ namespace Appalachia.Spatial.Voxels.VoxelTypes
     public class Voxels : VoxelsBase<Voxels, VoxelRaycastHit>
     {
         public override bool IsPersistent => false;
-        
-        protected override VoxelRaycastHit PrepareRaycastHit(int voxelIndex, Voxel voxel, float distance)
+
+        protected override VoxelRaycastHit PrepareRaycastHit(
+            int voxelIndex,
+            Voxel voxel,
+            float distance)
         {
-            return new VoxelRaycastHit {distance = distance, voxel = voxel};
+            return new() {distance = distance, voxel = voxel};
         }
 
         public static Voxels VoxelizeSingle(Transform t, Bounds b, float3 p)
@@ -37,16 +40,21 @@ namespace Appalachia.Spatial.Voxels.VoxelTypes
 
         public static Voxels Voxelize(Transform t, Collider[] c, MeshRenderer[] r, float3 res)
         {
-            return Voxelizer.Voxelize<Voxels, VoxelRaycastHit>(t, VoxelPopulationStyle.CollidersAndMeshes, c, r, res);
+            return Voxelizer.Voxelize<Voxels, VoxelRaycastHit>(
+                t,
+                VoxelPopulationStyle.CollidersAndMeshes,
+                c,
+                r,
+                res
+            );
         }
     }
 
     public class Voxels<TElement> : VoxelsBase<Voxels<TElement>, VoxelRaycastHit<TElement>>
         where TElement : struct
     {
-        public override bool IsPersistent => false;
-        
         [NonSerialized] public NativeArray<TElement> elementDatas;
+        public override bool IsPersistent => false;
 
         public override void InitializeElements(int elementCount)
         {
@@ -54,9 +62,12 @@ namespace Appalachia.Spatial.Voxels.VoxelTypes
             base.InitializeElements(elementCount);
         }
 
-        protected override VoxelRaycastHit<TElement> PrepareRaycastHit(int voxelIndex, Voxel voxel, float distance)
+        protected override VoxelRaycastHit<TElement> PrepareRaycastHit(
+            int voxelIndex,
+            Voxel voxel,
+            float distance)
         {
-            return new VoxelRaycastHit<TElement> {data = elementDatas[voxelIndex], voxel = voxel, distance = distance};
+            return new() {data = elementDatas[voxelIndex], voxel = voxel, distance = distance};
         }
 
         protected override void Dispose(bool disposing)
@@ -85,9 +96,19 @@ namespace Appalachia.Spatial.Voxels.VoxelTypes
             return Voxelizer.Voxelize<Voxels<TElement>, VoxelRaycastHit<TElement>>(t, c, res);
         }
 
-        public static Voxels<TElement> Voxelize(Transform t, Collider[] c, MeshRenderer[] r, float3 res)
+        public static Voxels<TElement> Voxelize(
+            Transform t,
+            Collider[] c,
+            MeshRenderer[] r,
+            float3 res)
         {
-            return Voxelizer.Voxelize<Voxels<TElement>, VoxelRaycastHit<TElement>>(t, VoxelPopulationStyle.CollidersAndMeshes, c, r, res);
+            return Voxelizer.Voxelize<Voxels<TElement>, VoxelRaycastHit<TElement>>(
+                t,
+                VoxelPopulationStyle.CollidersAndMeshes,
+                c,
+                r,
+                res
+            );
         }
     }
 
@@ -95,11 +116,10 @@ namespace Appalachia.Spatial.Voxels.VoxelTypes
         where TElement : struct
         where T : IVoxelsInit, new()
     {
-        public override bool IsPersistent => false;
-        
-        public T objectData;
-
         [NonSerialized] public NativeArray<TElement> elementDatas;
+
+        public T objectData;
+        public override bool IsPersistent => false;
 
         public override void OnInitialize()
         {
@@ -119,9 +139,12 @@ namespace Appalachia.Spatial.Voxels.VoxelTypes
             base.InitializeElements(elementCount);
         }
 
-        protected override VoxelRaycastHit<TElement> PrepareRaycastHit(int voxelIndex, Voxel voxel, float distance)
+        protected override VoxelRaycastHit<TElement> PrepareRaycastHit(
+            int voxelIndex,
+            Voxel voxel,
+            float distance)
         {
-            return new VoxelRaycastHit<TElement> {data = elementDatas[voxelIndex], voxel = voxel, distance = distance};
+            return new() {data = elementDatas[voxelIndex], voxel = voxel, distance = distance};
         }
 
         protected override void Dispose(bool disposing)
@@ -142,13 +165,24 @@ namespace Appalachia.Spatial.Voxels.VoxelTypes
 
         public static Voxels<T, TElement> VoxelizeSingle(Transform t, Bounds b, float3 p)
         {
-            return Voxelizer.VoxelizeSingle<Voxels<T, TElement>, VoxelRaycastHit<TElement>>(t, b, p);
+            return Voxelizer
+               .VoxelizeSingle<Voxels<T, TElement>, VoxelRaycastHit<TElement>>(t, b, p);
         }
 
-        public static Voxels<T, TElement> Voxelize(VoxelPopulationStyle style, Transform t, Collider[] c, MeshRenderer[] r, float3 res)
+        public static Voxels<T, TElement> Voxelize(
+            VoxelPopulationStyle style,
+            Transform t,
+            Collider[] c,
+            MeshRenderer[] r,
+            float3 res)
         {
-            
-            return Voxelizer.Voxelize<Voxels<T, TElement>, VoxelRaycastHit<TElement>>(t, style, c, r, res);
+            return Voxelizer.Voxelize<Voxels<T, TElement>, VoxelRaycastHit<TElement>>(
+                t,
+                style,
+                c,
+                r,
+                res
+            );
         }
     }
 }

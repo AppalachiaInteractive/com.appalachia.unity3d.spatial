@@ -42,6 +42,14 @@ namespace Appalachia.Spatial.SpatialKeys
             _descaledZ = _z / (float) groupingScale;
         }
 
+        public bool Equals(Vector3Key other)
+        {
+            return (_groupingScale == other._groupingScale) &&
+                   (_x == other._x) &&
+                   (_y == other._y) &&
+                   (_z == other._z);
+        }
+
         private static int GetRounded(float value, int scale)
         {
             return (int) math.round(value * scale);
@@ -57,11 +65,6 @@ namespace Appalachia.Spatial.SpatialKeys
         {
             var fScale = (float) _groupingScale;
             return new float3(_x / fScale, _y / fScale, _z / fScale);
-        }
-
-        public bool Equals(Vector3Key other)
-        {
-            return (_groupingScale == other._groupingScale) && (_x == other._x) && (_y == other._y) && (_z == other._z);
         }
 
         public override bool Equals(object obj)

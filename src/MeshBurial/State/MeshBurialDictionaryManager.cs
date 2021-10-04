@@ -12,9 +12,9 @@ namespace Appalachia.Spatial.MeshBurial.State
     {
         private static MeshBurialOptimizationParameters _optimizationParameters;
 
-        public static MeshBurialDictionary gameObjects = new MeshBurialDictionary();
+        public static MeshBurialDictionary gameObjects = new();
 
-        private static Dictionary<string, MeshBurialDictionary> _extras = new Dictionary<string, MeshBurialDictionary>();
+        private static Dictionary<string, MeshBurialDictionary> _extras = new();
 
         public static MeshBurialOptimizationParameters optimizationParameters
         {

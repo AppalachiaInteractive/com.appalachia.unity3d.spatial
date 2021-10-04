@@ -48,7 +48,10 @@ namespace Appalachia.Spatial
         public static NativeArray<T> MirrorAndFlatten<T>(T[,] array2D, Allocator allocator)
             where T : struct
         {
-            var resultArray1D = new NativeArray<T>(array2D.GetLength(0) * array2D.GetLength(1), allocator);
+            var resultArray1D = new NativeArray<T>(
+                array2D.GetLength(0) * array2D.GetLength(1),
+                allocator
+            );
 
             for (var y = 0; y < array2D.GetLength(0); y++)
             {
@@ -69,7 +72,14 @@ namespace Appalachia.Spatial
             int mapHeight,
             float3 mapScale)
         {
-            var height = GetWorldSpaceValue(worldPosition, mapPosition, values, mapWidth, mapHeight, mapScale);
+            var height = GetWorldSpaceValue(
+                worldPosition,
+                mapPosition,
+                values,
+                mapWidth,
+                mapHeight,
+                mapScale
+            );
 
             var diff = worldPosition.y - height;
 
@@ -84,7 +94,14 @@ namespace Appalachia.Spatial
             int mapHeight,
             float3 mapScale)
         {
-            var height = GetWorldSpaceValue(worldPosition, mapPosition, values, mapWidth, mapHeight, mapScale);
+            var height = GetWorldSpaceValue(
+                worldPosition,
+                mapPosition,
+                values,
+                mapWidth,
+                mapHeight,
+                mapScale
+            );
 
             var diff = worldPosition.y - height;
 
@@ -112,10 +129,38 @@ namespace Appalachia.Spatial
             var xCoord = (int) x;
             var yCoord = (int) y;
 
-            var value00 = SampleMap(values, xCoord + 0, yCoord + 0, mapWidth, mapHeight, mapScale.y);
-            var value10 = SampleMap(values, xCoord + 1, yCoord + 0, mapWidth, mapHeight, mapScale.y);
-            var value01 = SampleMap(values, xCoord + 0, yCoord + 1, mapWidth, mapHeight, mapScale.y);
-            var value11 = SampleMap(values, xCoord + 1, yCoord + 1, mapWidth, mapHeight, mapScale.y);
+            var value00 = SampleMap(
+                values,
+                xCoord + 0,
+                yCoord + 0,
+                mapWidth,
+                mapHeight,
+                mapScale.y
+            );
+            var value10 = SampleMap(
+                values,
+                xCoord + 1,
+                yCoord + 0,
+                mapWidth,
+                mapHeight,
+                mapScale.y
+            );
+            var value01 = SampleMap(
+                values,
+                xCoord + 0,
+                yCoord + 1,
+                mapWidth,
+                mapHeight,
+                mapScale.y
+            );
+            var value11 = SampleMap(
+                values,
+                xCoord + 1,
+                yCoord + 1,
+                mapWidth,
+                mapHeight,
+                mapScale.y
+            );
 
             var xBlend = x - xCoord;
             var yBlend = y - yCoord;
@@ -149,10 +194,38 @@ namespace Appalachia.Spatial
             var xCoord = (int) x;
             var yCoord = (int) y;
 
-            var value00 = SampleMap(values, xCoord + 0, yCoord + 0, mapWidth, mapHeight, mapScale.y);
-            var value10 = SampleMap(values, xCoord + 1, yCoord + 0, mapWidth, mapHeight, mapScale.y);
-            var value01 = SampleMap(values, xCoord + 0, yCoord + 1, mapWidth, mapHeight, mapScale.y);
-            var value11 = SampleMap(values, xCoord + 1, yCoord + 1, mapWidth, mapHeight, mapScale.y);
+            var value00 = SampleMap(
+                values,
+                xCoord + 0,
+                yCoord + 0,
+                mapWidth,
+                mapHeight,
+                mapScale.y
+            );
+            var value10 = SampleMap(
+                values,
+                xCoord + 1,
+                yCoord + 0,
+                mapWidth,
+                mapHeight,
+                mapScale.y
+            );
+            var value01 = SampleMap(
+                values,
+                xCoord + 0,
+                yCoord + 1,
+                mapWidth,
+                mapHeight,
+                mapScale.y
+            );
+            var value11 = SampleMap(
+                values,
+                xCoord + 1,
+                yCoord + 1,
+                mapWidth,
+                mapHeight,
+                mapScale.y
+            );
 
             var xBlend = x - xCoord;
             var yBlend = y - yCoord;

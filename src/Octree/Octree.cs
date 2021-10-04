@@ -18,26 +18,30 @@ namespace Appalachia.Spatial.Octree
         public const int _INITIAL_CAPACITY = 128;
         public const float _CAPACITY_INCREASE_MULTIPLIER = 3.0f;
         public const int _MAX_DEPTH = 3;
+        protected readonly float _capacityIncreaseMultiplier;
+
+        protected readonly int _depth;
+        protected readonly int _initialCapacity;
+        protected readonly int _maxDepth;
 
         protected Bounds _bounds;
         protected Vector3[] _boundsExtents;
-        protected NonSerializedList<TKey> _keys;
-        protected NonSerializedList<TValue> _values;
         protected TTree[] _childTrees;
+        protected NonSerializedList<TKey> _keys;
         protected int _nodeCount;
 
-        protected readonly int _depth;
-        protected readonly int _maxDepth;
-        protected readonly int _initialCapacity;
-        protected readonly float _capacityIncreaseMultiplier;
-
         protected OctreeStyle _style;
+        protected NonSerializedList<TValue> _values;
 
         public int NodeCount => _nodeCount;
 
 #region Constructors
 
-        protected abstract TTree CreateFromVectors(OctreeStyle style, Vector3 position, Vector3 size, int depth);
+        protected abstract TTree CreateFromVectors(
+            OctreeStyle style,
+            Vector3 position,
+            Vector3 size,
+            int depth);
 
         protected Octree(
             OctreeStyle style,
@@ -126,7 +130,15 @@ namespace Appalachia.Spatial.Octree
             int maxDepth,
             int initialCapacity,
             float capacityIncreaseMultiplier,
-            int depth) : this(style, bounds.center, bounds.size, maxDepth, initialCapacity, capacityIncreaseMultiplier, depth)
+            int depth) : this(
+            style,
+            bounds.center,
+            bounds.size,
+            maxDepth,
+            initialCapacity,
+            capacityIncreaseMultiplier,
+            depth
+        )
         {
         }
 
@@ -134,7 +146,8 @@ namespace Appalachia.Spatial.Octree
 
 #region Children
 
-        private static readonly ProfilerMarker _PRF_CreateChildren = new ProfilerMarker(_PRF_PFX + nameof(CreateChildren));
+        private static readonly ProfilerMarker _PRF_CreateChildren =
+            new(_PRF_PFX + nameof(CreateChildren));
 
         protected TTree[] CreateChildren()
         {
@@ -166,7 +179,7 @@ namespace Appalachia.Spatial.Octree
         }
 
         private static readonly ProfilerMarker _PRF_GetAppropriateChildIndexFromVector =
-            new ProfilerMarker(_PRF_PFX + nameof(GetAppropriateChildIndexFromVector));
+            new(_PRF_PFX + nameof(GetAppropriateChildIndexFromVector));
 
         protected int GetAppropriateChildIndexFromVector(Vector3 position)
         {
@@ -294,12 +307,22 @@ namespace Appalachia.Spatial.Octree
             }
         }
 
-        private static readonly ProfilerMarker _PRF_Add = new ProfilerMarker(_PRF_PFX + nameof(Add));
-        private static readonly ProfilerMarker _PRF_Add_ContainsCheck = new ProfilerMarker(_PRF_PFX + nameof(Add) + ".ContainsCheck");
-        private static readonly ProfilerMarker _PRF_Add_AddChildren = new ProfilerMarker(_PRF_PFX + nameof(Add) + ".AddChildren");
-        private static readonly ProfilerMarker _PRF_Add_AddNew = new ProfilerMarker(_PRF_PFX + nameof(Add) + ".AddNew");
-        private static readonly ProfilerMarker _PRF_Add_AddKey = new ProfilerMarker(_PRF_PFX + nameof(Add) + ".AddKey");
-        private static readonly ProfilerMarker _PRF_Add_AddValue = new ProfilerMarker(_PRF_PFX + nameof(Add) + ".AddValue");
+        private static readonly ProfilerMarker _PRF_Add = new(_PRF_PFX + nameof(Add));
+
+        private static readonly ProfilerMarker _PRF_Add_ContainsCheck =
+            new(_PRF_PFX + nameof(Add) + ".ContainsCheck");
+
+        private static readonly ProfilerMarker _PRF_Add_AddChildren =
+            new(_PRF_PFX + nameof(Add) + ".AddChildren");
+
+        private static readonly ProfilerMarker _PRF_Add_AddNew =
+            new(_PRF_PFX + nameof(Add) + ".AddNew");
+
+        private static readonly ProfilerMarker _PRF_Add_AddKey =
+            new(_PRF_PFX + nameof(Add) + ".AddKey");
+
+        private static readonly ProfilerMarker _PRF_Add_AddValue =
+            new(_PRF_PFX + nameof(Add) + ".AddValue");
 
         private bool Add(TKey key, TValue value, int depth)
         {
@@ -361,7 +384,8 @@ namespace Appalachia.Spatial.Octree
             }
         }
 
-        private static readonly ProfilerMarker _PRF_EnsureListsInitialized = new ProfilerMarker(_PRF_PFX + nameof(EnsureListsInitialized));
+        private static readonly ProfilerMarker _PRF_EnsureListsInitialized =
+            new(_PRF_PFX + nameof(EnsureListsInitialized));
 
         private void EnsureListsInitialized()
         {
@@ -371,12 +395,18 @@ namespace Appalachia.Spatial.Octree
                 {
                     if (_keys == null)
                     {
-                        _keys = new NonSerializedList<TKey>(_initialCapacity, _capacityIncreaseMultiplier);
+                        _keys = new NonSerializedList<TKey>(
+                            _initialCapacity,
+                            _capacityIncreaseMultiplier
+                        );
                     }
 
                     if (_values == null)
                     {
-                        _values = new NonSerializedList<TValue>(_initialCapacity, _capacityIncreaseMultiplier);
+                        _values = new NonSerializedList<TValue>(
+                            _initialCapacity,
+                            _capacityIncreaseMultiplier
+                        );
                     }
 
                     /*if (_nodes == null)
@@ -391,7 +421,7 @@ namespace Appalachia.Spatial.Octree
 
 #region Remove
 
-        private static readonly ProfilerMarker _PRF_Remove = new ProfilerMarker(_PRF_PFX + nameof(Remove));
+        private static readonly ProfilerMarker _PRF_Remove = new(_PRF_PFX + nameof(Remove));
 
         public bool Remove(TKey key, out TValue value)
         {
@@ -487,9 +517,14 @@ namespace Appalachia.Spatial.Octree
             }
         }
 
-        private static readonly ProfilerMarker _PRF_RemoveIntersecting = new ProfilerMarker(_PRF_PFX + nameof(RemoveIntersecting));
+        private static readonly ProfilerMarker _PRF_RemoveIntersecting =
+            new(_PRF_PFX + nameof(RemoveIntersecting));
 
-        public int RemoveIntersecting(OctreeQueryMode mode, Bounds bounds, List<TKey> removedKeys, List<TValue> removedValues)
+        public int RemoveIntersecting(
+            OctreeQueryMode mode,
+            Bounds bounds,
+            List<TKey> removedKeys,
+            List<TValue> removedValues)
         {
             using (_PRF_RemoveIntersecting.Auto())
             {
@@ -525,7 +560,8 @@ namespace Appalachia.Spatial.Octree
                 {
                     for (var i = 0; i < _childTrees.Length; i++)
                     {
-                        removals += _childTrees[i].RemoveIntersecting(mode, bounds, removedKeys, removedValues);
+                        removals += _childTrees[i]
+                           .RemoveIntersecting(mode, bounds, removedKeys, removedValues);
                     }
                 }
 
@@ -538,7 +574,7 @@ namespace Appalachia.Spatial.Octree
 
 #region Maintenance
 
-        private static readonly ProfilerMarker _PRF_Clear = new ProfilerMarker(_PRF_PFX + nameof(Clear));
+        private static readonly ProfilerMarker _PRF_Clear = new(_PRF_PFX + nameof(Clear));
 
         public void Clear()
         {
@@ -560,7 +596,7 @@ namespace Appalachia.Spatial.Octree
             }
         }
 
-        private static readonly ProfilerMarker _PRF_Reposition = new ProfilerMarker(_PRF_PFX + nameof(Reposition));
+        private static readonly ProfilerMarker _PRF_Reposition = new(_PRF_PFX + nameof(Reposition));
 
         public void Reposition(TKey oldKey, TKey newKey)
         {
@@ -572,7 +608,9 @@ namespace Appalachia.Spatial.Octree
                 }
                 else
                 {
-                    throw new NotSupportedException($"Could not reposition key from {oldKey} to {newKey}.");
+                    throw new NotSupportedException(
+                        $"Could not reposition key from {oldKey} to {newKey}."
+                    );
                 }
             }
         }
@@ -640,7 +678,7 @@ namespace Appalachia.Spatial.Octree
 
 #region Query
 
-        private static readonly ProfilerMarker _PRF_GetByKey = new ProfilerMarker(_PRF_PFX + nameof(GetByKey));
+        private static readonly ProfilerMarker _PRF_GetByKey = new(_PRF_PFX + nameof(GetByKey));
 
         public TValue GetByKey(TKey key)
         {
@@ -683,7 +721,7 @@ namespace Appalachia.Spatial.Octree
             }
         }
 
-        private static readonly ProfilerMarker _PRF_HasAny = new ProfilerMarker(_PRF_PFX + nameof(HasAny));
+        private static readonly ProfilerMarker _PRF_HasAny = new(_PRF_PFX + nameof(HasAny));
 
         public bool HasAny(OctreeQueryMode queryMode, Bounds bounds)
         {
@@ -723,9 +761,13 @@ namespace Appalachia.Spatial.Octree
             }
         }
 
-        private static readonly ProfilerMarker _PRF_GetAll = new ProfilerMarker(_PRF_PFX + nameof(GetAll));
+        private static readonly ProfilerMarker _PRF_GetAll = new(_PRF_PFX + nameof(GetAll));
 
-        public void GetAll(OctreeQueryMode queryMode, Bounds bounds, AppaList<TKey> keys, AppaList<TValue> values)
+        public void GetAll(
+            OctreeQueryMode queryMode,
+            Bounds bounds,
+            AppaList<TKey> keys,
+            AppaList<TValue> values)
         {
             using (_PRF_GetAll.Auto())
             {
@@ -733,9 +775,15 @@ namespace Appalachia.Spatial.Octree
             }
         }
 
-        private static readonly ProfilerMarker _PRF_GetAllWhere = new ProfilerMarker(_PRF_PFX + nameof(GetAllWhere));
+        private static readonly ProfilerMarker _PRF_GetAllWhere =
+            new(_PRF_PFX + nameof(GetAllWhere));
 
-        public void GetAllWhere(OctreeQueryMode queryMode, Bounds bounds, Predicate<TValue> predicate, AppaList<TKey> keys, AppaList<TValue> values)
+        public void GetAllWhere(
+            OctreeQueryMode queryMode,
+            Bounds bounds,
+            Predicate<TValue> predicate,
+            AppaList<TKey> keys,
+            AppaList<TValue> values)
         {
             using (_PRF_GetAllWhere.Auto())
             {
@@ -781,8 +829,8 @@ namespace Appalachia.Spatial.Octree
 
         private class MagnitudeSquaredComparer : Comparer<TKey>
         {
-            public Octree<TTree, TKey, TValue> tree;
             public Vector3 boundsCenter;
+            public Octree<TTree, TKey, TValue> tree;
 
             public override int Compare(TKey x, TKey y)
             {
@@ -793,9 +841,15 @@ namespace Appalachia.Spatial.Octree
             }
         }
 
-        private static readonly ProfilerMarker _PRF_GetNearestWhere = new ProfilerMarker(_PRF_PFX + nameof(GetNearestWhere));
+        private static readonly ProfilerMarker _PRF_GetNearestWhere =
+            new(_PRF_PFX + nameof(GetNearestWhere));
 
-        public bool GetNearestWhere(OctreeQueryMode queryMode, Bounds bounds, Predicate<TValue> predicate, out TKey key, out TValue value)
+        public bool GetNearestWhere(
+            OctreeQueryMode queryMode,
+            Bounds bounds,
+            Predicate<TValue> predicate,
+            out TKey key,
+            out TValue value)
         {
             using (_PRF_GetNearestWhere.Auto())
             {
@@ -841,7 +895,7 @@ namespace Appalachia.Spatial.Octree
             }
         }
 
-        private static readonly ProfilerMarker _PRF_YieldAll = new ProfilerMarker(_PRF_PFX + nameof(YieldAll));
+        private static readonly ProfilerMarker _PRF_YieldAll = new(_PRF_PFX + nameof(YieldAll));
 
         public IEnumerable<TValue> YieldAll(OctreeQueryMode queryMode, Bounds bounds)
         {
@@ -851,9 +905,13 @@ namespace Appalachia.Spatial.Octree
             }
         }
 
-        private static readonly ProfilerMarker _PRF_YieldAllWhere = new ProfilerMarker(_PRF_PFX + nameof(YieldAllWhere));
+        private static readonly ProfilerMarker _PRF_YieldAllWhere =
+            new(_PRF_PFX + nameof(YieldAllWhere));
 
-        public IEnumerable<TValue> YieldAllWhere(OctreeQueryMode queryMode, Bounds bounds, Predicate<TValue> predicate)
+        public IEnumerable<TValue> YieldAllWhere(
+            OctreeQueryMode queryMode,
+            Bounds bounds,
+            Predicate<TValue> predicate)
         {
             using (_PRF_YieldAllWhere.Auto())
             {
@@ -902,19 +960,27 @@ namespace Appalachia.Spatial.Octree
 
 #region Gizmos
 
-        private static readonly ProfilerMarker _PRF_DrawGizmos = new ProfilerMarker(_PRF_PFX + nameof(DrawGizmos));
-        private static readonly ProfilerMarker _PRF_InitializeGizmoColors = new ProfilerMarker(_PRF_PFX + nameof(InitializeGizmoColors));
-        private static readonly ProfilerMarker _PRF_DrawGizmosBoundsWithData = new ProfilerMarker(_PRF_PFX + nameof(DrawGizmosBoundsWithData));
-        private static readonly ProfilerMarker _PRF_DrawGizmosBoundsWithoutData = new ProfilerMarker(_PRF_PFX + nameof(DrawGizmosBoundsWithoutData));
-        private static readonly ProfilerMarker _PRF_DrawNodeGizmos = new ProfilerMarker(_PRF_PFX + nameof(DrawNodeGizmos));
-        
+        private static readonly ProfilerMarker _PRF_DrawGizmos = new(_PRF_PFX + nameof(DrawGizmos));
+
+        private static readonly ProfilerMarker _PRF_InitializeGizmoColors =
+            new(_PRF_PFX + nameof(InitializeGizmoColors));
+
+        private static readonly ProfilerMarker _PRF_DrawGizmosBoundsWithData =
+            new(_PRF_PFX + nameof(DrawGizmosBoundsWithData));
+
+        private static readonly ProfilerMarker _PRF_DrawGizmosBoundsWithoutData =
+            new(_PRF_PFX + nameof(DrawGizmosBoundsWithoutData));
+
+        private static readonly ProfilerMarker _PRF_DrawNodeGizmos =
+            new(_PRF_PFX + nameof(DrawNodeGizmos));
+
         private Color _gizmoNodeColor;
         private Color _gizmoBoundsWithDataColor;
         private Color _gizmoBoundsWithoutDataColor;
 
         protected abstract Color gizmoNodeColor { get; }
         protected abstract Color gizmoBoundsColor { get; }
-        
+
         public void DrawGizmos(int drawDepth = -1)
         {
             using (_PRF_DrawGizmos.Auto())
@@ -1009,7 +1075,7 @@ namespace Appalachia.Spatial.Octree
                         {
                             Gizmos.color = _gizmoBoundsWithDataColor;
                         }
-                        
+
                         Gizmos.DrawWireCube(_bounds.center, _bounds.size);
                     }
                 }
@@ -1036,7 +1102,7 @@ namespace Appalachia.Spatial.Octree
                         {
                             Gizmos.color = _gizmoBoundsWithoutDataColor;
                         }
-                        
+
                         Gizmos.DrawWireCube(_bounds.center, _bounds.size);
                     }
                 }
@@ -1061,7 +1127,7 @@ namespace Appalachia.Spatial.Octree
                     {
                         if (Gizmos.color != _gizmoNodeColor)
                         {
-                            Gizmos.color = _gizmoNodeColor;                            
+                            Gizmos.color = _gizmoNodeColor;
                         }
 
                         for (var index = 0; index < _keys.Count; index++)
@@ -1080,7 +1146,7 @@ namespace Appalachia.Spatial.Octree
                 }
             }
         }
-        
+
         protected abstract void DrawNodeGizmo(TKey key, TValue value);
 
 #endregion

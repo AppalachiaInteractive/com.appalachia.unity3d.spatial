@@ -11,8 +11,8 @@ namespace Appalachia.Spatial.Voxels.Persistence
 {
     [Serializable]
     public abstract class
-        VoxelPersistentElementsDataStore<TVoxelData, TDataStore, TElement> : VoxelPersistentDataStoreBase<TVoxelData, TDataStore,
-            VoxelRaycastHit<TElement>>
+        VoxelPersistentElementsDataStore<TVoxelData, TDataStore, TElement> :
+            VoxelPersistentDataStoreBase<TVoxelData, TDataStore, VoxelRaycastHit<TElement>>
         where TVoxelData : PersistentVoxelsElementsBase<TVoxelData, TDataStore, TElement>
         where TDataStore : VoxelPersistentElementsDataStore<TVoxelData, TDataStore, TElement>
         where TElement : struct

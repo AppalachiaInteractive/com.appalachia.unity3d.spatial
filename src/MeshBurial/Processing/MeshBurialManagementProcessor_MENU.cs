@@ -24,9 +24,11 @@ namespace Appalachia.Spatial.MeshBurial.Processing
 
         private static bool _vspMeshBurialEnabled;
 
-        private static readonly VegetationSystemPro.MultiOnVegetationCellSpawnedDelegate _enqueueCell = c => EnqueueCell(c);
+        private static readonly VegetationSystemPro.MultiOnVegetationCellSpawnedDelegate
+            _enqueueCell = c => EnqueueCell(c);
 
-        private static readonly VegetationSystemPro.MultiOnVegetationStudioRefreshDelegate _refreshSystem = RequeueAllCells;
+        private static readonly VegetationSystemPro.MultiOnVegetationStudioRefreshDelegate
+            _refreshSystem = RequeueAllCells;
 
         [MenuItem(MENU_VSP_ENABLE, true)]
         public static bool ToggleEnableVSPMeshBurialsValidate()
@@ -81,6 +83,7 @@ namespace Appalachia.Spatial.MeshBurial.Processing
         {
             QUEUES.pendingVegetationKeys.Clear();
             RequeueAllCells(_vegetationSystem);
+
             //RefreshPrefabRenderingSets();
         }
 
@@ -89,6 +92,7 @@ namespace Appalachia.Spatial.MeshBurial.Processing
         {
             QUEUES.pendingVegetationKeys.Clear();
             RequeueAllCells(_vegetationSystem);
+
             //RefreshPrefabRenderingSets();
 
             if (!MeshBurialExecutionManager._BURY.v)
