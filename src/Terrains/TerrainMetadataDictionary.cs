@@ -1,15 +1,14 @@
 #region
 
-using Appalachia.Core.Collections.Implementations.Lists;
-using Appalachia.Core.Collections.Implementations.Lookups;
+using Appalachia.Base.Scriptables;
 using Appalachia.Core.Collections.Interfaces;
-using Appalachia.Core.Scriptables;
+using Appalachia.Spatial.Terrains.Collections;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
 #endregion
 
-namespace Appalachia.Core.Terrains
+namespace Appalachia.Spatial.Terrains
 {
     public class TerrainMetadataDictionary : SelfSavingSingletonScriptableObject<TerrainMetadataDictionary>
     {

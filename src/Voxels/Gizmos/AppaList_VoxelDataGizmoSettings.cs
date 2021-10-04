@@ -4,7 +4,7 @@
 
 using Appalachia.Core.Collections;
 
-namespace Appalachia.Voxels.Gizmos
+namespace Appalachia.Spatial.Voxels.Gizmos
 {
     public class AppaList_VoxelDataGizmoSettings : AppaList<VoxelDataGizmoSettings>
     {

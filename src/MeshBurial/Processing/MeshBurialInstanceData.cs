@@ -1,14 +1,14 @@
 #region
 
 using System;
-using Appalachia.Core.Behaviours;
+using Appalachia.Base.Behaviours;
 using Appalachia.Core.Collections.Extensions;
 using Appalachia.Core.Collections.Native;
-using Appalachia.Core.Terrains;
-using Appalachia.Optimization.Metadata;
-using Appalachia.Optimization.Parameters;
+using Appalachia.Jobs.Optimization.Metadata;
+using Appalachia.Jobs.Optimization.Parameters;
 using Appalachia.Spatial.MeshBurial.State;
 using Appalachia.Spatial.SpatialKeys;
+using Appalachia.Spatial.Terrains;
 using Unity.Collections;
 using Unity.Mathematics;
 using Unity.Profiling;

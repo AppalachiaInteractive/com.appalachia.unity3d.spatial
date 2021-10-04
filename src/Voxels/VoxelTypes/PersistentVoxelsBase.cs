@@ -1,14 +1,14 @@
 #region
 
 using System;
-using Appalachia.Core.Scriptables;
-using Appalachia.Voxels.Casting;
-using Appalachia.Voxels.Persistence;
+using Appalachia.Base.Scriptables;
+using Appalachia.Spatial.Voxels.Casting;
+using Appalachia.Spatial.Voxels.Persistence;
 using UnityEngine;
 
 #endregion
 
-namespace Appalachia.Voxels.VoxelTypes
+namespace Appalachia.Spatial.Voxels.VoxelTypes
 {
     [Serializable]
     public abstract class PersistentVoxelsBase<TVoxelData, TDataStore, TRaycastHit> : VoxelsBase<TVoxelData, TRaycastHit>

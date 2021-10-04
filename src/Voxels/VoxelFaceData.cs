@@ -9,7 +9,7 @@ using UnityEngine;
 
 #endregion
 
-namespace Appalachia.Voxels
+namespace Appalachia.Spatial.Voxels
 {
     [Serializable]
     public struct VoxelFaceData : IEquatable<VoxelFaceData>

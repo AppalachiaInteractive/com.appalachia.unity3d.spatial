@@ -2,14 +2,14 @@
 
 using System;
 using Appalachia.Core.Extensions;
-using Appalachia.Core.Jobs.Types.temporal;
+using Appalachia.Jobs.Types.Temporal;
 using Unity.Burst;
 using Unity.Mathematics;
 using UnityEngine;
 
 #endregion
 
-namespace Appalachia.Voxels
+namespace Appalachia.Spatial.Voxels
 {
     [Serializable]
     public struct Voxel : IEquatable<Voxel>

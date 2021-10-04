@@ -1,7 +1,7 @@
 #region
 
 using System;
-using Appalachia.Core.Terrains;
+using Appalachia.Spatial.Terrains;
 using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.Serialization;

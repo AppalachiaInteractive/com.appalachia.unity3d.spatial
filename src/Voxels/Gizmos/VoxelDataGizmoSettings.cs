@@ -1,8 +1,8 @@
 #region
 
 using System;
-using Appalachia.Core.Editing.Attributes;
-using Appalachia.Core.Scriptables;
+using Appalachia.Base.Scriptables;
+using Appalachia.Editing.Attributes;
 using Appalachia.Utility.Constants;
 using Sirenix.OdinInspector;
 using Unity.Mathematics;
@@ -10,7 +10,7 @@ using UnityEngine;
 
 #endregion
 
-namespace Appalachia.Voxels.Gizmos
+namespace Appalachia.Spatial.Voxels.Gizmos
 {
     [Serializable]
     public class VoxelDataGizmoSettings : SelfSavingScriptableObject<VoxelDataGizmoSettings>

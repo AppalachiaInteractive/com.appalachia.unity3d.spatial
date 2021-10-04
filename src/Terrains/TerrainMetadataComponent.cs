@@ -2,9 +2,9 @@
 
 using System;
 using System.Collections.Generic;
-using Appalachia.Core.Editing;
-using Appalachia.Core.Editing.Handle;
-using Appalachia.Core.Terrains.Utilities;
+using Appalachia.Editing.Debugging;
+using Appalachia.Editing.Debugging.Handle;
+using Appalachia.Spatial.Terrains.Utilities;
 using Sirenix.OdinInspector;
 using Unity.Collections;
 using UnityEditor;
@@ -13,7 +13,7 @@ using UnityEngine.Serialization;
 
 #endregion
 
-namespace Appalachia.Core.Terrains
+namespace Appalachia.Spatial.Terrains
 {
     [ExecuteAlways]
     [RequireComponent(typeof(Terrain))]

@@ -1,7 +1,8 @@
 #region
 
 using System;
-using Appalachia.Core.Collections.Implementations.Lists;
+using Appalachia.Core.Collections;
+using Appalachia.Spatial.Collections;
 using Appalachia.Spatial.MeshBurial.State;
 using Appalachia.Spatial.SpatialKeys;
 using Sirenix.OdinInspector;
@@ -9,7 +10,7 @@ using UnityEngine;
 
 #endregion
 
-namespace Appalachia.Core.Collections.Implementations.Lookups
+namespace Appalachia.Spatial.MeshBurial.Collections
 {
     [Serializable]
     [ListDrawerSettings(Expanded = true, DraggableItems = false, HideAddButton = true, HideRemoveButton = true, NumberOfItemsPerPage = 5),

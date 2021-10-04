@@ -1,6 +1,6 @@
 #region
 
-using Appalachia.Core.Geometry;
+using Appalachia.Core.Math.Geometry;
 using UnityEngine;
 
 #endregion

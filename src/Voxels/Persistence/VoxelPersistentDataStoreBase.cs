@@ -1,21 +1,21 @@
 #region
 
 using System;
+using Appalachia.Base.Scriptables;
 using Appalachia.Core.Collections.Extensions;
 using Appalachia.Core.Collections.Native;
 using Appalachia.Core.Collections.Native.Pointers;
-using Appalachia.Core.Data.ComponentEquality;
+using Appalachia.Core.Comparisons.ComponentEquality;
 using Appalachia.Core.Extensions;
-using Appalachia.Core.Scriptables;
-using Appalachia.Voxels.Casting;
-using Appalachia.Voxels.VoxelTypes;
+using Appalachia.Spatial.Voxels.Casting;
+using Appalachia.Spatial.Voxels.VoxelTypes;
 using Unity.Collections;
 using Unity.Mathematics;
 using UnityEngine;
 
 #endregion
 
-namespace Appalachia.Voxels.Persistence
+namespace Appalachia.Spatial.Voxels.Persistence
 {
     [Serializable]
     public abstract class

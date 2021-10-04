@@ -1,13 +1,13 @@
 #region
 
-using Appalachia.Voxels.Casting;
-using Appalachia.Voxels.Persistence;
+using Appalachia.Spatial.Voxels.Casting;
+using Appalachia.Spatial.Voxels.Persistence;
 using Unity.Mathematics;
 using UnityEngine;
 
 #endregion
 
-namespace Appalachia.Voxels.VoxelTypes
+namespace Appalachia.Spatial.Voxels.VoxelTypes
 {
     public sealed class PersistentVoxels : PersistentVoxelsBase<PersistentVoxels, VoxelPersistentDataStore, VoxelRaycastHit>
     {

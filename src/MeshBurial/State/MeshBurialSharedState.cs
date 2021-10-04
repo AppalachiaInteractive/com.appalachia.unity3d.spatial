@@ -1,7 +1,7 @@
 #region
 
 using System;
-using Appalachia.Core.MeshData;
+using Appalachia.MeshData;
 using Sirenix.OdinInspector;
 using UnityEngine;
 

@@ -1,11 +1,12 @@
 #region
 
 using System;
+using Appalachia.Core.Collections;
 using Appalachia.Spatial.MeshBurial.State;
 
 #endregion
 
-namespace Appalachia.Core.Collections.Implementations.Lists
+namespace Appalachia.Spatial.MeshBurial.Collections
 {
     [Serializable]
     public sealed class AppaList_MeshBurialSharedState : AppaList<MeshBurialSharedState>

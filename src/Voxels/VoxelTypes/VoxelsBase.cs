@@ -6,13 +6,13 @@ using Appalachia.Core.Collections.Extensions;
 using Appalachia.Core.Collections.Native;
 using Appalachia.Core.Collections.Native.Pointers;
 using Appalachia.Core.Collections.NonSerialized;
-using Appalachia.Core.Editing.Handle;
 using Appalachia.Core.Exceptions;
 using Appalachia.Core.Extensions;
-using Appalachia.Core.Jobs;
+using Appalachia.Editing.Debugging.Handle;
+using Appalachia.Jobs;
+using Appalachia.Spatial.Voxels.Casting;
+using Appalachia.Spatial.Voxels.Gizmos;
 using Appalachia.Utility.Constants;
-using Appalachia.Voxels.Casting;
-using Appalachia.Voxels.Gizmos;
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Jobs;
@@ -23,7 +23,7 @@ using UnityEngine;
 
 #endregion
 
-namespace Appalachia.Voxels.VoxelTypes
+namespace Appalachia.Spatial.Voxels.VoxelTypes
 {
     public abstract class VoxelsBase<T, TRaycastHit> : IDisposable, IEquatable<VoxelsBase<T, TRaycastHit>>
         where T : VoxelsBase<T, TRaycastHit>

@@ -1,13 +1,13 @@
 #region
 
 using System;
+using Appalachia.Core.Collections;
 using Appalachia.Core.Collections.Implementations.Lists;
-using Appalachia.Core.Terrains;
 using UnityEngine;
 
 #endregion
 
-namespace Appalachia.Core.Collections.Implementations.Lookups
+namespace Appalachia.Spatial.Terrains.Collections
 {
     [Serializable]
     public class TerrainMetadataLookup : AppaLookup<int, TerrainMetadata, AppaList_int, AppaList_TerrainMetadata>

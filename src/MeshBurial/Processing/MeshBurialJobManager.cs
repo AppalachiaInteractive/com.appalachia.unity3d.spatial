@@ -1,17 +1,17 @@
 #region
 
-using Appalachia.Core.Burstable;
 using Appalachia.Core.Collections.Native;
 using Appalachia.Core.Constants;
 using Appalachia.Core.Extensions;
-using Appalachia.Core.MeshData;
-using Appalachia.Core.Terrains;
-using Appalachia.Optimization;
-using Appalachia.Optimization.Metadata;
-using Appalachia.Optimization.Options;
-using Appalachia.Optimization.Utilities;
+using Appalachia.Jobs.Burstable;
+using Appalachia.Jobs.Optimization;
+using Appalachia.Jobs.Optimization.Metadata;
+using Appalachia.Jobs.Optimization.Options;
+using Appalachia.Jobs.Optimization.Utilities;
+using Appalachia.MeshData;
 using Appalachia.Spatial.MeshBurial.State;
 using Appalachia.Spatial.SpatialKeys;
+using Appalachia.Spatial.Terrains;
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Jobs;

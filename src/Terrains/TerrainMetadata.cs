@@ -1,17 +1,17 @@
 #region
 
 using System;
-using Appalachia.Core.Collections.Extensions;
+using Appalachia.Base.Scriptables;
 using Appalachia.Core.Collections.Native;
-using Appalachia.Core.Scriptables;
-using Appalachia.Core.Terrains.Utilities;
+using Appalachia.Core.Extensions;
+using Appalachia.Spatial.Terrains.Utilities;
 using Unity.Collections;
 using Unity.Profiling;
 using UnityEngine;
 
 #endregion
 
-namespace Appalachia.Core.Terrains
+namespace Appalachia.Spatial.Terrains
 {
     [Serializable]
     public class TerrainMetadata : SelfNamingSavingAndIdentifyingScriptableObject<TerrainMetadata>

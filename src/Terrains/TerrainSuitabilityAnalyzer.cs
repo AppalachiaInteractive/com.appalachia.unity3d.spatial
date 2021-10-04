@@ -1,8 +1,8 @@
 using System;
-using Appalachia.Core.Behaviours;
-using Appalachia.Core.Editing;
-using Appalachia.Core.Editing.Handle;
+using Appalachia.Base.Behaviours;
 using Appalachia.Core.Extensions;
+using Appalachia.Editing.Debugging;
+using Appalachia.Editing.Debugging.Handle;
 using AwesomeTechnologies.VegetationSystem;
 using Sirenix.OdinInspector;
 using Unity.Mathematics;
@@ -10,7 +10,7 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.Serialization;
 
-namespace Appalachia.Core.Terrains
+namespace Appalachia.Spatial.Terrains
 {
     public class TerrainSuitabilityAnalyzer : InternalMonoBehaviour
     {

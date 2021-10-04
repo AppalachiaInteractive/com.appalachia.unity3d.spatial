@@ -5,7 +5,7 @@ using UnityEngine;
 
 #endregion
 
-namespace Appalachia.Voxels.Gizmos
+namespace Appalachia.Spatial.Voxels.Gizmos
 {
     public class VoxelDataGizmoSettingsIndex : AppaLookup<VoxelDataGizmoStyle, VoxelDataGizmoSettings, AppaList_VoxelDataGizmoStyle,
         AppaList_VoxelDataGizmoSettings>

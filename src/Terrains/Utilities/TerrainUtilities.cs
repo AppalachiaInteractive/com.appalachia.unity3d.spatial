@@ -5,7 +5,7 @@ using UnityEngine;
 
 #endregion
 
-namespace Appalachia.Core.Terrains.Utilities
+namespace Appalachia.Spatial.Terrains.Utilities
 {
     public static class TerrainUtilities
     {

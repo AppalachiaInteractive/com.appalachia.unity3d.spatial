@@ -1,10 +1,10 @@
 #region
 
-using Appalachia.Core.Scriptables;
+using Appalachia.Base.Scriptables;
 
 #endregion
 
-namespace Appalachia.Voxels.Gizmos
+namespace Appalachia.Spatial.Voxels.Gizmos
 {
     public class VoxelDataGizmoSettingsLookup : ScriptableObjectLookupCollection<VoxelDataGizmoSettingsLookup, VoxelDataGizmoSettingsIndex,
         VoxelDataGizmoStyle, VoxelDataGizmoSettings, AppaList_VoxelDataGizmoStyle, AppaList_VoxelDataGizmoSettings>

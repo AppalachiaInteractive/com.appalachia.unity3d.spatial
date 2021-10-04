@@ -2,7 +2,7 @@
 
 #endregion
 
-using Appalachia.Core.Burstable;
+using Appalachia.Jobs.Burstable;
 
 namespace Appalachia.Spatial.MeshBurial.Processing
 {

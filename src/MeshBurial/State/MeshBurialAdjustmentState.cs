@@ -1,11 +1,12 @@
 #region
 
 using System;
+using Appalachia.Base.Scriptables;
 using Appalachia.Core.Collections.Implementations.Lookups;
 using Appalachia.Core.Collections.Native;
 using Appalachia.Core.Constants;
-using Appalachia.Core.MeshData;
-using Appalachia.Core.Scriptables;
+using Appalachia.MeshData;
+using Appalachia.Spatial.MeshBurial.Collections;
 using Appalachia.Spatial.MeshBurial.Processing;
 using Appalachia.Spatial.SpatialKeys;
 using Sirenix.OdinInspector;

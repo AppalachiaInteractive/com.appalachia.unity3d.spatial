@@ -1,15 +1,15 @@
 #region
 
 using System;
+using Appalachia.Base.Scriptables;
 using Appalachia.Core.Collections;
 using Appalachia.Core.Collections.Implementations.Lists;
-using Appalachia.Core.Scriptables;
-using Appalachia.Voxels.Casting;
-using Appalachia.Voxels.VoxelTypes;
+using Appalachia.Spatial.Voxels.Casting;
+using Appalachia.Spatial.Voxels.VoxelTypes;
 
 #endregion
 
-namespace Appalachia.Voxels.Persistence
+namespace Appalachia.Spatial.Voxels.Persistence
 {
     [Serializable]
     public abstract class

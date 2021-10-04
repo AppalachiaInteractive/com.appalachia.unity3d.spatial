@@ -2,13 +2,13 @@
 
 using System;
 using System.Collections.Generic;
-using Appalachia.Core.Burstable;
 using Appalachia.Core.Collections.Native;
 using Appalachia.Core.Collections.Native.Pointers;
 using Appalachia.Core.Extensions;
+using Appalachia.Jobs.Burstable;
+using Appalachia.Spatial.Voxels.Casting;
+using Appalachia.Spatial.Voxels.VoxelTypes;
 using Appalachia.Utility.Constants;
-using Appalachia.Voxels.Casting;
-using Appalachia.Voxels.VoxelTypes;
 using Unity.Collections;
 using Unity.Mathematics;
 using Unity.Profiling;
@@ -16,7 +16,7 @@ using UnityEngine;
 
 #endregion
 
-namespace Appalachia.Voxels
+namespace Appalachia.Spatial.Voxels
 {
     public static class Voxelizer
     {

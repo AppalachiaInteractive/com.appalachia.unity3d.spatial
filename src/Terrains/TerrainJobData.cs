@@ -8,7 +8,7 @@ using UnityEngine;
 
 #endregion
 
-namespace Appalachia.Core.Terrains
+namespace Appalachia.Spatial.Terrains
 {
     [Serializable]
     public struct TerrainJobData : IEquatable<TerrainJobData>

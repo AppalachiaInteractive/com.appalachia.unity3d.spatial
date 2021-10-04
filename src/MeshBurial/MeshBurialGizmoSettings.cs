@@ -1,7 +1,7 @@
 #region
 
 using System;
-using Appalachia.Core.Scriptables;
+using Appalachia.Base.Scriptables;
 using Sirenix.OdinInspector;
 using UnityEngine;
 

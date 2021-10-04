@@ -4,7 +4,7 @@ using System;
 
 #endregion
 
-namespace Appalachia.Voxels.Casting
+namespace Appalachia.Spatial.Voxels.Casting
 {
     [Serializable]
     public struct VoxelRaycastHit : IVoxelRaycastHit

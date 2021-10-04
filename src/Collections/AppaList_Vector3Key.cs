@@ -1,11 +1,12 @@
 #region
 
 using System;
+using Appalachia.Core.Collections;
 using Appalachia.Spatial.SpatialKeys;
 
 #endregion
 
-namespace Appalachia.Core.Collections.Implementations.Lists
+namespace Appalachia.Spatial.Collections
 {
     [Serializable]
     public sealed class AppaList_Vector3Key : AppaList<Vector3Key>

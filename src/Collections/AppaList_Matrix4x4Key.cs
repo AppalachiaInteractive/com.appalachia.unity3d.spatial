@@ -1,11 +1,12 @@
 #region
 
 using System;
+using Appalachia.Core.Collections;
 using Appalachia.Spatial.SpatialKeys;
 
 #endregion
 
-namespace Appalachia.Core.Collections.Implementations.Lists
+namespace Appalachia.Spatial.Collections
 {
     [Serializable]
     public sealed class AppaList_Matrix4x4Key : AppaList<Matrix4x4Key>

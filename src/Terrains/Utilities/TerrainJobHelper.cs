@@ -1,14 +1,13 @@
 #region
 
 using Appalachia.Core.Collections.Native;
-using Appalachia.Spatial;
 using Unity.Collections;
 using Unity.Mathematics;
 using UnityEngine;
 
 #endregion
 
-namespace Appalachia.Core.Terrains.Utilities
+namespace Appalachia.Spatial.Terrains.Utilities
 {
     public static class TerrainJobHelper
     {

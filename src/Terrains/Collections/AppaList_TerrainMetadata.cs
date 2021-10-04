@@ -1,11 +1,11 @@
 #region
 
 using System;
-using Appalachia.Core.Terrains;
+using Appalachia.Core.Collections;
 
 #endregion
 
-namespace Appalachia.Core.Collections.Implementations.Lists
+namespace Appalachia.Spatial.Terrains.Collections
 {
     [Serializable]
     public sealed class AppaList_TerrainMetadata : AppaList<TerrainMetadata>

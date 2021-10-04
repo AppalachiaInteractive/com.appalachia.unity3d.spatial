@@ -1,4 +1,4 @@
-namespace Appalachia.Voxels.VoxelTypes
+namespace Appalachia.Spatial.Voxels.VoxelTypes
 {
     public interface IVoxelsInit
     {

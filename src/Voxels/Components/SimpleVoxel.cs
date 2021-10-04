@@ -1,17 +1,17 @@
 #region
 
 using System;
-using Appalachia.Core.Behaviours;
-using Appalachia.Core.Editing.Attributes;
-using Appalachia.Filtering;
-using Appalachia.Voxels.Gizmos;
+using Appalachia.Base.Behaviours;
+using Appalachia.Core.Filtering;
+using Appalachia.Editing.Attributes;
+using Appalachia.Spatial.Voxels.Gizmos;
 using Sirenix.OdinInspector;
 using Unity.Mathematics;
 using UnityEngine;
 
 #endregion
 
-namespace Appalachia.Voxels.Components
+namespace Appalachia.Spatial.Voxels.Components
 {
     [Serializable]
     public class SimpleVoxel : InternalMonoBehaviour

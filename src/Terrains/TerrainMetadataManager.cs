@@ -3,7 +3,7 @@
 using System.Collections.Generic;
 using Appalachia.Core.Attributes;
 using Appalachia.Core.Collections.Native;
-using Appalachia.Core.Terrains.Utilities;
+using Appalachia.Spatial.Terrains.Utilities;
 using Unity.Collections;
 using Unity.Profiling;
 using UnityEditor;
@@ -11,7 +11,7 @@ using UnityEngine;
 
 #endregion
 
-namespace Appalachia.Core.Terrains
+namespace Appalachia.Spatial.Terrains
 {
     [AlwaysInitializeOnLoad]
     public static class TerrainMetadataManager

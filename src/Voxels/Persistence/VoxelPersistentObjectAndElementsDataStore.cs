@@ -1,13 +1,13 @@
 #region
 
 using System;
-using Appalachia.Voxels.Casting;
-using Appalachia.Voxels.VoxelTypes;
+using Appalachia.Spatial.Voxels.Casting;
+using Appalachia.Spatial.Voxels.VoxelTypes;
 using Unity.Collections;
 
 #endregion
 
-namespace Appalachia.Voxels.Persistence
+namespace Appalachia.Spatial.Voxels.Persistence
 {
     [Serializable]
     public abstract class

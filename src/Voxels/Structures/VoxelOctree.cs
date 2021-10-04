@@ -1,17 +1,17 @@
 #region
 
-using Appalachia.Core.Editing.Coloring;
+using Appalachia.Editing.Preferences.Globals;
 using Appalachia.Spatial.Octree;
+using Appalachia.Spatial.Voxels.Casting;
+using Appalachia.Spatial.Voxels.VoxelTypes;
 using Appalachia.Utility.Constants;
-using Appalachia.Voxels.Casting;
-using Appalachia.Voxels.VoxelTypes;
 using Unity.Mathematics;
 using Unity.Profiling;
 using UnityEngine;
 
 #endregion
 
-namespace Appalachia.Voxels.Structures
+namespace Appalachia.Spatial.Voxels.Structures
 {
     public sealed class VoxelOctree<TVoxelData, TVoxelRaycastHit, TValue> : Octree<VoxelOctree<TVoxelData, TVoxelRaycastHit, TValue>, int, TValue>
         where TValue : struct, IOctreeNodeGizmoDrawer

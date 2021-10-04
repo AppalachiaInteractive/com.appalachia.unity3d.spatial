@@ -1,4 +1,4 @@
-namespace Appalachia.Voxels.Casting
+namespace Appalachia.Spatial.Voxels.Casting
 {
     public interface IVoxelRaycastHit
     {

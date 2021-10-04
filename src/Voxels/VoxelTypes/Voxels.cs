@@ -2,14 +2,14 @@
 
 using System;
 using Appalachia.Core.Collections.Native;
-using Appalachia.Voxels.Casting;
+using Appalachia.Spatial.Voxels.Casting;
 using Unity.Collections;
 using Unity.Mathematics;
 using UnityEngine;
 
 #endregion
 
-namespace Appalachia.Voxels.VoxelTypes
+namespace Appalachia.Spatial.Voxels.VoxelTypes
 {
     public class Voxels : VoxelsBase<Voxels, VoxelRaycastHit>
     {

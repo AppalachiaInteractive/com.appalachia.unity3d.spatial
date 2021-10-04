@@ -2,9 +2,9 @@
 
 using Appalachia.Core.Collections.Native;
 using Appalachia.Core.Extensions;
-using Appalachia.Core.MeshData;
-using Appalachia.Core.Terrains;
-using Appalachia.Core.Terrains.Utilities;
+using Appalachia.MeshData;
+using Appalachia.Spatial.Terrains;
+using Appalachia.Spatial.Terrains.Utilities;
 using Appalachia.Utility.Constants;
 using Unity.Burst;
 using Unity.Collections;

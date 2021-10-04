@@ -1,13 +1,13 @@
 #region
 
 using System;
-using Appalachia.Core.Burstable;
+using Appalachia.Jobs.Burstable;
 using Unity.Mathematics;
 using UnityEngine;
 
 #endregion
 
-namespace Appalachia.Voxels
+namespace Appalachia.Spatial.Voxels
 {
     [Serializable]
     public struct VoxelSamplePoint : IEquatable<VoxelSamplePoint>

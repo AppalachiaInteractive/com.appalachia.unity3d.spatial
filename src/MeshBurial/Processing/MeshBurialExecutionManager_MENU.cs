@@ -4,7 +4,7 @@
 
 using System;
 using Appalachia.Core.Constants;
-using Appalachia.Core.Editing.Preferences;
+using Appalachia.Editing.Preferences;
 using Unity.Mathematics;
 using UnityEditor;
 

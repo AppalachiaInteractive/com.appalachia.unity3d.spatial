@@ -1,4 +1,4 @@
-namespace Appalachia.Voxels
+namespace Appalachia.Spatial.Voxels
 {
     public enum VoxelPopulationStyle
     {
