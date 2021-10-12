@@ -2,7 +2,7 @@
 
 using Appalachia.Core.Collections.Native;
 using Appalachia.Core.Extensions;
-using Appalachia.MeshData;
+using Appalachia.Jobs.MeshData;
 using Appalachia.Spatial.Terrains;
 using Appalachia.Spatial.Terrains.Utilities;
 using Appalachia.Utility.Constants;

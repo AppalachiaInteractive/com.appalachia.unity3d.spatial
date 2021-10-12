@@ -1,6 +1,6 @@
 #region
 
-using Appalachia.Editing.Attributes;
+using Appalachia.Core.Attributes.Editing;
 using Unity.Profiling;
 using UnityEditor;
 using UnityEngine;

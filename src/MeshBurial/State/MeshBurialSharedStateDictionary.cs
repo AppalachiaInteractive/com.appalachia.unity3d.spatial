@@ -1,7 +1,7 @@
 #region
 
-using Appalachia.Base.Scriptables;
 using Appalachia.Core.Collections.Interfaces;
+using Appalachia.Core.Scriptables;
 using Appalachia.Spatial.MeshBurial.Collections;
 using Sirenix.OdinInspector;
 

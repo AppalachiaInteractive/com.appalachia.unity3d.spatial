@@ -1,7 +1,7 @@
 #region
 
 using System;
-using Appalachia.Base.Behaviours;
+using Appalachia.Core.Behaviours;
 using Appalachia.Spatial.MeshBurial.State;
 using Unity.Collections;
 using Unity.Mathematics;

@@ -1,7 +1,7 @@
 #region
 
 using System;
-using Appalachia.Base.Scriptables;
+using Appalachia.Core.Scriptables;
 using Appalachia.Spatial.Voxels.Casting;
 using Appalachia.Spatial.Voxels.Persistence;
 using UnityEngine;

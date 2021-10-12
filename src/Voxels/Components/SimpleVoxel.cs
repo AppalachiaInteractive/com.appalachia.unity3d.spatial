@@ -1,9 +1,9 @@
 #region
 
 using System;
-using Appalachia.Base.Behaviours;
+using Appalachia.Core.Attributes.Editing;
+using Appalachia.Core.Behaviours;
 using Appalachia.Core.Filtering;
-using Appalachia.Editing.Attributes;
 using Appalachia.Spatial.Voxels.Gizmos;
 using Sirenix.OdinInspector;
 using Unity.Mathematics;
@@ -14,7 +14,7 @@ using UnityEngine;
 namespace Appalachia.Spatial.Voxels.Components
 {
     [Serializable]
-    public class SimpleVoxel : InternalMonoBehaviour
+    public class SimpleVoxel : AppalachiaMonoBehaviour
     {
         [OnValueChanged(nameof(RefreshChildCollections))]
         public VoxelPopulationStyle style;

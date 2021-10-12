@@ -1,7 +1,7 @@
 #region
 
 using System;
-using Appalachia.Base.Behaviours;
+using Appalachia.Core.Behaviours;
 using Appalachia.Core.Collections.Extensions;
 using Appalachia.Core.Collections.Native;
 using Appalachia.Jobs.Optimization.Metadata;

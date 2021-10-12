@@ -1,7 +1,7 @@
 #region
 
 using System.Collections.Generic;
-using Appalachia.Editing.Attributes;
+using Appalachia.Core.Attributes.Editing;
 
 #endregion
 

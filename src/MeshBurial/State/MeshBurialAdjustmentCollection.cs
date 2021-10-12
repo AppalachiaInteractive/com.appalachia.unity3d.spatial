@@ -1,8 +1,8 @@
 #region
 
-using Appalachia.Base.Scriptables;
+using Appalachia.Core.Assets;
 using Appalachia.Core.Collections.Interfaces;
-using Appalachia.Editing.Assets;
+using Appalachia.Core.Scriptables;
 using Appalachia.Spatial.MeshBurial.Collections;
 using Sirenix.OdinInspector;
 using Unity.Profiling;
@@ -61,6 +61,11 @@ namespace Appalachia.Spatial.MeshBurial.State
         {
             using (_PRF_Reset.Auto())
             {
+                if (_state == null)
+                {
+                    return;
+                }
+                
                 for (var i = 0; i < _state.Count; i++)
                 {
                     _state.at[i].Reset();
@@ -70,7 +75,7 @@ namespace Appalachia.Spatial.MeshBurial.State
 
                 SetDirty();
 
-                AssetDatabaseSaveManager.SaveAssetsNextFrame();
+                AssetDatabaseManager.SaveAssetsNextFrame();
             }
         }
 

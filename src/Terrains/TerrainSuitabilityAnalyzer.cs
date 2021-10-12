@@ -1,5 +1,5 @@
 using System;
-using Appalachia.Base.Behaviours;
+using Appalachia.Core.Behaviours;
 using Appalachia.Core.Extensions;
 using Appalachia.Editing.Debugging;
 using Appalachia.Editing.Debugging.Handle;
@@ -12,7 +12,7 @@ using UnityEngine.Serialization;
 
 namespace Appalachia.Spatial.Terrains
 {
-    public class TerrainSuitabilityAnalyzer : InternalMonoBehaviour
+    public class TerrainSuitabilityAnalyzer : AppalachiaMonoBehaviour
     {
         private static readonly string[] _directions =
         {

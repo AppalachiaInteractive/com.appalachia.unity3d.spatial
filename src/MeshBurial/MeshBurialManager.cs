@@ -2,7 +2,7 @@
 
 #endregion
 
-using Appalachia.Editing.Attributes;
+using Appalachia.Core.Attributes.Editing;
 
 namespace Appalachia.Spatial.MeshBurial
 {

@@ -4,7 +4,7 @@
 
 using System;
 using Appalachia.Core.Constants;
-using Appalachia.Editing.Preferences;
+using Appalachia.Core.Preferences;
 using Unity.Mathematics;
 using UnityEditor;
 
@@ -14,7 +14,7 @@ namespace Appalachia.Spatial.MeshBurial.Processing
 {
     public static partial class MeshBurialExecutionManager
     {
-        private const string G_ = "Mesh Burial";
+        private const string G_ = "Appalachia/Mesh Burial";
         private const string MENU_BASE_ = "Tools/" + G_ + "/";
 
         private const string MENU_LOG = MENU_BASE_ + "Logging/";
@@ -950,11 +950,6 @@ namespace Appalachia.Spatial.MeshBurial.Processing
         private static bool _TLT_360 => _TIMELOGTIME.Value == _TLT_360v;
         private static bool _TLT_420 => _TIMELOGTIME.Value == _TLT_420v;
 
-        [MenuItem(TIMELOGTIME + "10")]
-        private static void TIMELOGTIME_010()
-        {
-            _TIMELOGTIME.Value = _T_010v;
-        }
 
         [MenuItem(TIMELOGTIME + "1", true)]
         private static bool _TLT_001_v()

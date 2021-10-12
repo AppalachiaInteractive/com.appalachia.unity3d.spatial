@@ -92,7 +92,7 @@ namespace Appalachia.Spatial
 
                     if (PrefabUtility.IsAnyPrefabInstanceRoot(objectToCenter))
                     {
-                        objectsToCenter[i] = AssetDatabaseHelper.GetPrefabAsset(objectToCenter);
+                        objectsToCenter[i] = AssetDatabaseManager.GetPrefabAsset(objectToCenter);
                     }
                 }
             }

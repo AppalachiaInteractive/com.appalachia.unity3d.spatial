@@ -1,6 +1,6 @@
 #region
 
-using Appalachia.Editing.Preferences.Globals;
+using Appalachia.Core.Preferences.Globals;
 using Appalachia.Spatial.Octree;
 using Appalachia.Spatial.Voxels.Casting;
 using Appalachia.Spatial.Voxels.VoxelTypes;

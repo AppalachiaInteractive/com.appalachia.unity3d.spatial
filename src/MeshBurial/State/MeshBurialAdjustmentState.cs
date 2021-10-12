@@ -1,10 +1,10 @@
 #region
 
 using System;
-using Appalachia.Base.Scriptables;
 using Appalachia.Core.Collections.Native;
 using Appalachia.Core.Constants;
-using Appalachia.MeshData;
+using Appalachia.Core.Scriptables;
+using Appalachia.Jobs.MeshData;
 using Appalachia.Spatial.MeshBurial.Collections;
 using Appalachia.Spatial.MeshBurial.Processing;
 using Appalachia.Spatial.SpatialKeys;

@@ -1,6 +1,6 @@
 #region
 
-using Appalachia.Base.Scriptables;
+using Appalachia.Core.Scriptables;
 
 #endregion
 

@@ -1,12 +1,12 @@
 #region
 
 using System;
-using Appalachia.Base.Scriptables;
 using Appalachia.Core.Collections.Extensions;
 using Appalachia.Core.Collections.Native;
 using Appalachia.Core.Collections.Native.Pointers;
 using Appalachia.Core.Comparisons.ComponentEquality;
 using Appalachia.Core.Extensions;
+using Appalachia.Core.Scriptables;
 using Appalachia.Spatial.Voxels.Casting;
 using Appalachia.Spatial.Voxels.VoxelTypes;
 using Unity.Collections;

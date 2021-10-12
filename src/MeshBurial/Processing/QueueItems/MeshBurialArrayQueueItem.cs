@@ -2,6 +2,7 @@
 
 using System;
 using Unity.Collections;
+using Unity.Collections.NotBurstCompatible;
 using Unity.Mathematics;
 using Unity.Profiling;
 using UnityEngine;
@@ -62,7 +63,7 @@ namespace Appalachia.Spatial.MeshBurial.Processing.QueueItems
         {
             using (_PRF_GetAllMatrices.Auto())
             {
-                mats.CopyFrom(matrices);
+                mats.CopyFromNBC(matrices);
             }
         }
 

@@ -2,14 +2,14 @@
 
 using System;
 using System.Collections.Generic;
+using Appalachia.Core.Assets;
 using Appalachia.Core.Attributes;
 using Appalachia.Core.Collections;
 using Appalachia.Core.Collections.Native;
-using Appalachia.Editing.Assets;
+using Appalachia.Jobs.MeshData;
 using Appalachia.Jobs.Optimization.Options;
 using Appalachia.Jobs.Optimization.Utilities;
 using Appalachia.Jobs.Transfers;
-using Appalachia.MeshData;
 using Appalachia.Spatial.MeshBurial.Processing.QueueItems;
 using Appalachia.Spatial.MeshBurial.State;
 using AwesomeTechnologies.VegetationStudio;
@@ -704,7 +704,7 @@ namespace Appalachia.Spatial.MeshBurial.Processing
 
                         if (_appliedAdjustments > 0)
                         {
-                            AssetDatabaseSaveManager.SaveAssetsSoon();
+                            AssetDatabaseManager.SaveAssetsSoon();
                             _appliedAdjustments = 0;
                         }
 
