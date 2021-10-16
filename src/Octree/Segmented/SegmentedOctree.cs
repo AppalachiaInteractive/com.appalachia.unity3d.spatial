@@ -49,6 +49,7 @@ namespace Appalachia.Spatial.Octree.Segmented
             float capacityIncreaseMultiplier = Octree<TT, TK, TV>._CAPACITY_INCREASE_MULTIPLIER,
             int depth = 0)
         {
+            _style = style;
             _bounds = bounds;
             _center = _bounds.center;
             _size = _bounds.size;

@@ -86,7 +86,7 @@ namespace Appalachia.Spatial.MeshBurial.Processing
             }
         }
 
-        [MenuItem(MENU_BASE + "Clear Queues", false, MENU_P.TOOLS.MESH_BURY.CLEAR_QUEUES)]
+        [MenuItem(MENU_BASE + "Clear Queues", false, APPA_MENU.TOOLS.MESH_BURY.CLEAR_QUEUES)]
         public static void ClearQueues()
         {
             using (_PRF_ClearQueues.Auto())

@@ -2,6 +2,7 @@
   "name": "Appalachia.Spatial.Terrains",
   "rootNamespace": "",
   "references": [
+    "GUID:56ca8901b63fd204692a4a27f67b605e",
     "GUID:4a600fa6fa2ca854b8f233a23710b315",
     "GUID:195705ddaa6fe6c42a576177c5d36a5c",
     "GUID:873f913f34eb2c34385d17b9a87f21b9",
@@ -11,9 +12,9 @@
     "GUID:a4d999b198ed04a449148ce79f89f0f4",
     "GUID:3f3a2990c4ac26b4cb19df5e8f108661",
     "GUID:1d9bff6eb4c4a694e9d9687c9a3d170b",
-    "GUID:fb58d5396d4f85044a40c7548929c37d",
     "GUID:e0cd26848372d4e5c891c569017e11f1",
-    "GUID:d8b63aba1907145bea998dd612889d6b"
+    "GUID:d8b63aba1907145bea998dd612889d6b",
+    "GUID:fb58d5396d4f85044a40c7548929c37d"
   ],
   "includePlatforms": [],
   "excludePlatforms": [],
@@ -23,5 +24,6 @@
   "autoReferenced": true,
   "defineConstraints": [],
   "versionDefines": [],
-  "noEngineReferences": false
+  "noEngineReferences": false,
+  "optionalUnityReferences": []
 }

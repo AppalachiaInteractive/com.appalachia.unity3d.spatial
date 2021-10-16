@@ -238,11 +238,12 @@ namespace Appalachia.Spatial.Terrains
 
             var rootNormal_XZ = math.normalizesafe(rootNormal.xz());
 
-            var sampleCounters = suitabilityType == SuitabilityType.Aspect
-                ? InitializeAspectSample(rootNormal_XZ, AspectReferenceDirectionXZ)
-                : suitabilityType == SuitabilityType.Concavity
-                    ? InitializeConcavitySample()
-                    : InitializeDepressionSample();
+            var sampleCounters = suitabilityType switch
+            {
+                SuitabilityType.Aspect    => InitializeAspectSample(rootNormal_XZ, AspectReferenceDirectionXZ),
+                SuitabilityType.Concavity => InitializeConcavitySample(),
+                _ => InitializeDepressionSample()
+            };
 
             var sampleCount = (int) sampleCounters.x;
             var sampleSum = sampleCounters.y;
@@ -298,15 +299,16 @@ namespace Appalachia.Spatial.Terrains
                     );
                     var samplePosition_WS = samplePosition_TS + terrainPosition_WS;
 
-                    var sampleValue = suitabilityType == SuitabilityType.Aspect
-                        ? GetAspectSampleValue(sampleNormal_XZ, AspectReferenceDirectionXZ)
-                        : suitabilityType == SuitabilityType.Concavity
-                            ? GetConcavitySampleValue(
-                                samplePosition_TS,
-                                rootPosition_TS,
-                                sampleNormal
-                            )
-                            : sampleHeight - rootHeight;
+                    var sampleValue = suitabilityType switch
+                    {
+                        SuitabilityType.Aspect => GetAspectSampleValue(sampleNormal_XZ, AspectReferenceDirectionXZ),
+                        SuitabilityType.Concavity => GetConcavitySampleValue(
+                            samplePosition_TS,
+                            rootPosition_TS,
+                            sampleNormal
+                        ),
+                        _ => sampleHeight - rootHeight
+                    };
 
                     Handles.Label(samplePosition_WS, $"{sampleValue:F3}", Label);
 
@@ -324,11 +326,12 @@ namespace Appalachia.Spatial.Terrains
                         minPosition = samplePosition_WS;
                     }
 
-                    var colorRemove = suitabilityType == SuitabilityType.Aspect
-                        ? CheckAspectRemoval(sampleValue)
-                        : suitabilityType == SuitabilityType.Concavity
-                            ? CheckConcavityRemoval(sampleValue)
-                            : CheckDepressionRemoval(sampleValue);
+                    var colorRemove = suitabilityType switch
+                    {
+                        SuitabilityType.Aspect    => CheckAspectRemoval(sampleValue),
+                        SuitabilityType.Concavity => CheckConcavityRemoval(sampleValue),
+                        _                         => CheckDepressionRemoval(sampleValue)
+                    };
 
                     sampleColors[aggPointIndex] = colorRemove ? Color.red : Color.green;
                     samplePositions[aggPointIndex] = samplePosition_WS;
@@ -337,11 +340,12 @@ namespace Appalachia.Spatial.Terrains
 
             var testValue = GetTestValue(sampleMin, sampleMax, sampleSum, sampleCount);
 
-            var remove = suitabilityType == SuitabilityType.Aspect
-                ? CheckAspectRemoval(testValue)
-                : suitabilityType == SuitabilityType.Concavity
-                    ? CheckConcavityRemoval(testValue)
-                    : CheckDepressionRemoval(testValue);
+            var remove = suitabilityType switch
+            {
+                SuitabilityType.Aspect    => CheckAspectRemoval(testValue),
+                SuitabilityType.Concavity => CheckConcavityRemoval(testValue),
+                _                         => CheckDepressionRemoval(testValue)
+            };
 
             DrawSpheres(samplePositions, sampleColors, minPosition, maxPosition, GizmoSize);
 

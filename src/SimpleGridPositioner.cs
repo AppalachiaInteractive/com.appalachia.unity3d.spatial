@@ -906,6 +906,7 @@ namespace Appalachia.Spatial
                     }
                     catch
                     {
+                        // ignored
                     }
                 }
 

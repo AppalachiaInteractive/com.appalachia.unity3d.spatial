@@ -7,6 +7,7 @@ using Appalachia.Core.Constants;
 using Appalachia.Core.Preferences;
 using Unity.Mathematics;
 using UnityEditor;
+// ReSharper disable CompareOfFloatsByEqualityOperator
 
 #endregion
 
@@ -39,7 +40,7 @@ namespace Appalachia.Spatial.MeshBurial.Processing
             return true;
         }
 
-        [MenuItem(MENU_ENABLE_, false, MENU_P.TOOLS.MESH_BURY.ENABLE)]
+        [MenuItem(MENU_ENABLE_, false, APPA_MENU.TOOLS.MESH_BURY.ENABLE)]
         public static void ToggleEnableMeshBurials()
         {
             EnableMeshBurials();
@@ -102,7 +103,7 @@ namespace Appalachia.Spatial.MeshBurial.Processing
             return true;
         }
 
-        [MenuItem(MENU_DEBUGLOG_, false, MENU_P.TOOLS.MESH_BURY.TOOLS)]
+        [MenuItem(MENU_DEBUGLOG_, false, APPA_MENU.TOOLS.MESH_BURY.TOOLS)]
         public static void MENU_DEBUGLOG()
         {
             _DEBUGLOG.v = !_DEBUGLOG.v;
@@ -128,7 +129,7 @@ namespace Appalachia.Spatial.MeshBurial.Processing
             return true;
         }
 
-        [MenuItem(MENU_DEBUGZEROLOG_, false, MENU_P.TOOLS.MESH_BURY.TOOLS)]
+        [MenuItem(MENU_DEBUGZEROLOG_, false, APPA_MENU.TOOLS.MESH_BURY.TOOLS)]
         public static void MENU_DEBUGZEROLOG()
         {
             _DEBUGZEROLOG.v = !_DEBUGZEROLOG.v;
@@ -159,7 +160,7 @@ namespace Appalachia.Spatial.MeshBurial.Processing
             return true;
         }
 
-        [MenuItem(MENU_JOBS_MESH_NORMALS_, false, MENU_P.TOOLS.MESH_BURY.TOOLS)]
+        [MenuItem(MENU_JOBS_MESH_NORMALS_, false, APPA_MENU.TOOLS.MESH_BURY.TOOLS)]
         private static void MENU_JOBS_MESH_NORMALS()
         {
             if (!_MESH_NORMALS.IsAwake)
@@ -192,7 +193,7 @@ namespace Appalachia.Spatial.MeshBurial.Processing
             return true;
         }
 
-        [MenuItem(MENU_JOBS_TERRAIN_NORMALS_, false, MENU_P.TOOLS.MESH_BURY.TOOLS)]
+        [MenuItem(MENU_JOBS_TERRAIN_NORMALS_, false, APPA_MENU.TOOLS.MESH_BURY.TOOLS)]
         private static void MENU_JOBS_TERRAIN_NORMALS()
         {
             if (!_TERRAIN_NORMALS.IsAwake)
@@ -224,7 +225,7 @@ namespace Appalachia.Spatial.MeshBurial.Processing
             return true;
         }
 
-        [MenuItem(MENU_JOBS_HEIGHTS_, false, MENU_P.TOOLS.MESH_BURY.TOOLS)]
+        [MenuItem(MENU_JOBS_HEIGHTS_, false, APPA_MENU.TOOLS.MESH_BURY.TOOLS)]
         private static void MENU_JOBS_HEIGHTS()
         {
             if (!_HEIGHT.IsAwake)
@@ -256,7 +257,7 @@ namespace Appalachia.Spatial.MeshBurial.Processing
             return true;
         }
 
-        [MenuItem(MENU_JOBS_PARAMS_, false, MENU_P.TOOLS.MESH_BURY.TOOLS)]
+        [MenuItem(MENU_JOBS_PARAMS_, false, APPA_MENU.TOOLS.MESH_BURY.TOOLS)]
         private static void MENU_JOBS_PARAMS()
         {
             if (!_PARAMS.IsAwake)
@@ -288,7 +289,7 @@ namespace Appalachia.Spatial.MeshBurial.Processing
             return true;
         }
 
-        [MenuItem(MENU_JOBS_TESTS_, false, MENU_P.TOOLS.MESH_BURY.TOOLS)]
+        [MenuItem(MENU_JOBS_TESTS_, false, APPA_MENU.TOOLS.MESH_BURY.TOOLS)]
         private static void MENU_JOBS_TESTS()
         {
             if (!_TEST.IsAwake)
@@ -897,7 +898,7 @@ namespace Appalachia.Spatial.MeshBurial.Processing
             return true;
         }
 
-        [MenuItem(MENU_TIMELOG_, false, MENU_P.TOOLS.MESH_BURY.TOOLS)]
+        [MenuItem(MENU_TIMELOG_, false, APPA_MENU.TOOLS.MESH_BURY.TOOLS)]
         public static void MENU_TIMELOG()
         {
             _TIMELOG.v = !_TIMELOG.v;

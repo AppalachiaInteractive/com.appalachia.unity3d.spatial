@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fee3300097a54496b0e3864b5b57a33a, type: 3}
+  m_Name: Lenape_Male_v1_s1_INTERACTION-INFO
+  m_EditorClassIdentifier: 
+  texture: {fileID: 2800000, guid: 16c79a47f8bbd144eb0c60a10f1762c3, type: 3}
+  size: 2.7120082
+  offset: 0
+  strength: 1.5
+  scale: 1
+  minOld: 0
+  maxOld: 0.99607843

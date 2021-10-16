@@ -75,7 +75,7 @@ namespace Appalachia.Spatial.MeshBurial.State
 
                 SetDirty();
 
-                AssetDatabaseManager.SaveAssetsNextFrame();
+                AssetDatabaseSaveManager.SaveAssetsNextFrame();
             }
         }
 

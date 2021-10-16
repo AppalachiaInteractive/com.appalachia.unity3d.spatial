@@ -704,7 +704,7 @@ namespace Appalachia.Spatial.MeshBurial.Processing
 
                         if (_appliedAdjustments > 0)
                         {
-                            AssetDatabaseManager.SaveAssetsSoon();
+                            AssetDatabaseSaveManager.SaveAssetsSoon();
                             _appliedAdjustments = 0;
                         }
 

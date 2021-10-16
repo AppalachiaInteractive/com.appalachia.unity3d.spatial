@@ -69,13 +69,13 @@ namespace Appalachia.Spatial.Terrains
         {
             unchecked
             {
-                var hashCode = this.hashCode;
-                hashCode = (hashCode * 397) ^ terrainPosition.GetHashCode();
-                hashCode = (hashCode * 397) ^ resolution;
-                hashCode = (hashCode * 397) ^ scale.GetHashCode();
-                hashCode = (hashCode * 397) ^ size.GetHashCode();
-                hashCode = (hashCode * 397) ^ (int) allocator;
-                return hashCode;
+                var h = this.hashCode;
+                h = (h * 397) ^ terrainPosition.GetHashCode();
+                h = (h * 397) ^ resolution;
+                h = (h * 397) ^ scale.GetHashCode();
+                h = (h * 397) ^ size.GetHashCode();
+                h = (h * 397) ^ (int) allocator;
+                return h;
             }
         }
 

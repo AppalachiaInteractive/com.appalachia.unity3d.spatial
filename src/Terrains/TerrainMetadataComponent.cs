@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using Appalachia.CI.Integration.Assets;
 using Appalachia.Editing.Debugging;
 using Appalachia.Editing.Debugging.Handle;
 using Appalachia.Spatial.Terrains.Utilities;
@@ -220,7 +221,7 @@ namespace Appalachia.Spatial.Terrains
                         comp = terrain.gameObject.AddComponent<TerrainMetadataComponent>();
                     }
 
-                    AssetDatabase.TryGetGUIDAndLocalFileIdentifier(
+                    AssetDatabaseManager.TryGetGUIDAndLocalFileIdentifier(
                         terrain.terrainData,
                         out var guid,
                         out long _

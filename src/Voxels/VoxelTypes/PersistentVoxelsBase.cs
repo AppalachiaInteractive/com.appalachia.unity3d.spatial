@@ -53,7 +53,7 @@ namespace Appalachia.Spatial.Voxels.VoxelTypes
             this.renderers = renderers;
             CalculateVoxelActiveRatio();
 
-            if (this.activeRatio != activeRatio)
+            if (Math.Abs(this.activeRatio - activeRatio) > float.Epsilon)
             {
                 UpdateVoxelActiveRatio(activeRatio);
             }

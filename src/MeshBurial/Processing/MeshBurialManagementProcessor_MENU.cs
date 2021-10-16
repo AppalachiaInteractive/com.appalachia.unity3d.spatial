@@ -2,6 +2,7 @@
 
 #region
 
+using Appalachia.CI.Integration.Assets;
 using Appalachia.Core.Constants;
 using Appalachia.Spatial.MeshBurial.State;
 using AwesomeTechnologies.VegetationSystem;
@@ -37,7 +38,7 @@ namespace Appalachia.Spatial.MeshBurial.Processing
             return true;
         }
 
-        [MenuItem(MENU_VSP_ENABLE, false, MENU_P.TOOLS.MESH_BURY.ENABLE_VSP)]
+        [MenuItem(MENU_VSP_ENABLE, false, APPA_MENU.TOOLS.MESH_BURY.ENABLE_VSP)]
         public static void ToggleEnableVSPMeshBurials()
         {
             _vspMeshBurialEnabled = !_vspMeshBurialEnabled;
@@ -62,7 +63,7 @@ namespace Appalachia.Spatial.MeshBurial.Processing
             }
         }
 
-        [MenuItem(MENU_VSP_DISABLE, false, MENU_P.TOOLS.MESH_BURY.ENABLE_VSP)]
+        [MenuItem(MENU_VSP_DISABLE, false, APPA_MENU.TOOLS.MESH_BURY.ENABLE_VSP)]
         public static void DisableVSPItems()
         {
             for (var i = 0; i < _vegetationSystem.VegetationPackageProList.Count; i++)
@@ -78,7 +79,7 @@ namespace Appalachia.Spatial.MeshBurial.Processing
             }
         }
 
-        [MenuItem(MENU_RESET + "Refresh", false, MENU_P.TOOLS.MESH_BURY.RESET)]
+        [MenuItem(MENU_RESET + "Refresh", false, APPA_MENU.TOOLS.MESH_BURY.RESET)]
         public static void Refresh()
         {
             QUEUES.pendingVegetationKeys.Clear();
@@ -87,7 +88,7 @@ namespace Appalachia.Spatial.MeshBurial.Processing
             //RefreshPrefabRenderingSets();
         }
 
-        [MenuItem(MENU_RESET + "Refresh and Start", false, MENU_P.TOOLS.MESH_BURY.RESET)]
+        [MenuItem(MENU_RESET + "Refresh and Start", false, APPA_MENU.TOOLS.MESH_BURY.RESET)]
         public static void RefreshAndStart()
         {
             QUEUES.pendingVegetationKeys.Clear();
@@ -101,14 +102,14 @@ namespace Appalachia.Spatial.MeshBurial.Processing
             }
         }
 
-        [MenuItem(MENU_RESET + "Execute Full Reset", false, MENU_P.TOOLS.MESH_BURY.RESET)]
+        [MenuItem(MENU_RESET + "Execute Full Reset", false, APPA_MENU.TOOLS.MESH_BURY.RESET)]
         public static void Reset()
         {
             MeshBurialExecutionManager.EnsureCompleted();
             MeshBurialAdjustmentCollection.instance.Reset();
         }
 
-        [MenuItem(MENU_RESET + "Reset and Refresh", false, MENU_P.TOOLS.MESH_BURY.RESET)]
+        [MenuItem(MENU_RESET + "Reset and Refresh", false, APPA_MENU.TOOLS.MESH_BURY.RESET)]
         public static void ResetRefresh()
         {
             Reset();
@@ -117,7 +118,7 @@ namespace Appalachia.Spatial.MeshBurial.Processing
             Refresh();
         }
 
-        [MenuItem(MENU_BASE + "Force Save", false, MENU_P.TOOLS.MESH_BURY.FORCE_SAVE)]
+        [MenuItem(MENU_BASE + "Force Save", false, APPA_MENU.TOOLS.MESH_BURY.FORCE_SAVE)]
         public static void ForceSave()
         {
             var collection = MeshBurialAdjustmentCollection.instance;
@@ -128,7 +129,7 @@ namespace Appalachia.Spatial.MeshBurial.Processing
             }
 
             MeshBurialAdjustmentCollection.instance.SetDirty();
-            AssetDatabase.SaveAssets();
+            AssetDatabaseManager.SaveAssets();
         }
     }
 }

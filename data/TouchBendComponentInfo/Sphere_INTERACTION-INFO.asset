@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fee3300097a54496b0e3864b5b57a33a, type: 3}
+  m_Name: Sphere_INTERACTION-INFO
+  m_EditorClassIdentifier: 
+  texture: {fileID: 2800000, guid: 4b37f3992b721784497408b8bb81e43b, type: 3}
+  size: 3.4641016
+  offset: 0
+  strength: 1
+  minOld: 0
+  maxOld: 0.89411765

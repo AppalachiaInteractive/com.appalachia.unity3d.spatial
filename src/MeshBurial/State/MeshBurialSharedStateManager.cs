@@ -1,5 +1,6 @@
 #region
 
+using Appalachia.CI.Integration.Assets;
 using Appalachia.Core.Attributes.Editing;
 using Unity.Profiling;
 using UnityEditor;
@@ -32,7 +33,7 @@ namespace Appalachia.Spatial.MeshBurial.State
                 if (PrefabUtility.IsPartOfPrefabAsset(go) ||
                     PrefabUtility.IsAnyPrefabInstanceRoot(go))
                 {
-                    AssetDatabase.TryGetGUIDAndLocalFileIdentifier(go, out var guid, out long _);
+                    AssetDatabaseManager.TryGetGUIDAndLocalFileIdentifier(go, out var guid, out long _);
 
                     var hashCode = guid.GetHashCode();
 
@@ -47,7 +48,7 @@ namespace Appalachia.Spatial.MeshBurial.State
         {
             using (_PRF_GetByPrefab.Auto())
             {
-                AssetDatabase.TryGetGUIDAndLocalFileIdentifier(prefab, out var guid, out long _);
+                AssetDatabaseManager.TryGetGUIDAndLocalFileIdentifier(prefab, out var guid, out long _);
 
                 var hashCode = guid.GetHashCode();
 

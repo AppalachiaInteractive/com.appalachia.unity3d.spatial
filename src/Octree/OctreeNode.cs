@@ -1,3 +1,4 @@
+/*
 namespace Appalachia.Spatial.Octree
 {
     /*public struct OctreeNode<TK, TV> : IEquatable<OctreeNode<TK, TV>>
@@ -34,5 +35,6 @@ namespace Appalachia.Spatial.Octree
         {
             return !left.Equals(right);
         }
-    }*/
+    }#1#
 }
+*/

@@ -325,7 +325,7 @@ namespace Appalachia.Spatial.Voxels.VoxelTypes
                 activeRatio = math.clamp(activeRatio, 0.001f, 1f);
                 ratio = math.clamp(ratio,             0.001f, 1f);
 
-                if (activeRatio == ratio)
+                if (Math.Abs(activeRatio - ratio) < float.Epsilon)
                 {
                     return default;
                 }
