@@ -12,6 +12,13 @@
 ## Releasing
 | Hash | Date | Author | Changes |
 |------|------|--------|---------|
+| 51c1882de937b9cf6f53ba79e4115612e2b22b35 | 2021-10-20 | Chris Schubert | Automatic depenency and reference management and cleanup |
+| f9376b62babc4f5184dece9d64b6fc795054860a | 2021-10-20 | Chris Schubert | Committing project and assembly management changes before regenerating project files |
+
+
+ ## Tag: `v0.1.3`
+| Hash | Date | Author | Changes |
+|------|------|--------|---------|
 | db704e9922fde449eddd4994a60f8564c549fc4c | 2021-10-16 | Chris Schubert | More project cleanup and refactoring |
 | fa3d010bd644373e63e549def4a54559406c3988 | 2021-10-12 | Chris Schubert | Code cleanup and project restructuring |
 
