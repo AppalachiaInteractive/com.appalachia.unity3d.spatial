@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Appalachia.Core.Attributes.Editing;
+using Appalachia.Core.Debugging;
 using Appalachia.Core.Extensions;
 using Appalachia.Editing.Core.Behaviours;
 using Appalachia.Editing.Debugging;
