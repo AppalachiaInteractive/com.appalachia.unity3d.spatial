@@ -2,8 +2,8 @@
 
 #region
 
+using Appalachia.CI.Constants;
 using Appalachia.CI.Integration.Assets;
-using Appalachia.Core.Constants;
 using Appalachia.Spatial.MeshBurial.State;
 using AwesomeTechnologies.VegetationSystem;
 using UnityEditor;

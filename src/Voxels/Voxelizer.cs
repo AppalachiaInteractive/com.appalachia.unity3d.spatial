@@ -8,7 +8,7 @@ using Appalachia.Core.Extensions;
 using Appalachia.Jobs.Burstable;
 using Appalachia.Spatial.Voxels.Casting;
 using Appalachia.Spatial.Voxels.VoxelTypes;
-using Appalachia.Utility.Constants;
+using Appalachia.Utility.src.Constants;
 using Unity.Collections;
 using Unity.Mathematics;
 using Unity.Profiling;

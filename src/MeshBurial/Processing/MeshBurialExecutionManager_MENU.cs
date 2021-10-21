@@ -3,7 +3,7 @@
 #region
 
 using System;
-using Appalachia.Core.Constants;
+using Appalachia.CI.Constants;
 using Appalachia.Core.Preferences;
 using Unity.Mathematics;
 using UnityEditor;

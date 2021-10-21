@@ -1,9 +1,9 @@
 #region
 
+using Appalachia.CI.Constants;
 using Appalachia.Core.Collections;
 using Appalachia.Core.Collections.Implementations.Sets;
 using Appalachia.Core.Collections.NonSerialized;
-using Appalachia.Core.Constants;
 using Appalachia.Core.Scriptables;
 using Appalachia.Spatial.MeshBurial.Processing.QueueItems;
 using Unity.Profiling;

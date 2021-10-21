@@ -5,7 +5,7 @@ using Appalachia.Core.Extensions;
 using Appalachia.Jobs.MeshData;
 using Appalachia.Spatial.Terrains;
 using Appalachia.Spatial.Terrains.Utilities;
-using Appalachia.Utility.Constants;
+using Appalachia.Utility.src.Constants;
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Mathematics;

@@ -2,7 +2,7 @@
 
 #region
 
-using Appalachia.Core.Constants;
+using Appalachia.CI.Constants;
 using Unity.Profiling;
 using UnityEditor;
 using UnityEngine;
