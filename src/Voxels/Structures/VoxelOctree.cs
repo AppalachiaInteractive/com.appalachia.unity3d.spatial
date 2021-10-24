@@ -4,7 +4,7 @@ using Appalachia.Core.Preferences.Globals;
 using Appalachia.Spatial.Octree;
 using Appalachia.Spatial.Voxels.Casting;
 using Appalachia.Spatial.Voxels.VoxelTypes;
-using Appalachia.Utility.src.Constants;
+using Appalachia.Utility.Constants;
 using Unity.Mathematics;
 using Unity.Profiling;
 using UnityEngine;

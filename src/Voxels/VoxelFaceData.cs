@@ -2,7 +2,7 @@
 
 using System;
 using Appalachia.Core.Extensions;
-using Appalachia.Utility.src.Constants;
+using Appalachia.Utility.Constants;
 using Unity.Burst;
 using Unity.Mathematics;
 using UnityEngine;

@@ -6,7 +6,7 @@ using System;
 using Appalachia.Core.Attributes.Editing;
 using Appalachia.Core.Preferences.Globals;
 using Appalachia.Spatial.ConvexDecomposition.Generation;
-using Appalachia.Utility.src.Colors;
+using Appalachia.Utility.Colors;
 using Sirenix.OdinInspector;
 using Unity.Profiling;
 using UnityEditor;

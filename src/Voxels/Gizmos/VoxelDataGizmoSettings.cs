@@ -3,7 +3,7 @@
 using System;
 using Appalachia.Core.Attributes.Editing;
 using Appalachia.Core.Scriptables;
-using Appalachia.Utility.src.Constants;
+using Appalachia.Utility.Constants;
 using Sirenix.OdinInspector;
 using Unity.Mathematics;
 using UnityEngine;
