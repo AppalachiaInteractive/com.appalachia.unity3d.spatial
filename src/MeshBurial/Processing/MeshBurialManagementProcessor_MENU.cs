@@ -15,14 +15,6 @@ namespace Appalachia.Spatial.MeshBurial.Processing
 {
     public static partial class MeshBurialManagementProcessor
     {
-        public const string MENU_BASE = "Tools/Mesh Burial/";
-        public const string MENU_VSP = MENU_BASE + "VSP/";
-
-        private const string MENU_VSP_ENABLE = MENU_VSP + "Enable VSP Mesh Burial";
-        private const string MENU_VSP_DISABLE = MENU_VSP + "Disable VSP Items";
-
-        private const string MENU_RESET = MENU_BASE + "Manage/";
-
         private static bool _vspMeshBurialEnabled;
 
         private static readonly VegetationSystemPro.MultiOnVegetationCellSpawnedDelegate
@@ -31,14 +23,14 @@ namespace Appalachia.Spatial.MeshBurial.Processing
         private static readonly VegetationSystemPro.MultiOnVegetationStudioRefreshDelegate
             _refreshSystem = RequeueAllCells;
 
-        [MenuItem(MENU_VSP_ENABLE, true)]
+        [UnityEditor.MenuItem(PKG.Menu.Appalachia.External.Base + "Enable", true)]
         public static bool ToggleEnableVSPMeshBurialsValidate()
         {
-            Menu.SetChecked(MENU_VSP_ENABLE, _vspMeshBurialEnabled);
+            Menu.SetChecked(PKG.Menu.Appalachia.External.Base + "Enable", _vspMeshBurialEnabled);
             return true;
         }
 
-        [MenuItem(MENU_VSP_ENABLE, false, APPA_MENU.TOOLS.MESH_BURY.ENABLE_VSP)]
+        [UnityEditor.MenuItem(PKG.Menu.Appalachia.External.Base + "Enable", false, PKG.Menu.Appalachia.External.Priority)]
         public static void ToggleEnableVSPMeshBurials()
         {
             _vspMeshBurialEnabled = !_vspMeshBurialEnabled;
@@ -63,7 +55,7 @@ namespace Appalachia.Spatial.MeshBurial.Processing
             }
         }
 
-        [MenuItem(MENU_VSP_DISABLE, false, APPA_MENU.TOOLS.MESH_BURY.ENABLE_VSP)]
+        [UnityEditor.MenuItem(PKG.Menu.Appalachia.External.Base + "Disable", false, PKG.Menu.Appalachia.External.Priority + 1)]
         public static void DisableVSPItems()
         {
             for (var i = 0; i < _vegetationSystem.VegetationPackageProList.Count; i++)
@@ -79,7 +71,7 @@ namespace Appalachia.Spatial.MeshBurial.Processing
             }
         }
 
-        [MenuItem(MENU_RESET + "Refresh", false, APPA_MENU.TOOLS.MESH_BURY.RESET)]
+        [UnityEditor.MenuItem(PKG.Menu.Appalachia.Manage.Base + "Refresh", false, PKG.Menu.Appalachia.Manage.Priority + 2)]
         public static void Refresh()
         {
             QUEUES.pendingVegetationKeys.Clear();
@@ -88,7 +80,7 @@ namespace Appalachia.Spatial.MeshBurial.Processing
             //RefreshPrefabRenderingSets();
         }
 
-        [MenuItem(MENU_RESET + "Refresh and Start", false, APPA_MENU.TOOLS.MESH_BURY.RESET)]
+        [UnityEditor.MenuItem(PKG.Menu.Appalachia.Manage.Base + "Refresh and Start", false, PKG.Menu.Appalachia.Manage.Priority + 4)]
         public static void RefreshAndStart()
         {
             QUEUES.pendingVegetationKeys.Clear();
@@ -102,14 +94,14 @@ namespace Appalachia.Spatial.MeshBurial.Processing
             }
         }
 
-        [MenuItem(MENU_RESET + "Execute Full Reset", false, APPA_MENU.TOOLS.MESH_BURY.RESET)]
+        [UnityEditor.MenuItem(PKG.Menu.Appalachia.Manage.Base + "Execute Full Reset", false, PKG.Menu.Appalachia.Manage.Priority + 6)]
         public static void Reset()
         {
             MeshBurialExecutionManager.EnsureCompleted();
             MeshBurialAdjustmentCollection.instance.Reset();
         }
 
-        [MenuItem(MENU_RESET + "Reset and Refresh", false, APPA_MENU.TOOLS.MESH_BURY.RESET)]
+        [UnityEditor.MenuItem(PKG.Menu.Appalachia.Manage.Base + "Reset and Refresh", false, PKG.Menu.Appalachia.Manage.Priority + 8)]
         public static void ResetRefresh()
         {
             Reset();
@@ -118,7 +110,7 @@ namespace Appalachia.Spatial.MeshBurial.Processing
             Refresh();
         }
 
-        [MenuItem(MENU_BASE + "Force Save", false, APPA_MENU.TOOLS.MESH_BURY.FORCE_SAVE)]
+        [UnityEditor.MenuItem(PKG.Menu.Appalachia.Manage.Base + "Force Save", false, PKG.Menu.Appalachia.Manage.Priority + 10)]
         public static void ForceSave()
         {
             var collection = MeshBurialAdjustmentCollection.instance;

@@ -113,7 +113,8 @@ namespace Appalachia.Spatial
             */
         }
 
-        [MenuItem("GameObject/Chris/Organization/Add SimpleGridPositioner", false, -10)]
+        [UnityEditor.MenuItem(PKG.Menu.GameObject.Base + "Add SimpleGridPositioner", false, -10)]
+        [UnityEditor.MenuItem(PKG.Menu.Appalachia.Components.Base + "Add SimpleGridPositioner", false, -10)]
         public static void AddSimpleGridPositioner(MenuCommand menuCommand)
         {
             //Create the spawner

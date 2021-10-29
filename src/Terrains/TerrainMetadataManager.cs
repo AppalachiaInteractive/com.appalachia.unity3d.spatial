@@ -14,6 +14,7 @@ using UnityEngine;
 namespace Appalachia.Spatial.Terrains
 {
     [AlwaysInitializeOnLoad]
+    
     public static class TerrainMetadataManager
     {
         private const string _PRF_PFX = nameof(TerrainMetadataManager) + ".";

@@ -14,6 +14,7 @@ using UnityEngine;
 namespace Appalachia.Spatial.ConvexDecomposition.Data.Review
 {
     [Serializable]
+    
     public class DecomposedColliderDataReview : SelfSavingSingletonScriptableObject<DecomposedColliderDataReview>
     {
         [ExecuteOnEnable]

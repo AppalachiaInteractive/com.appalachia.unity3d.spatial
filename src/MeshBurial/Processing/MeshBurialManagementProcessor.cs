@@ -20,6 +20,7 @@ using Object = UnityEngine.Object;
 namespace Appalachia.Spatial.MeshBurial.Processing
 {
     [AlwaysInitializeOnLoad]
+    
     public static partial class MeshBurialManagementProcessor
     {
         private const string _PRF_PFX = nameof(MeshBurialManagementProcessor) + ".";

@@ -196,7 +196,7 @@ namespace Appalachia.Spatial.Terrains
 
 #if UNITY_EDITOR
 
-        [MenuItem("Tools/Terrains/Add TerrainMetadata To All")]
+        [UnityEditor.MenuItem(PKG.Menu.Appalachia.Tools.Base + "Terrains/Add TerrainMetadata To All")]
         public static void AddToAllTerrains_Menu()
         {
             AddToAllTerrains();

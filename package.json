@@ -25,16 +25,19 @@
     "com.unity.mathematics": "1.2.4",
     "com.unity.collections": "1.0.0-pre.6",
     "com.unity.burst": "1.6.1",
-    "com.appalachia.unity3d.utility": "0.1.3",
-    "com.appalachia.unity3d.editing": "0.1.9",
-    "com.appalachia.unity3d.ci": "0.1.3",
-    "com.appalachia.unity3d.core": "0.1.7",
+    "com.appalachia.unity3d.utility": "0.1.4",
+    "com.appalachia.unity3d.editing": "0.1.10",
+    "com.appalachia.unity3d.ci": "0.1.4",
+    "com.appalachia.unity3d.core": "0.1.8",
     "com.unity.jobs": "0.11.0-preview.6",
-    "com.appalachia.unity3d.rendering": "0.1.8",
-    "com.appalachia.unity3d.simulation": "0.1.13",
-    "com.appalachia.unity3d.jobs": "0.1.6",
-    "com.appalachia.dotnet.mdabros.sharp-learning": "0.2.13",
-    "com.appalachia.unity3d.awesome-technologies.vegetation-studio": "0.1.17"
+    "com.appalachia.unity3d.rendering": "0.1.9",
+    "com.appalachia.unity3d.simulation": "0.1.14",
+    "com.appalachia.unity3d.jobs": "0.1.7",
+    "com.unity.addressables": "1.19.9",
+    "com.unity.render-pipelines.core": "12.1.0",
+    "com.appalachia.unity3d.third-party.awesometechnologies": "0.1.0",
+    "com.appalachia.unity3d.third-party.mdabros": "0.1.0",
+    "com.unity.timeline": "1.6.2"
   },
   "scripts": {
     "preversion": "bash ~/com.appalachia/appa/appa package unity3d preversion",
@@ -47,6 +50,5 @@
     "prepublishOnly": "bash ~/com.appalachia/appa/appa package unity3d prepublishOnly",
     "publish": "bash ~/com.appalachia/appa/appa package unity3d publish",
     "postpublish": "bash ~/com.appalachia/appa/appa package unity3d postpublish"
-  },
-  "exports": null
+  }
 }

@@ -18,7 +18,6 @@ namespace Appalachia.Spatial.MeshBurial.Processing
     {
         private const string _PRF_PFX = nameof(MeshBurialManagementQueue) + ".";
 
-        private const string MENU_BASE = MeshBurialManagementProcessor.MENU_BASE;
 
         //prefabSpawnPointStates.Count +
         //runtimePrefabRenderingElements.Count +
@@ -86,7 +85,7 @@ namespace Appalachia.Spatial.MeshBurial.Processing
             }
         }
 
-        [MenuItem(MENU_BASE + "Clear Queues", false, APPA_MENU.TOOLS.MESH_BURY.CLEAR_QUEUES)]
+        [UnityEditor.MenuItem(PKG.Menu.Appalachia.Tools.Base + "Clear Queues", false, PKG.Menu.Appalachia.Tools.Priority)]
         public static void ClearQueues()
         {
             using (_PRF_ClearQueues.Auto())

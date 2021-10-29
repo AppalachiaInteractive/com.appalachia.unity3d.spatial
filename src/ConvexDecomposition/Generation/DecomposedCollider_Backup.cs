@@ -241,7 +241,7 @@ namespace Appalachia.Core.ConvexDecomposition
         
         
         [TabGroup(_PHYSX_TABS, _PHYSX_SUB_SWAP), PropertyOrder(161), ShowInInspector, SmartLabel]
-        [SmartInlineButton(nameof(Swap), DisableIfMemberName = nameof(_canNotSwap))]
+        [SmartInlineButton(nameof(Swap), DisableIfCondition = nameof(_canNotSwap))]
         public static PhysicMaterial swapTo;
 
         [TabGroup(_PHYSX_TABS, _PHYSX_SUB_ALL)]
@@ -1302,43 +1302,43 @@ namespace Appalachia.Core.ConvexDecomposition
         private const string RIGID_BASE = MENU_BASE + "Rigidbodies/";
         private const string UTILITY_BASE = MENU_BASE + "Utility/";
 
-        [MenuItem(CREATE_BASE + "1x Volume Tolerance", priority = APPA_MENU.GAME_OBJ.COLLIDERS.COLLIDER_BAKE)]
+        [UnityEditor.MenuItem(CREATE_BASE + "1x Volume Tolerance", priority = PKG.Priorities.COLLIDERS.COLLIDER_BAKE)]
         public static void Decompose_1(MenuCommand menuCommand)
         {
             Decompose(menuCommand, 1f);
         }
 
-        [MenuItem(CREATE_BASE + "2x Volume Tolerance", priority = APPA_MENU.GAME_OBJ.COLLIDERS.COLLIDER_BAKE)]
+        [UnityEditor.MenuItem(CREATE_BASE + "2x Volume Tolerance", priority = PKG.Priorities.COLLIDERS.COLLIDER_BAKE)]
         public static void Decompose_2(MenuCommand menuCommand)
         {
             Decompose(menuCommand, 2f);
         }
 
-        [MenuItem(CREATE_BASE + "3x Volume Tolerance", priority = APPA_MENU.GAME_OBJ.COLLIDERS.COLLIDER_BAKE)]
+        [UnityEditor.MenuItem(CREATE_BASE + "3x Volume Tolerance", priority = PKG.Priorities.COLLIDERS.COLLIDER_BAKE)]
         public static void Decompose_3(MenuCommand menuCommand)
         {
             Decompose(menuCommand, 3f);
         }
 
-        [MenuItem(CREATE_BASE + "4x Volume Tolerance", priority = APPA_MENU.GAME_OBJ.COLLIDERS.COLLIDER_BAKE)]
+        [UnityEditor.MenuItem(CREATE_BASE + "4x Volume Tolerance", priority = PKG.Priorities.COLLIDERS.COLLIDER_BAKE)]
         public static void Decompose_4(MenuCommand menuCommand)
         {
             Decompose(menuCommand, 4f);
         }
 
-        [MenuItem(CREATE_BASE + "5x Volume Tolerance", priority = APPA_MENU.GAME_OBJ.COLLIDERS.COLLIDER_BAKE)]
+        [UnityEditor.MenuItem(CREATE_BASE + "5x Volume Tolerance", priority = PKG.Priorities.COLLIDERS.COLLIDER_BAKE)]
         public static void Decompose_5(MenuCommand menuCommand)
         {
             Decompose(menuCommand, 5f);
         }
 
-        [MenuItem(CREATE_BASE + "7.5x Volume Tolerance", priority = APPA_MENU.GAME_OBJ.COLLIDERS.COLLIDER_BAKE)]
+        [UnityEditor.MenuItem(CREATE_BASE + "7.5x Volume Tolerance", priority = PKG.Priorities.COLLIDERS.COLLIDER_BAKE)]
         public static void Decompose_75(MenuCommand menuCommand)
         {
             Decompose(menuCommand, 7.5f);
         }
 
-        [MenuItem(CREATE_BASE + "10.0x Volume Tolerance", priority = APPA_MENU.GAME_OBJ.COLLIDERS.COLLIDER_BAKE)]
+        [UnityEditor.MenuItem(CREATE_BASE + "10.0x Volume Tolerance", priority = PKG.Priorities.COLLIDERS.COLLIDER_BAKE)]
         public static void Decompose_10(MenuCommand menuCommand)
         {
             Decompose(menuCommand, 10f);
@@ -1370,19 +1370,19 @@ namespace Appalachia.Core.ConvexDecomposition
             }
         }
 
-        [MenuItem(TOGGLE_BASE + "Enabled Decomposed Colliders", priority = APPA_MENU.GAME_OBJ.COLLIDERS.COLLIDER_BAKE)]
+        [UnityEditor.MenuItem(TOGGLE_BASE + "Enabled Decomposed Colliders", priority = PKG.Priorities.COLLIDERS.COLLIDER_BAKE)]
         public static void Toggle_DecOn_OrigOff(MenuCommand menuCommand)
         {
             ToggleColliders(menuCommand, true, true, true, false);
         }
 
-        [MenuItem(TOGGLE_BASE + "Enabled Original Colliders", priority = APPA_MENU.GAME_OBJ.COLLIDERS.COLLIDER_BAKE)]
+        [UnityEditor.MenuItem(TOGGLE_BASE + "Enabled Original Colliders", priority = PKG.Priorities.COLLIDERS.COLLIDER_BAKE)]
         public static void Toggle_DecOff_OrigOn(MenuCommand menuCommand)
         {
             ToggleColliders(menuCommand, true, false, true, true);
         }
 
-        [MenuItem(TOGGLE_BASE + "Disable All Colliders", priority = APPA_MENU.GAME_OBJ.COLLIDERS.COLLIDER_BAKE)]
+        [UnityEditor.MenuItem(TOGGLE_BASE + "Disable All Colliders", priority = PKG.Priorities.COLLIDERS.COLLIDER_BAKE)]
         public static void Toggle_DecOff_OrigOff(MenuCommand menuCommand)
         {
             ToggleColliders(menuCommand, true, false, true, false);
@@ -1430,37 +1430,37 @@ namespace Appalachia.Core.ConvexDecomposition
             }
         }
 
-        [MenuItem(RIGID_BASE + "Add Rigidbody/1 kg", priority = APPA_MENU.GAME_OBJ.COLLIDERS.COLLIDER_BAKE)]
+        [UnityEditor.MenuItem(RIGID_BASE + "Add Rigidbody/1 kg", priority = PKG.Priorities.COLLIDERS.COLLIDER_BAKE)]
         public static void AddRigidbody_1(MenuCommand menuCommand)
         {
             AddRigidbody(menuCommand, 1.0f);
         }
 
-        [MenuItem(RIGID_BASE + "Add Rigidbody/2 kg", priority = APPA_MENU.GAME_OBJ.COLLIDERS.COLLIDER_BAKE)]
+        [UnityEditor.MenuItem(RIGID_BASE + "Add Rigidbody/2 kg", priority = PKG.Priorities.COLLIDERS.COLLIDER_BAKE)]
         public static void AddRigidbody_2(MenuCommand menuCommand)
         {
             AddRigidbody(menuCommand, 2.0f);
         }
 
-        [MenuItem(RIGID_BASE + "Add Rigidbody/3 kg", priority = APPA_MENU.GAME_OBJ.COLLIDERS.COLLIDER_BAKE)]
+        [UnityEditor.MenuItem(RIGID_BASE + "Add Rigidbody/3 kg", priority = PKG.Priorities.COLLIDERS.COLLIDER_BAKE)]
         public static void AddRigidbody_3(MenuCommand menuCommand)
         {
             AddRigidbody(menuCommand, 3.0f);
         }
 
-        [MenuItem(RIGID_BASE + "Add Rigidbody/4 kg", priority = APPA_MENU.GAME_OBJ.COLLIDERS.COLLIDER_BAKE)]
+        [UnityEditor.MenuItem(RIGID_BASE + "Add Rigidbody/4 kg", priority = PKG.Priorities.COLLIDERS.COLLIDER_BAKE)]
         public static void AddRigidbody_4(MenuCommand menuCommand)
         {
             AddRigidbody(menuCommand, 4.0f);
         }
 
-        [MenuItem(RIGID_BASE + "Add Rigidbody/5 kg", priority = APPA_MENU.GAME_OBJ.COLLIDERS.COLLIDER_BAKE)]
+        [UnityEditor.MenuItem(RIGID_BASE + "Add Rigidbody/5 kg", priority = PKG.Priorities.COLLIDERS.COLLIDER_BAKE)]
         public static void AddRigidbody_5(MenuCommand menuCommand)
         {
             AddRigidbody(menuCommand, 5.0f);
         }
 
-        [MenuItem(RIGID_BASE + "Add Rigidbody/10 kg", priority = APPA_MENU.GAME_OBJ.COLLIDERS.COLLIDER_BAKE)]
+        [UnityEditor.MenuItem(RIGID_BASE + "Add Rigidbody/10 kg", priority = PKG.Priorities.COLLIDERS.COLLIDER_BAKE)]
         public static void AddRigidbody_10(MenuCommand menuCommand)
         {
             AddRigidbody(menuCommand, 10.0f);
@@ -1495,7 +1495,7 @@ namespace Appalachia.Core.ConvexDecomposition
             }
         }
 
-        [MenuItem(RIGID_BASE + "Remove Rigidbody", priority = APPA_MENU.GAME_OBJ.COLLIDERS.COLLIDER_BAKE)]
+        [UnityEditor.MenuItem(RIGID_BASE + "Remove Rigidbody", priority = PKG.Priorities.COLLIDERS.COLLIDER_BAKE)]
         public static void RemoveRigidbody(MenuCommand menuCommand)
         {
             var go = menuCommand.context as GameObject;

@@ -6,7 +6,7 @@ namespace Appalachia.Spatial.ConvexDecomposition
 {
     public class ConvexTest : SelfSavingSingletonScriptableObject<ConvexTest>
     {
-        [MenuItem("Assets/Create/Internal/ConvexDecomposition/Test")]
+        [UnityEditor.MenuItem(PKG.Menu.Assets.Base + "Create/Internal/ConvexDecomposition/Test")]
         public static void Create()
         {
             Debug.Log(instance.name);
