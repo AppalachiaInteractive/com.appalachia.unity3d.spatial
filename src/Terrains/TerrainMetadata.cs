@@ -14,7 +14,7 @@ using UnityEngine;
 namespace Appalachia.Spatial.Terrains
 {
     [Serializable]
-    public class TerrainMetadata : SelfNamingSavingAndIdentifyingScriptableObject<TerrainMetadata>
+    public class TerrainMetadata : AutonamedIdentifiableAppalachiaObject<TerrainMetadata>
     {
         private const string _PRF_PFX = nameof(TerrainMetadata) + ".";
 

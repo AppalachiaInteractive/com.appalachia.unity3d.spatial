@@ -13,7 +13,7 @@ using UnityEngine.Serialization;
 
 namespace Appalachia.Spatial.Terrains
 {
-    public class TerrainSuitabilityAnalyzer : AppalachiaMonoBehaviour
+    public class TerrainSuitabilityAnalyzer : AppalachiaBehaviour
     {
         private static readonly string[] _directions =
         {

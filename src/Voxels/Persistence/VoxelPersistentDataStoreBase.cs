@@ -20,7 +20,7 @@ namespace Appalachia.Spatial.Voxels.Persistence
     [Serializable]
     public abstract class
         VoxelPersistentDataStoreBase<TVoxelData, TDataStore, TRaycastHit> :
-            SelfNamingSavingAndIdentifyingScriptableObject<TDataStore>
+            AutonamedIdentifiableAppalachiaObject<TDataStore>
         where TVoxelData : PersistentVoxelsBase<TVoxelData, TDataStore, TRaycastHit>
         where TDataStore : VoxelPersistentDataStoreBase<TVoxelData, TDataStore, TRaycastHit>
         where TRaycastHit : struct, IVoxelRaycastHit

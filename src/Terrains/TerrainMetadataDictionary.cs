@@ -11,7 +11,7 @@ using UnityEngine;
 namespace Appalachia.Spatial.Terrains
 {
     public class
-        TerrainMetadataDictionary : SelfSavingSingletonScriptableObject<TerrainMetadataDictionary>
+        TerrainMetadataDictionary : SingletonAppalachiaObject<TerrainMetadataDictionary>
     {
         [SerializeField]
         [ListDrawerSettings(

@@ -30,7 +30,7 @@ namespace Appalachia.Spatial.MeshBurial.Processing
             return true;
         }
 
-        [UnityEditor.MenuItem(PKG.Menu.Appalachia.External.Base + "Enable", false, PKG.Menu.Appalachia.External.Priority)]
+        [UnityEditor.MenuItem(PKG.Menu.Appalachia.External.Base + "Enable", priority = PKG.Menu.Appalachia.External.Priority)]
         public static void ToggleEnableVSPMeshBurials()
         {
             _vspMeshBurialEnabled = !_vspMeshBurialEnabled;
@@ -55,7 +55,7 @@ namespace Appalachia.Spatial.MeshBurial.Processing
             }
         }
 
-        [UnityEditor.MenuItem(PKG.Menu.Appalachia.External.Base + "Disable", false, PKG.Menu.Appalachia.External.Priority + 1)]
+        [UnityEditor.MenuItem(PKG.Menu.Appalachia.External.Base + "Disable", priority = PKG.Menu.Appalachia.External.Priority + 1)]
         public static void DisableVSPItems()
         {
             for (var i = 0; i < _vegetationSystem.VegetationPackageProList.Count; i++)
@@ -71,7 +71,7 @@ namespace Appalachia.Spatial.MeshBurial.Processing
             }
         }
 
-        [UnityEditor.MenuItem(PKG.Menu.Appalachia.Manage.Base + "Refresh", false, PKG.Menu.Appalachia.Manage.Priority + 2)]
+        [UnityEditor.MenuItem(PKG.Menu.Appalachia.Manage.Base + "Refresh", priority = PKG.Menu.Appalachia.Manage.Priority + 2)]
         public static void Refresh()
         {
             QUEUES.pendingVegetationKeys.Clear();
@@ -80,7 +80,7 @@ namespace Appalachia.Spatial.MeshBurial.Processing
             //RefreshPrefabRenderingSets();
         }
 
-        [UnityEditor.MenuItem(PKG.Menu.Appalachia.Manage.Base + "Refresh and Start", false, PKG.Menu.Appalachia.Manage.Priority + 4)]
+        [UnityEditor.MenuItem(PKG.Menu.Appalachia.Manage.Base + "Refresh and Start", priority = PKG.Menu.Appalachia.Manage.Priority + 4)]
         public static void RefreshAndStart()
         {
             QUEUES.pendingVegetationKeys.Clear();
@@ -94,14 +94,14 @@ namespace Appalachia.Spatial.MeshBurial.Processing
             }
         }
 
-        [UnityEditor.MenuItem(PKG.Menu.Appalachia.Manage.Base + "Execute Full Reset", false, PKG.Menu.Appalachia.Manage.Priority + 6)]
+        [UnityEditor.MenuItem(PKG.Menu.Appalachia.Manage.Base + "Execute Full Reset", priority = PKG.Menu.Appalachia.Manage.Priority + 6)]
         public static void Reset()
         {
             MeshBurialExecutionManager.EnsureCompleted();
             MeshBurialAdjustmentCollection.instance.Reset();
         }
 
-        [UnityEditor.MenuItem(PKG.Menu.Appalachia.Manage.Base + "Reset and Refresh", false, PKG.Menu.Appalachia.Manage.Priority + 8)]
+        [UnityEditor.MenuItem(PKG.Menu.Appalachia.Manage.Base + "Reset and Refresh", priority = PKG.Menu.Appalachia.Manage.Priority + 8)]
         public static void ResetRefresh()
         {
             Reset();
@@ -110,7 +110,7 @@ namespace Appalachia.Spatial.MeshBurial.Processing
             Refresh();
         }
 
-        [UnityEditor.MenuItem(PKG.Menu.Appalachia.Manage.Base + "Force Save", false, PKG.Menu.Appalachia.Manage.Priority + 10)]
+        [UnityEditor.MenuItem(PKG.Menu.Appalachia.Manage.Base + "Force Save", priority = PKG.Menu.Appalachia.Manage.Priority + 10)]
         public static void ForceSave()
         {
             var collection = MeshBurialAdjustmentCollection.instance;

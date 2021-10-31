@@ -14,7 +14,7 @@ using UnityEngine;
 namespace Appalachia.Spatial.Voxels.Components
 {
     [Serializable]
-    public class SimpleVoxel : AppalachiaMonoBehaviour
+    public class SimpleVoxel : AppalachiaBehaviour
     {
         [OnValueChanged(nameof(RefreshChildCollections))]
         public VoxelPopulationStyle style;

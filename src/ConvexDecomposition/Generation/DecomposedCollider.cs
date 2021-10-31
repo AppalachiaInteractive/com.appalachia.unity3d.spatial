@@ -24,7 +24,7 @@ namespace Appalachia.Spatial.ConvexDecomposition.Generation
 {
     [ExecuteAlways]
     [DisallowMultipleComponent]
-    public partial class DecomposedCollider : EditorOnlyFrustumCulledMonoBehaviour
+    public partial class DecomposedCollider : EditorOnlyFrustumCulledBehaviour
     {
         [PropertyOrder(-150)]
         [HideLabel, LabelWidth(0), InlineProperty, SerializeField, InlineEditor(Expanded = true)]

@@ -12,7 +12,7 @@ using Unity.Profiling;
 namespace Appalachia.Spatial.MeshBurial.Processing.QueueItems
 {
     [Serializable]
-    public abstract class MeshBurialQueueItem : InternalBase<MeshBurialQueueItem>
+    public abstract class MeshBurialQueueItem : AppalachiaBase<MeshBurialQueueItem>
     {
         private const string _PRF_PFX = nameof(MeshBurialQueueItem) + ".";
 

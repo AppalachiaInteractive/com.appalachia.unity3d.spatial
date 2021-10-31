@@ -14,7 +14,7 @@ using UnityEditor;
 namespace Appalachia.Spatial.MeshBurial.Processing
 {
     public class
-        MeshBurialManagementQueue : SelfSavingSingletonScriptableObject<MeshBurialManagementQueue>
+        MeshBurialManagementQueue : SingletonAppalachiaObject<MeshBurialManagementQueue>
     {
         private const string _PRF_PFX = nameof(MeshBurialManagementQueue) + ".";
 
@@ -85,7 +85,7 @@ namespace Appalachia.Spatial.MeshBurial.Processing
             }
         }
 
-        [UnityEditor.MenuItem(PKG.Menu.Appalachia.Tools.Base + "Clear Queues", false, PKG.Menu.Appalachia.Tools.Priority)]
+        [UnityEditor.MenuItem(PKG.Menu.Appalachia.Tools.Base + "Clear Queues", priority = PKG.Menu.Appalachia.Tools.Priority)]
         public static void ClearQueues()
         {
             using (_PRF_ClearQueues.Auto())

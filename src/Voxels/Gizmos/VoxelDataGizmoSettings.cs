@@ -13,7 +13,7 @@ using UnityEngine;
 namespace Appalachia.Spatial.Voxels.Gizmos
 {
     [Serializable]
-    public class VoxelDataGizmoSettings : SelfSavingScriptableObject<VoxelDataGizmoSettings>
+    public class VoxelDataGizmoSettings : AppalachiaObject<VoxelDataGizmoSettings>
     {
         public VoxelDataGizmoStyle style;
 

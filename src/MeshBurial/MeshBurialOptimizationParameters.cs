@@ -11,7 +11,7 @@ namespace Appalachia.Spatial.MeshBurial
 {
     [Serializable]
     public class
-        MeshBurialOptimizationParameters : SelfSavingSingletonScriptableObject<
+        MeshBurialOptimizationParameters : SingletonAppalachiaObject<
             MeshBurialOptimizationParameters>
     {
         public OptimizerType optimizerType = OptimizerType.RandomSearch;

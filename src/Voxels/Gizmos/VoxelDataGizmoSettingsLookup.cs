@@ -6,7 +6,7 @@ using Appalachia.Core.Scriptables;
 
 namespace Appalachia.Spatial.Voxels.Gizmos
 {
-    public class VoxelDataGizmoSettingsLookup : ScriptableObjectLookupCollection<
+    public class VoxelDataGizmoSettingsLookup : AppalachiaObjectLookupCollection<
         VoxelDataGizmoSettingsLookup, VoxelDataGizmoSettingsIndex, VoxelDataGizmoStyle,
         VoxelDataGizmoSettings, AppaList_VoxelDataGizmoStyle, AppaList_VoxelDataGizmoSettings>
     {

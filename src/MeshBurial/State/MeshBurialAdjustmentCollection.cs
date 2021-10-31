@@ -17,7 +17,7 @@ using UnityEngine;
 namespace Appalachia.Spatial.MeshBurial.State
 {
     public class
-        MeshBurialAdjustmentCollection : SelfSavingSingletonScriptableObject<
+        MeshBurialAdjustmentCollection : SingletonAppalachiaObject<
             MeshBurialAdjustmentCollection>
     {
         private const string _PRF_PFX = nameof(MeshBurialAdjustmentCollection) + ".";

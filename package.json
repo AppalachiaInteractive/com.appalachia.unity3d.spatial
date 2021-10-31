@@ -37,7 +37,8 @@
     "com.unity.render-pipelines.core": "12.1.0",
     "com.appalachia.unity3d.third-party.awesometechnologies": "0.1.0",
     "com.appalachia.unity3d.third-party.mdabros": "0.1.0",
-    "com.unity.timeline": "1.6.2"
+    "com.unity.timeline": "1.6.2",
+    "com.unity.inputsystem": "1.1.1"
   },
   "scripts": {
     "preversion": "bash ~/com.appalachia/appa/appa package unity3d preversion",

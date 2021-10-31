@@ -32,7 +32,7 @@ namespace Appalachia.Spatial.Voxels.VoxelTypes
         {
             if (dataStore == null)
             {
-                dataStore = SelfSavingScriptableObject<TDataStore>.LoadOrCreateNew(identifier);
+                dataStore = AppalachiaObject<TDataStore>.LoadOrCreateNew(identifier);
             }
         }
 

@@ -15,7 +15,7 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data.Review
 {
     [Serializable]
     
-    public class DecomposedColliderDataReview : SelfSavingSingletonScriptableObject<DecomposedColliderDataReview>
+    public class DecomposedColliderDataReview : SingletonAppalachiaObject<DecomposedColliderDataReview>
     {
         [ExecuteOnEnable]
         static void Initialize()

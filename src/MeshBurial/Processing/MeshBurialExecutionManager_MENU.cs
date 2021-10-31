@@ -33,7 +33,7 @@ namespace Appalachia.Spatial.MeshBurial.Processing
             return true;
         }
 
-        [UnityEditor.MenuItem(PKG.Menu.Appalachia.Tools.Enable.Base, false, PKG.Priority + 1)]
+        [UnityEditor.MenuItem(PKG.Menu.Appalachia.Tools.Enable.Base, priority = PKG.Priority + 1)]
         public static void ToggleEnableMeshBurials()
         {
             EnableMeshBurials();
@@ -94,7 +94,7 @@ namespace Appalachia.Spatial.MeshBurial.Processing
             return true;
         }
 
-        [UnityEditor.MenuItem(PKG.Menu.Appalachia.Logging.Base, false)]
+        [UnityEditor.MenuItem(PKG.Menu.Appalachia.Logging.Base, priority = PKG.Priority)]
         public static void MENU_DEBUGLOG()
         {
             _DEBUGLOG.v = !_DEBUGLOG.v;
@@ -120,7 +120,7 @@ namespace Appalachia.Spatial.MeshBurial.Processing
             return true;
         }
 
-        [UnityEditor.MenuItem(MENU_DEBUGZEROLOG_, false, PKG.Menu.Appalachia.Logging.Priority)]
+        [UnityEditor.MenuItem(MENU_DEBUGZEROLOG_, priority = PKG.Menu.Appalachia.Logging.Priority)]
         public static void MENU_DEBUGZEROLOG()
         {
             _DEBUGZEROLOG.v = !_DEBUGZEROLOG.v;
@@ -151,7 +151,7 @@ namespace Appalachia.Spatial.MeshBurial.Processing
             return true;
         }
 
-        [UnityEditor.MenuItem(MENU_JOBS_MESH_NORMALS_, false, PKG.Menu.Appalachia.Jobs.Priority)]
+        [UnityEditor.MenuItem(MENU_JOBS_MESH_NORMALS_, priority = PKG.Menu.Appalachia.Jobs.Priority)]
         private static void MENU_JOBS_MESH_NORMALS()
         {
             if (!_MESH_NORMALS.IsAwake)
@@ -184,7 +184,7 @@ namespace Appalachia.Spatial.MeshBurial.Processing
             return true;
         }
 
-        [UnityEditor.MenuItem(MENU_JOBS_TERRAIN_NORMALS_, false, PKG.Menu.Appalachia.Jobs.Priority)]
+        [UnityEditor.MenuItem(MENU_JOBS_TERRAIN_NORMALS_, priority = PKG.Menu.Appalachia.Jobs.Priority)]
         private static void MENU_JOBS_TERRAIN_NORMALS()
         {
             if (!_TERRAIN_NORMALS.IsAwake)
@@ -216,7 +216,7 @@ namespace Appalachia.Spatial.MeshBurial.Processing
             return true;
         }
 
-        [UnityEditor.MenuItem(MENU_JOBS_HEIGHTS_, false, PKG.Menu.Appalachia.Jobs.Priority)]
+        [UnityEditor.MenuItem(MENU_JOBS_HEIGHTS_, priority = PKG.Menu.Appalachia.Jobs.Priority)]
         private static void MENU_JOBS_HEIGHTS()
         {
             if (!_HEIGHT.IsAwake)
@@ -248,7 +248,7 @@ namespace Appalachia.Spatial.MeshBurial.Processing
             return true;
         }
 
-        [UnityEditor.MenuItem(MENU_JOBS_PARAMS_, false, PKG.Menu.Appalachia.Jobs.Priority)]
+        [UnityEditor.MenuItem(MENU_JOBS_PARAMS_, priority = PKG.Menu.Appalachia.Jobs.Priority)]
         private static void MENU_JOBS_PARAMS()
         {
             if (!_PARAMS.IsAwake)
@@ -280,7 +280,7 @@ namespace Appalachia.Spatial.MeshBurial.Processing
             return true;
         }
 
-        [UnityEditor.MenuItem(MENU_JOBS_TESTS_, false, PKG.Menu.Appalachia.Jobs.Priority)]
+        [UnityEditor.MenuItem(MENU_JOBS_TESTS_, priority = PKG.Menu.Appalachia.Jobs.Priority)]
         private static void MENU_JOBS_TESTS()
         {
             if (!_TEST.IsAwake)
@@ -890,7 +890,7 @@ namespace Appalachia.Spatial.MeshBurial.Processing
             return true;
         }
 
-        [UnityEditor.MenuItem(MENU_TIMELOG_, false, PKG.Menu.Appalachia.Logging.Priority)]
+        [UnityEditor.MenuItem(MENU_TIMELOG_, priority = PKG.Menu.Appalachia.Logging.Priority)]
         public static void MENU_TIMELOG()
         {
             _TIMELOG.v = !_TIMELOG.v;

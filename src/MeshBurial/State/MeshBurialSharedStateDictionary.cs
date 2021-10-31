@@ -10,7 +10,7 @@ using Sirenix.OdinInspector;
 namespace Appalachia.Spatial.MeshBurial.State
 {
     public class
-        MeshBurialSharedStateDictionary : SelfSavingSingletonScriptableObject<
+        MeshBurialSharedStateDictionary : SingletonAppalachiaObject<
             MeshBurialSharedStateDictionary>
     {
         [ListDrawerSettings(

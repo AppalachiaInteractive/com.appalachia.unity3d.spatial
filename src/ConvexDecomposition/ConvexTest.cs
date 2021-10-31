@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Appalachia.Spatial.ConvexDecomposition
 {
-    public class ConvexTest : SelfSavingSingletonScriptableObject<ConvexTest>
+    public class ConvexTest : SingletonAppalachiaObject<ConvexTest>
     {
         [UnityEditor.MenuItem(PKG.Menu.Assets.Base + "Create/Internal/ConvexDecomposition/Test")]
         public static void Create()

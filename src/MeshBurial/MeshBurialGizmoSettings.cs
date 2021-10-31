@@ -11,7 +11,7 @@ namespace Appalachia.Spatial.MeshBurial
 {
     [Serializable]
     public class
-        MeshBurialGizmoSettings : SelfSavingSingletonScriptableObject<MeshBurialGizmoSettings>
+        MeshBurialGizmoSettings : SingletonAppalachiaObject<MeshBurialGizmoSettings>
     {
         public bool drawAllTriangles;
         public bool drawBorders = true;

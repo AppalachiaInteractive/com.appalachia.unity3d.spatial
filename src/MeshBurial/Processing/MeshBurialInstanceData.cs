@@ -18,7 +18,7 @@ using Unity.Profiling;
 namespace Appalachia.Spatial.MeshBurial.Processing
 {
     [Serializable]
-    public class MeshBurialInstanceData : InternalBase<MeshBurialInstanceData>
+    public class MeshBurialInstanceData : AppalachiaBase<MeshBurialInstanceData>
     {
         private const string _PRF_PFX = nameof(MeshBurialInstanceData) + ".";
 
