@@ -1,7 +1,7 @@
 {
   "name": "com.appalachia.unity3d.spatial",
   "displayName": "Appalachia.Spatial for Unity3D",
-  "version": "0.2.1",
+  "version": "0.2.0",
   "unity": "2020.3",
   "description": "Spatial utilities like Octrees and mesh burial utilities for Unity3D.",
   "keywords": [
