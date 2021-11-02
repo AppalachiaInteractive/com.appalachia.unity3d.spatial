@@ -8,7 +8,7 @@ namespace Appalachia.Spatial.Voxels
 {
     internal static partial class PKG
     {
-        public const int Priority = -291000;
+        public const int Priority = -294000;
         public const string Name = "Spatial/Voxels";
         public const string Prefix = Root + Name + "/";
         public const string Root = "Appalachia/";
