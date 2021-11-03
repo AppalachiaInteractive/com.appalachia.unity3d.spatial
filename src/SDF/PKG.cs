@@ -8,7 +8,7 @@ namespace Appalachia.Spatial.SDF
 {
     internal static partial class PKG
     {
-        public const int Priority = -296000;
+        public const int Priority = -304000;
         public const string Name = "Spatial/SDF";
         public const string Prefix = Root + Name + "/";
         public const string Root = "Appalachia/";

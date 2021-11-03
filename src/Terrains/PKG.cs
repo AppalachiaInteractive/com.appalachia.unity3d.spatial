@@ -8,7 +8,7 @@ namespace Appalachia.Spatial.Terrains
 {
     internal static partial class PKG
     {
-        public const int Priority = -295000;
+        public const int Priority = -303000;
         public const string Name = "Spatial/Terrains";
         public const string Prefix = Root + Name + "/";
         public const string Root = "Appalachia/";
