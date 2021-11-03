@@ -14,6 +14,7 @@ C:/Users/Chris/com.appalachia/unity3d/appa/Assets/Appalachia.Spatial
 ## Releasing
 | Hash | Date | Author | Changes |
 |------|------|--------|---------|
+| ab40e7a25e3cf7086a8c7a2e44cd99138e81036b | 2021-11-02 | Chris Schubert | Updating changelog and releaselog |
 | 5eb0ff38766f4a5a3e25e600b71250be74fb4842 | 2021-11-02 | Chris Schubert | Updating changelog and releaselog |
 | 3440c081b19c7b7b1bfdeb02ae6f987a9ad63fb4 | 2021-11-02 | Chris Schubert | Updating changelog and releaselog |
 | 2f47db7c00cbfde1465376bf2b2e8434f3dde2ef | 2021-11-01 | Chris Schubert | Updating changelog and releaselog |
