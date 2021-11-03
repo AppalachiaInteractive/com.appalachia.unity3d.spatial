@@ -4,6 +4,7 @@ using Appalachia.Core.Debugging;
 using Appalachia.Core.Extensions;
 using Appalachia.Editing.Debugging;
 using Appalachia.Editing.Debugging.Handle;
+using Appalachia.Utility.Extensions;
 using AwesomeTechnologies.VegetationSystem;
 using Sirenix.OdinInspector;
 using Unity.Mathematics;

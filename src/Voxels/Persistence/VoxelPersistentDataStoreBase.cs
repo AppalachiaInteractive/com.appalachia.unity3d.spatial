@@ -9,6 +9,7 @@ using Appalachia.Core.Extensions;
 using Appalachia.Core.Scriptables;
 using Appalachia.Spatial.Voxels.Casting;
 using Appalachia.Spatial.Voxels.VoxelTypes;
+using Appalachia.Utility.Extensions;
 using Unity.Collections;
 using Unity.Mathematics;
 using UnityEngine;

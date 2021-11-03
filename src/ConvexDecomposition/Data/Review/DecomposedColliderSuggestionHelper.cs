@@ -1,6 +1,7 @@
 using System;
 using Appalachia.CI.Integration.Assets;
 using Appalachia.Core.Extensions;
+using Appalachia.Utility.Extensions;
 using Sirenix.OdinInspector;
 using Unity.Profiling;
 using UnityEngine;

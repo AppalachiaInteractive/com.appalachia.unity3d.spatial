@@ -13,6 +13,7 @@ using Appalachia.Jobs;
 using Appalachia.Spatial.Voxels.Casting;
 using Appalachia.Spatial.Voxels.Gizmos;
 using Appalachia.Utility.Constants;
+using Appalachia.Utility.Extensions;
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Jobs;

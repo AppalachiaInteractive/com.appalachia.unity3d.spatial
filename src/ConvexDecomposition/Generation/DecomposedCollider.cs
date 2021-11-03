@@ -13,6 +13,7 @@ using Appalachia.Editing.Debugging;
 using Appalachia.Rendering.Prefabs.Rendering;
 using Appalachia.Simulation.Physical.Integration;
 using Appalachia.Spatial.ConvexDecomposition.Data;
+using Appalachia.Utility.Extensions;
 using Sirenix.OdinInspector;
 using Unity.Profiling;
 using UnityEditor;

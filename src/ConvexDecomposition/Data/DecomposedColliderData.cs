@@ -27,6 +27,7 @@ using Appalachia.Spatial.ConvexDecomposition.Data.Review;
 using Appalachia.Spatial.ConvexDecomposition.Generation;
 using Appalachia.Utility.Constants;
 using Appalachia.Utility.Colors;
+using Appalachia.Utility.Extensions;
 using Sirenix.OdinInspector;
 using Unity.Mathematics;
 using Unity.Profiling;

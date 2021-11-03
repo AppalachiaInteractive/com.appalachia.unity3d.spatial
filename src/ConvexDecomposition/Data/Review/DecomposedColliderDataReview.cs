@@ -7,6 +7,7 @@ using Appalachia.Core.Preferences.Globals;
 using Appalachia.Core.Scriptables;
 using Appalachia.Editing.Core;
 using Appalachia.Spatial.ConvexDecomposition.Generation;
+using Appalachia.Utility.Extensions;
 using Sirenix.OdinInspector;
 using Unity.Profiling;
 using UnityEngine;

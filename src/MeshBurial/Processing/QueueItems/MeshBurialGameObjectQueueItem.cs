@@ -2,6 +2,7 @@
 
 using System;
 using Appalachia.Core.Extensions;
+using Appalachia.Utility.Extensions;
 using Unity.Collections;
 using Unity.Mathematics;
 using UnityEngine;

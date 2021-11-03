@@ -8,7 +8,7 @@ namespace Appalachia.Spatial.MeshBurial
 {
     internal static partial class PKG
     {
-        public const int Priority = -305000;
+        public const int Priority = -307000;
         public const string Name = "Spatial/MeshBurial";
         public const string Prefix = Root + Name + "/";
         public const string Root = "Appalachia/";

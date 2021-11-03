@@ -5,6 +5,7 @@ using Appalachia.Core.Collections.Native;
 using Appalachia.Core.Extensions;
 using Appalachia.Core.Scriptables;
 using Appalachia.Spatial.Terrains.Utilities;
+using Appalachia.Utility.Extensions;
 using Unity.Collections;
 using Unity.Profiling;
 using UnityEngine;
