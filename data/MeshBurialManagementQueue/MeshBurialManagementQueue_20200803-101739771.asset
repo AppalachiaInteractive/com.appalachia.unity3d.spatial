@@ -35,9 +35,3 @@ MonoBehaviour:
       _adoptTerrainNormal: 0
   gameObject:
     _array: []
-  runtimePrefabRenderingSets:
-    _array: []
-    _current:
-      _model: {fileID: 0}
-      _modelHashCode: 0
-      _adoptTerrainNormal: 0

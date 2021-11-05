@@ -17,7 +17,7 @@ MonoBehaviour:
   _state:
     initializerCount: 65
     values:
-      noTracking: 0
+      _capacityIncreaseMultiplier: 2
       _values:
       - {fileID: 11400000, guid: 1fdbfffadb5044845992cd48f1e0b224, type: 2}
       - {fileID: 11400000, guid: 953d3c3805200d247be3276610e5669f, type: 2}
@@ -84,10 +84,10 @@ MonoBehaviour:
       - {fileID: 11400000, guid: 8cd0fe73f6584264e8c0ccecb97af164, type: 2}
       - {fileID: 11400000, guid: 96c2a323ab8ca164f9fb27a160f8dc54, type: 2}
       - {fileID: 11400000, guid: f5be4406ce43ca34685951779288fb8f, type: 2}
-      _capacityIncreaseMultiplier: 2
+      noTracking: 0
       _count: 65
     keys:
-      noTracking: 0
+      _capacityIncreaseMultiplier: 2
       _values:
       - {fileID: 8999897599872518580, guid: da8baf4421ab1fc45af92958703e9bef, type: 3}
       - {fileID: 5706129521192676408, guid: 2cfee201e7f031746a3d7ae333bf465d, type: 3}
@@ -154,5 +154,5 @@ MonoBehaviour:
       - {fileID: 5274537518601918083, guid: f7733c597d4606f48812724ea034640b, type: 3}
       - {fileID: 260841496837692875, guid: 7f5a78e83d179b8429973c76d4c078e5, type: 3}
       - {fileID: 8903222407693082871, guid: d3214ed39f0b7e841bd3f357b268587b, type: 3}
-      _capacityIncreaseMultiplier: 2
+      noTracking: 0
       _count: 65
