@@ -1,4 +1,6 @@
 ```
+C:/Users/Chris/com.appalachia/unity3d/appa/Assets/Appalachia.Spatial
+ Let's go!  
  ______   ______   __       ______   ______   ______   ______    
 /\  == \ /\  ___\ /\ \     /\  ___\ /\  __ \ /\  ___\ /\  ___\   
 \ \  __< \ \  __\ \ \ \____\ \  __\ \ \  __ \\ \___  \\ \  __\   
@@ -13,6 +15,7 @@
 `0.2.0`
 | Hash | Date | Author | Changes |
 |------|------|--------|---------|
+| 0118d25450da7b99440767cd6c204d3de3c851ed | 2021-11-05 | Chris Schubert | Updating changelog and releaselog |
 | a8a9bc18a864acc711e3b943bd3af2ec16644593 | 2021-11-05 | Chris Schubert | Updating changelog and releaselog |
 | 2e8545824802333cb44746ddd6c832c513b58621 | 2021-11-05 | Chris Schubert | Updating changelog and releaselog |
 | 70ef05fbca2ecbf12291f0e0c3bcb1334e5c49a1 | 2021-11-05 | Chris Schubert | Updating changelog and releaselog |
