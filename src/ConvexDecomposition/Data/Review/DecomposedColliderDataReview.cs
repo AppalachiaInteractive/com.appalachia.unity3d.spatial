@@ -8,6 +8,7 @@ using Appalachia.Core.Scriptables;
 using Appalachia.Editing.Core;
 using Appalachia.Spatial.ConvexDecomposition.Generation;
 using Appalachia.Utility.Extensions;
+using Appalachia.Utility.Logging;
 using Sirenix.OdinInspector;
 using Unity.Profiling;
 using UnityEngine;
@@ -247,7 +248,7 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data.Review
 
                     if (data.originalMesh == null)
                     {
-                        Debug.LogWarning($"No mesh for {data.name}", data);
+                       AppaLog.Warning($"No mesh for {data.name}", data);
                         continue;
                     }
 

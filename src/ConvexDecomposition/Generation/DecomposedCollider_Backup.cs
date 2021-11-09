@@ -644,7 +644,7 @@ namespace Appalachia.Core.ConvexDecomposition
                                     }
                                     catch (Exception ex)
                                     {
-                                        Debug.LogError(ex, pf);
+                                        AppaLog.Error(ex, pf);
                                     }
                                 }
                                 else
@@ -674,7 +674,7 @@ namespace Appalachia.Core.ConvexDecomposition
                                 }
                                 catch (Exception ex)
                                 {
-                                    Debug.LogError(ex, gameObject);
+                                    AppaLog.Error(ex, gameObject);
                                 }
                             }
                             else

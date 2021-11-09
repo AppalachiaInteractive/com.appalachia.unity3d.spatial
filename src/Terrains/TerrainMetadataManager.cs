@@ -227,7 +227,7 @@ namespace Appalachia.Spatial.Terrains
         {
             using (_PRF_DisposeNativeCollections.Auto())
             {
-                //Debug.Log("Disposing native collections.");
+                //AppaLog.Info("Disposing native collections.");
 
                 var terrainLookup = TerrainMetadataDictionary.instance;
 

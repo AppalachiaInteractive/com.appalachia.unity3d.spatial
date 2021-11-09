@@ -10,6 +10,7 @@ using Appalachia.Spatial.Voxels.Casting;
 using Appalachia.Spatial.Voxels.VoxelTypes;
 using Appalachia.Utility.Constants;
 using Appalachia.Utility.Extensions;
+using Appalachia.Utility.Logging;
 using Unity.Collections;
 using Unity.Mathematics;
 using Unity.Profiling;
@@ -370,7 +371,7 @@ namespace Appalachia.Spatial.Voxels
                     t.localScale = localScale;
 
                     SyncTransforms(4);
-                    Debug.LogException(ex);
+                    AppaLog.Exception(ex);
                     throw;
                 }
             }

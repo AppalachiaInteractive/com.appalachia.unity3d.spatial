@@ -6,6 +6,7 @@ using Appalachia.Core.Extensions;
 using Appalachia.Core.Scriptables;
 using Appalachia.Spatial.Terrains.Utilities;
 using Appalachia.Utility.Extensions;
+using Appalachia.Utility.Logging;
 using Unity.Collections;
 using Unity.Profiling;
 using UnityEngine;
@@ -140,7 +141,7 @@ namespace Appalachia.Spatial.Terrains
             {
                 if ((names == null) || (_terrainData == null))
                 {
-                    Debug.LogWarning("Failed to initialize foley map");
+                   AppaLog.Warning("Failed to initialize foley map");
                     return;
                 }
 
@@ -164,7 +165,7 @@ namespace Appalachia.Spatial.Terrains
                             continue;
                         }
 
-                        // Debug.Log("map: " + names[j] + " -- " + texture.name);
+                        // AppaLog.Info("map: " + names[j] + " -- " + texture.name);
                         alphamapTextureFoleyIndex[i] = j;
                         found = true;
                         break;
@@ -172,10 +173,7 @@ namespace Appalachia.Spatial.Terrains
 
                     if (!found)
                     {
-                        Debug.LogWarningFormat(
-                            "Failed to bind footstep foley to terrain texture '{0}'",
-                            texture.name
-                        );
+                        AppaLog.Warning($"Failed to bind footstep foley to terrain texture '{texture.name}'");
                     }
                 }
             }

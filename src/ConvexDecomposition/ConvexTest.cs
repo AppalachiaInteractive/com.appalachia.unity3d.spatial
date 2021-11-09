@@ -1,4 +1,5 @@
 using Appalachia.Core.Scriptables;
+using Appalachia.Utility.Logging;
 using UnityEditor;
 using UnityEngine;
 
@@ -9,7 +10,7 @@ namespace Appalachia.Spatial.ConvexDecomposition
         [UnityEditor.MenuItem(PKG.Menu.Assets.Base + "Create/Internal/ConvexDecomposition/Test")]
         public static void Create()
         {
-            Debug.Log(instance.name);
+            AppaLog.Info(instance.name);
         }
         public ConvexMeshSettings settings;
     }

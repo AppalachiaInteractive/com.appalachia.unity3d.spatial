@@ -4,6 +4,7 @@ using Appalachia.CI.Integration.Assets;
 using Appalachia.CI.Integration.FileSystem;
 using Appalachia.Core.Attributes.Editing;
 using Appalachia.Simulation.Core.Metadata.Materials;
+using Appalachia.Utility.Logging;
 using Sirenix.OdinInspector;
 using Unity.Profiling;
 using UnityEngine;
@@ -134,12 +135,12 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data
 
             if (isThisMeshAlreadyAnAsset)
             {
-                if (DecomposedColliderData.extraLogging.v) Debug.Log($"MOVING asset from [{existingMeshPath}] to [{newSaveTargetPath}].");
+                if (DecomposedColliderData.extraLogging.v) AppaLog.Info($"MOVING asset from [{existingMeshPath}] to [{newSaveTargetPath}].");
                 AssetDatabaseManager.MoveAsset(existingMeshPath, newSaveTargetPath);
             }
             else
             {
-                if (DecomposedColliderData.extraLogging.v) Debug.Log($"CREATING asset at [{newSaveTargetPath}].");
+                if (DecomposedColliderData.extraLogging.v) AppaLog.Info($"CREATING asset at [{newSaveTargetPath}].");
                 AssetDatabaseManager.CreateAsset(mesh, newSaveTargetPath);
             }
         }
@@ -152,7 +153,7 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data
                 if ((mesh != null) && !AssetDatabaseManager.IsSubAsset(mesh) && !externalMesh)
                 {
                     var meshPath = AssetDatabaseManager.GetAssetPath(mesh);
-                    if (DecomposedColliderData.extraLogging.v) Debug.Log($"DELETING asset at [{meshPath}].");
+                    if (DecomposedColliderData.extraLogging.v) AppaLog.Info($"DELETING asset at [{meshPath}].");
                     AssetDatabaseManager.DeleteAsset(meshPath);
                 }
 

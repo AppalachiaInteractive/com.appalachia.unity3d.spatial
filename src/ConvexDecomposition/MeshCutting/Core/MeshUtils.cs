@@ -1,6 +1,7 @@
 ﻿#if UNITY_EDITOR
 using System.Collections.Generic;
 using Appalachia.Jobs.MeshData;
+using Appalachia.Utility.Logging;
 using UnityEngine;
 
 namespace Appalachia.Spatial.ConvexDecomposition.MeshCutting.Core
@@ -52,7 +53,7 @@ namespace Appalachia.Spatial.ConvexDecomposition.MeshCutting.Core
                 if ((i + 3) >= pairs.Length)
                 {
                     // Why does this happen?
-                    Debug.Log("Huh?");
+                    AppaLog.Info("Huh?");
                     break;
                 }
                 else if (pairs[i + 3] == pairs[faceStart])
@@ -96,7 +97,7 @@ namespace Appalachia.Spatial.ConvexDecomposition.MeshCutting.Core
                 if ((i + 3) >= pairs.Count)
                 {
                     // Why does this happen?
-                    Debug.Log("Huh?");
+                    AppaLog.Info("Huh?");
                     break;
                 }
                 else if (pairs[i + 3] == pairs[faceStart])

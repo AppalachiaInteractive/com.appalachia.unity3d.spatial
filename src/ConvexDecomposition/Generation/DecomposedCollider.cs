@@ -14,6 +14,7 @@ using Appalachia.Rendering.Prefabs.Rendering;
 using Appalachia.Simulation.Physical.Integration;
 using Appalachia.Spatial.ConvexDecomposition.Data;
 using Appalachia.Utility.Extensions;
+using Appalachia.Utility.Logging;
 using Sirenix.OdinInspector;
 using Unity.Profiling;
 using UnityEditor;
@@ -122,7 +123,7 @@ namespace Appalachia.Spatial.ConvexDecomposition.Generation
 
                     data = DecomposedColliderData.LoadOrCreateNew(directory, assetName);
 
-                    if (DecomposedColliderData.dirtyLogging.v) Debug.LogWarning("Setting dirty: created data.");
+                    if (DecomposedColliderData.dirtyLogging.v)AppaLog.Warning("Setting dirty: created data.");
                     data.SetDirty();
                     SetDirty();
                 }

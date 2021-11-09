@@ -15,7 +15,6 @@ using Appalachia.Core.Preferences;
 using Appalachia.Core.Preferences.Globals;
 using Appalachia.Core.Scriptables;
 using Appalachia.Core.Shading;
-using Appalachia.Editing.Assets;
 using Appalachia.Editing.Core;
 using Appalachia.Editing.Debugging.Handle;
 using Appalachia.Editing.Scene.Prefabs;
@@ -25,9 +24,10 @@ using Appalachia.Simulation.Core.Metadata.Materials;
 using Appalachia.Simulation.Core.Selections;
 using Appalachia.Spatial.ConvexDecomposition.Data.Review;
 using Appalachia.Spatial.ConvexDecomposition.Generation;
-using Appalachia.Utility.Constants;
 using Appalachia.Utility.Colors;
+using Appalachia.Utility.Constants;
 using Appalachia.Utility.Extensions;
+using Appalachia.Utility.Logging;
 using Sirenix.OdinInspector;
 using Unity.Mathematics;
 using Unity.Profiling;
@@ -42,7 +42,7 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data
 
     public class DecomposedColliderData : AppalachiaObject<DecomposedColliderData>
     {
-#region UI Groups
+        #region UI Groups
 
         private const string _PRF_PFX = nameof(DecomposedColliderData) + ".";
 
@@ -131,9 +131,9 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data
         private const string _MAINTENANCE5_ = _MAINTENANCE_ + _MAINTENANCE5;
         private const string _MAINTENANCE6_ = _MAINTENANCE_ + _MAINTENANCE6;
 
-#endregion
+        #endregion
 
-#region Fields and Properties
+        #region Fields and Properties
 
         public const string childName = "COLLIDERS";
 
@@ -169,7 +169,7 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data
             DeleteGizmoComponents();
         }
 
-#region Shared
+        #region Shared
 
         [TabGroup(_TABS, _SHARED)]
         [HorizontalGroup(_SHARED_A)]
@@ -210,9 +210,9 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data
         [ShowInInspector]
         public static PREF<bool> dirtyLogging;
 
-#endregion
+        #endregion
 
-#region Refs
+        #region Refs
 
         [TabGroup(_TABS, _REFS)]
         [HorizontalGroup(_REFS_A)]
@@ -292,9 +292,9 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data
         [DisableIf(nameof(locked))]
         public float originalScale;
 
-#endregion
+        #endregion
 
-#region Decompose
+        #region Decompose
 
         [TabGroup(_TABS, _DECOMPOSE)]
         [PropertyOrder(_PRI_DECOMPOSE + 0)]
@@ -325,9 +325,9 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data
         [DisableIf(nameof(locked))]
         public ConvexMeshSettings settings;
 
-#endregion
+        #endregion
 
-#region External
+        #region External
 
         private Color _buttonColor => Color.white;
 
@@ -402,9 +402,9 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data
         )]
         public DecomposedColliderReplacementReviewItem replacementReview;
 
-#endregion
+        #endregion
 
-#region Results
+        #region Results
 
         [TabGroup(_TABS, _RESULTS)]
         [PropertyOrder(_PRI_RESULTS + 0)]
@@ -472,9 +472,9 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data
         [DisableIf(nameof(locked))]
         public List<DecomposedColliderElement> elements = new();
 
-#endregion
+        #endregion
 
-#region Physics
+        #region Physics
 
         [TabGroup(_TABS, _PHYSICS)]
         [PropertyOrder(_PRI_PHYSICS + 0)]
@@ -541,9 +541,9 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data
         [DisableIf(nameof(locked))]
         public static PhysicMaterialLookupSelection swapToSelector;
 
-#endregion
+        #endregion
 
-#region State
+        #region State
 
         private DecomposedCollider _parent;
 
@@ -562,9 +562,9 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data
             }
         }
 
-#endregion
+        #endregion
 
-#region Obsolete
+        #region Obsolete
 
         [HideInInspector]
         [Obsolete]
@@ -574,11 +574,11 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data
         [Obsolete]
         public bool _migratedPieces;
 
-#endregion
+        #endregion
 
-#endregion
+        #endregion
 
-#region Profiling
+        #region Profiling
 
         private static readonly ProfilerMarker _PRF_ClampColliderIndex =
             new(_PRF_PFX + nameof(ClampColliderIndex));
@@ -623,25 +623,25 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data
         private static readonly ProfilerMarker _PRF_LoadExternalMeshes =
             new(_PRF_PFX + nameof(LoadExternalMeshes));
 
-#endregion
+        #endregion
 
-#region UI | Ranges
+        #region UI | Ranges
 
         private bool _domaxi => elements?.Count > 0;
         private int _max_index => elements?.Count - 1 ?? 0;
 
-#endregion
+        #endregion
 
-#region UI | Colors
+        #region UI | Colors
 
         private Color _lockColor => locked ? Colors.CadmiumYellow : Color.white;
         private Color _indexColor => ColorPrefs.Instance.DecomposedColliderSelectedIndex.v;
         private Color limitationColors => ColorPrefs.Instance.DecomposedColliderLimitationColors.v;
         private Color successColor => ColorPrefs.Instance.DecomposedColliderSuccessThreshold.v;
 
-#endregion
+        #endregion
 
-#region UI | Enabled/Disabled
+        #region UI | Enabled/Disabled
 
         private bool originalMeshDisabled => externallyCreated || (originalMesh != null);
 
@@ -652,9 +652,9 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data
         private bool _disableSuggestExternal => locked || (externallyCreated && (externalModel != null));
         private bool _disableReplacementReview => suggestedReplacementModel == null;
 
-#endregion
+        #endregion
 
-#region Unity Events
+        #region Unity Events
 
         private void OnEnable()
         {
@@ -753,9 +753,9 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data
             _meshObject = default;
         }
 
-#endregion
+        #endregion
 
-#region Helpers
+        #region Helpers
 
         public DataReviewState state => GetState(this);
 
@@ -862,7 +862,7 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data
 
                 if (string.IsNullOrWhiteSpace(originalMeshPath))
                 {
-                    Debug.LogWarning($"Could not find mesh asset path for {name}.");
+                    AppaLog.Warning($"Could not find mesh asset path for {name}.");
 
                     originalMeshPath = AssetPath;
                 }
@@ -900,7 +900,7 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data
 
                 if (basicLogging.v)
                 {
-                    Debug.Log($"Checking original mesh for {name}.");
+                    AppaLog.Info($"Checking original mesh for {name}.");
                 }
 
                 if ((originalMesh == null) ||
@@ -936,6 +936,7 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data
             }
         }
 
+        // ReSharper disable once ParameterHidesMember
         private void GetOriginalMesh(GameObject go, int meshOffset)
         {
             if (locked)
@@ -949,7 +950,7 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data
 
                 if (basicLogging.v)
                 {
-                    Debug.Log($"Getting original mesh for {name}.");
+                    AppaLog.Info($"Getting original mesh for {name}.");
                 }
 
                 var renderer = go.FilterComponents<MeshRenderer>(true).CheapestRenderer(meshOffset);
@@ -986,7 +987,7 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data
 
                 if (basicLogging.v)
                 {
-                    Debug.Log($"Updating transform data for {name}.");
+                    AppaLog.Info($"Updating transform data for {name}.");
                 }
 
                 if (t == null)
@@ -999,7 +1000,7 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data
                     localPosition = t.localPosition;
                     if (dirtyLogging.v)
                     {
-                        Debug.LogWarning("Setting dirty: cached position updated.");
+                        AppaLog.Warning("Setting dirty: cached position updated.");
                     }
 
                     SetDirty();
@@ -1010,7 +1011,7 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data
                     localRotation = t.localRotation;
                     if (dirtyLogging.v)
                     {
-                        Debug.LogWarning("Setting dirty: cached rotation updated.");
+                        AppaLog.Warning("Setting dirty: cached rotation updated.");
                     }
 
                     SetDirty();
@@ -1021,7 +1022,7 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data
                     localScale = t.localScale;
                     if (dirtyLogging.v)
                     {
-                        Debug.LogWarning("Setting dirty: cached scale updated.");
+                        AppaLog.Warning("Setting dirty: cached scale updated.");
                     }
 
                     SetDirty();
@@ -1037,7 +1038,7 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data
 
                 if (originalMesh == null)
                 {
-                    Debug.LogError("Must assign meshes to this", c);
+                    AppaLog.Error("Must assign meshes to this", c);
                     c.enabled = false;
                     name = null;
                     return null;
@@ -1061,9 +1062,9 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data
             }
         }
 
-#endregion
+        #endregion
 
-#region Maintenance
+        #region Maintenance
 
         [FoldoutGroup(_MAINTENANCE)]
         [ButtonGroup(_MAINTENANCE1_)]
@@ -1088,7 +1089,7 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data
 
                     if (basicLogging.v)
                     {
-                        Debug.Log($"Confirming validity for {name}.");
+                        AppaLog.Info($"Confirming validity for {name}.");
                     }
 
                     for (var i = elements.Count - 1; i >= 0; i--)
@@ -1101,7 +1102,7 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data
                             elements.RemoveAt(i);
                             if (dirtyLogging.v)
                             {
-                                Debug.LogWarning("Setting dirty: Invalid element removed");
+                                AppaLog.Warning("Setting dirty: Invalid element removed");
                             }
 
                             SetDirty();
@@ -1152,7 +1153,7 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data
 
                 if (basicLogging.v)
                 {
-                    Debug.Log($"Deleting old meshes for {name}.");
+                    AppaLog.Info($"Deleting old meshes for {name}.");
                 }
 
                 var meshHash = elements.Select(p => p.mesh).ToHashSet();
@@ -1177,7 +1178,7 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data
                     {
                         if (extraLogging.v)
                         {
-                            Debug.LogWarning($"Would delete mesh at {path}");
+                            AppaLog.Warning($"Would delete mesh at {path}");
                         }
                         else
                         {
@@ -1209,7 +1210,7 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data
 
                 if (basicLogging.v)
                 {
-                    Debug.Log($"Applying material for {name}.");
+                    AppaLog.Info($"Applying material for {name}.");
                 }
 
                 for (var i = 0; i < elements.Count; i++)
@@ -1250,7 +1251,7 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data
 
                 if (dirtyLogging.v)
                 {
-                    Debug.LogWarning("Setting dirty");
+                    AppaLog.Warning("Setting dirty");
                 }
 
                 SetDirty();
@@ -1286,7 +1287,7 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data
             {
                 if (basicLogging.v)
                 {
-                    Debug.Log($"Initializing colliders for {name}.");
+                    AppaLog.Info($"Initializing colliders for {name}.");
                 }
 
                 var foundColliderObj = false;
@@ -1339,7 +1340,7 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data
                                     }
                                     catch (Exception ex)
                                     {
-                                        Debug.LogError(ex, pf);
+                                        AppaLog.Error(ex, pf);
                                     }
                                 }
                                 else
@@ -1371,7 +1372,7 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data
                                 }
                                 catch (Exception ex)
                                 {
-                                    Debug.LogError(ex, go);
+                                    AppaLog.Error(ex, go);
                                 }
                             }
                             else
@@ -1431,9 +1432,9 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data
             _gizmoMeshRenderer = null;
         }
 
-#endregion
+        #endregion
 
-#region Physics
+        #region Physics
 
         private Color colorSelectorModel => ColorPrefs.Instance.DecomposedColliderSelectorModel.v;
         private Color colorSelectorSwap => ColorPrefs.Instance.DecomposedColliderSelectorSwap.v;
@@ -1480,7 +1481,7 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data
             materialModel = mat;
             if (dirtyLogging.v)
             {
-                Debug.LogWarning("Setting dirty: material model updating");
+                AppaLog.Warning("Setting dirty: material model updating");
             }
 
             SetDirty();
@@ -1507,7 +1508,7 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data
 
             if (dirtyLogging.v)
             {
-                Debug.LogWarning("Setting selected dirty: material assigned");
+                AppaLog.Warning("Setting selected dirty: material assigned");
             }
 
             ApplyMaterials();
@@ -1530,9 +1531,9 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data
             ApplyMaterials();
         }
 
-#endregion
+        #endregion
 
-#region Processing
+        #region Processing
 
         public void ExecuteDecompositionExplicit(
             GameObject go,
@@ -1622,16 +1623,10 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data
 
             using (_PRF_DecompositionRequired.Auto())
             {
-                if ((elements != null) &&
-                    (elements.Count > 0) &&
-                    elements.None_NoAlloc(d => d.mesh == null) &&
-                    (decomposedVolume > 0) &&
-                    ((decomposedVolume < successVolume) || (elements.Count == settings.maxConvexHulls)))
-                {
-                    return false;
-                }
-
-                return true;
+                return elements is not {Count: > 0} c ||
+                       !elements.None_NoAlloc(d => d.mesh == null) ||
+                       !(decomposedVolume > 0) ||
+                       (!(decomposedVolume < successVolume) && (elements.Count != settings.maxConvexHulls));
             }
         }
 
@@ -1653,7 +1648,7 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data
                 {
                     if (basicLogging.v)
                     {
-                        Debug.Log($"Generating decomposed meshes for {name}.");
+                        AppaLog.Info($"Generating decomposed meshes for {name}.");
                     }
 
                     decomposedVolume = successVolume * 10.0f;
@@ -1782,21 +1777,6 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data
             return meshes.Count;
         }
 
-        private const string _generation_start = "{0}: Generating collision mesh starting: {1}";
-        private const string _generation_complete = "{0}: Generating collision mesh complete.";
-
-        private const string _abandon = "{0}: Abandoning before round {1}. {2}. | {3} | Settings: {4}";
-        private const string _abandon_volume = "Volume Not Improving";
-        private const string _abandon_hulls = "Hulls Not Increasingly Utilized";
-
-        private const string _break = "{0}: Breaking before round {1}. {2}. | {3} | Settings: {4}";
-        private const string _break_disabled = "Generation Disabled";
-        private const string _break_resolution = "Maximum Resolution Reached";
-        private const string _break_hulls = "Maximum Hulls Reached";
-        private const string _break_iterations = "Maximum Iterations Reached";
-
-        private const string _round = "{0}: Round {1}. | Settings: {2}";
-
         private static void ExecuteGenerationIteration(
             string name,
             bool fillHoles,
@@ -1817,7 +1797,7 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data
 
             if (performanceLogging.v)
             {
-                Debug.LogFormat(_generation_start, name, settings);
+                AppaLog.Info($"{name}: Generating collision mesh starting: {settings}");
             }
 
             meshes = fillHoles
@@ -1826,7 +1806,7 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data
 
             if (performanceLogging.v)
             {
-                Debug.LogFormat(_generation_complete, name);
+                AppaLog.Info($"{name}: Generating collision mesh complete.");
             }
         }
 
@@ -1849,7 +1829,9 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data
 
             if (generationDisabled.v)
             {
-                Debug.LogWarningFormat(_break, name, nextIter, _break_disabled, volume_string, settings);
+                AppaLog.Warning(
+                    $"{name}: Breaking before round {nextIter}. Generation Disabled. | {volume_string} | Settings: {settings}"
+                );
                 return true;
             }
 
@@ -1857,13 +1839,8 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data
             {
                 if (performanceLogging.v)
                 {
-                    Debug.LogWarningFormat(
-                        _break,
-                        name,
-                        nextIter,
-                        _break_resolution,
-                        volume_string,
-                        settings
+                    AppaLog.Warning(
+                        $"{name}: Breaking before round {nextIter}. Maximum Resolution Reached. | {volume_string} | Settings: {settings}"
                     );
                 }
 
@@ -1876,7 +1853,9 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data
             {
                 if (performanceLogging.v)
                 {
-                    Debug.LogWarningFormat(_break, name, nextIter, _break_hulls, volume_string, settings);
+                    AppaLog.Warning(
+                        $"{name}: Breaking before round {nextIter}. Maximum Hulls Reached. | {volume_string} | Settings: {settings}"
+                    );
                 }
 
                 return true;
@@ -1886,13 +1865,8 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data
             {
                 if (performanceLogging.v)
                 {
-                    Debug.LogWarningFormat(
-                        _break,
-                        name,
-                        nextIter,
-                        _break_iterations,
-                        volume_string,
-                        settings
+                    AppaLog.Warning(
+                        $"{name}: Breaking before round {nextIter}. Maximum Iterations Reached. | {volume_string} | Settings: {settings}"
                     );
                 }
 
@@ -1910,13 +1884,8 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data
                 {
                     if (performanceLogging.v)
                     {
-                        Debug.LogWarningFormat(
-                            _abandon,
-                            name,
-                            nextIter,
-                            _abandon_volume,
-                            volume_string,
-                            settings
+                        AppaLog.Warning(
+                            $"{name}: Abandoning before round {nextIter}. Volume Not Improving. | {volume_string} | Settings: {settings}"
                         );
                     }
 
@@ -1929,13 +1898,8 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data
                 {
                     if (performanceLogging.v)
                     {
-                        Debug.LogWarningFormat(
-                            _abandon,
-                            name,
-                            nextIter,
-                            _abandon_hulls,
-                            volume_string,
-                            settings
+                        AppaLog.Warning(
+                            $"{name}: Abandoning before round {nextIter}. Hulls Not Increasingly Utilized. | {volume_string} | Settings: {settings}"
                         );
                     }
 
@@ -1945,7 +1909,7 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data
 
             if (performanceLogging.v)
             {
-                Debug.LogFormat(_round, name, nextIter, settings);
+                AppaLog.Info($"{name}: Round {nextIter}. | Settings: {settings}");
             }
 
             return false;
@@ -1989,7 +1953,7 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data
 
             if (basicLogging.v)
             {
-                Debug.Log(
+                AppaLog.Info(
                     $"Parameter change: [{oldResolution}] res. to [{settings.resolution}] res. | [{oldHulls}] max hulls to [{settings.maxConvexHulls}] max hulls"
                 );
             }
@@ -2011,7 +1975,7 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data
 
                 if (basicLogging.v)
                 {
-                    Debug.Log($"Saving data for {name}.");
+                    AppaLog.Info($"Saving data for {name}.");
                 }
 
                 var saveDirectory = GetSaveDirectory(originalMesh);
@@ -2034,7 +1998,7 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data
                 {
                     if (basicLogging.v)
                     {
-                        Debug.Log($"Deleting old meshes for {name}.");
+                        AppaLog.Info($"Deleting old meshes for {name}.");
                     }
 
                     using (new AssetEditingScope())
@@ -2054,7 +2018,7 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data
                             {
                                 if (extraLogging.v)
                                 {
-                                    Debug.Log($"Deleting asset at [{path}].");
+                                    AppaLog.Info($"Deleting asset at [{path}].");
                                 }
 
                                 AssetDatabaseManager.DeleteAsset(path);
@@ -2065,7 +2029,7 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data
 
                         if (basicLogging.v)
                         {
-                            Debug.Log($"Initializing elements for {name}.");
+                            AppaLog.Info($"Initializing elements for {name}.");
                         }
 
                         for (var i = 0; i < meshes.Count; i++)
@@ -2129,7 +2093,7 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data
 
                         if (dirtyLogging.v)
                         {
-                            Debug.LogWarning("Setting dirty: elements added");
+                            AppaLog.Warning("Setting dirty: elements added");
                         }
 
                         SetDirty();
@@ -2151,7 +2115,7 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data
 
                         if (basicLogging.v)
                         {
-                            Debug.Log($"Saving elements for {name}.");
+                            AppaLog.Info($"Saving elements for {name}.");
                         }
 
                         for (var i = 0; i < meshes.Count; i++)
@@ -2172,9 +2136,9 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data
             }
         }
 
-#endregion
+        #endregion
 
-#region External Processing
+        #region External Processing
 
         private ValueDropdownList<GameObject> _assets => DecomposedColliderSuggestionHelper.assets;
 
@@ -2346,7 +2310,7 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data
 
                     if (string.IsNullOrWhiteSpace(path))
                     {
-                        Debug.LogWarning($"Object [{externalModel.name}] is not an asset.");
+                        AppaLog.Warning($"Object [{externalModel.name}] is not an asset.");
                         return;
                     }
 
@@ -2358,7 +2322,7 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data
 
                     if (meshes.Count == 0)
                     {
-                        Debug.LogWarning($"No meshes found in asset [{externalModel.name}].");
+                        AppaLog.Warning($"No meshes found in asset [{externalModel.name}].");
                         return;
                     }
 
@@ -2371,7 +2335,7 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data
 
                     if (basicLogging.v)
                     {
-                        Debug.Log($"Loading external meshes for {name}.");
+                        AppaLog.Info($"Loading external meshes for {name}.");
                     }
 
                     var progressItems = meshes.Count;
@@ -2387,7 +2351,7 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data
                     {
                         if (basicLogging.v)
                         {
-                            Debug.Log($"Deleting old meshes for {name}.");
+                            AppaLog.Info($"Deleting old meshes for {name}.");
                         }
 
                         var temp = elements;
@@ -2395,7 +2359,7 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data
 
                         if (basicLogging.v)
                         {
-                            Debug.Log($"Initializing elements for {name}.");
+                            AppaLog.Info($"Initializing elements for {name}.");
                         }
 
                         for (var i = 0; i < meshes.Count; i++)
@@ -2457,7 +2421,7 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data
 
                         if (dirtyLogging.v)
                         {
-                            Debug.LogWarning("Setting dirty: elements added");
+                            AppaLog.Warning("Setting dirty: elements added");
                         }
 
                         SetDirty();
@@ -2475,9 +2439,9 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data
             }
         }
 
-#endregion
+        #endregion
 
-#region Gizmos
+        #region Gizmos
 
         private static Transform[] _cachedSelections;
         private static int _cacheFrameCount;
@@ -2618,7 +2582,7 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data
                 _gizmoMesh.CombineMeshes(combine, false, false);
                 if (dirtyLogging.v)
                 {
-                    Debug.LogWarning("Setting dirty: Saving gizmo mesh");
+                    AppaLog.Warning("Setting dirty: Saving gizmo mesh");
                 }
 
                 EditorUtility.SetDirty(_gizmoMesh);
@@ -2809,7 +2773,7 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data
             }
         }
 
-#endregion
+        #endregion
     }
 }
 

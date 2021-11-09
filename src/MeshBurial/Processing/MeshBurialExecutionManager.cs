@@ -12,6 +12,7 @@ using Appalachia.Jobs.Optimization.Utilities;
 using Appalachia.Jobs.Transfers;
 using Appalachia.Spatial.MeshBurial.Processing.QueueItems;
 using Appalachia.Spatial.MeshBurial.State;
+using Appalachia.Utility.Logging;
 using AwesomeTechnologies.VegetationStudio;
 using AwesomeTechnologies.VegetationSystem;
 using Unity.Collections;
@@ -170,7 +171,7 @@ namespace Appalachia.Spatial.MeshBurial.Processing
             {
                 pendingHandle.Complete();
 
-                //if (!manual) Debug.Log("Disposing native collections.");
+                //if (!manual) AppaLog.Info("Disposing native collections.");
 
                 if (randoms.IsCreated)
                 {
@@ -225,7 +226,7 @@ namespace Appalachia.Spatial.MeshBurial.Processing
                          (_LOG.Value > 0) &&
                          ((Time.frameCount % _LOG.Value) == 0)))
                     {
-                        Debug.Log($"Mesh Burial Queue Depth: {queueDepth}  [{Time.frameCount}]");
+                        AppaLog.Info($"Mesh Burial Queue Depth: {queueDepth}  [{Time.frameCount}]");
                         _lastLogAt = queueDepth;
                     }
 
@@ -237,7 +238,7 @@ namespace Appalachia.Spatial.MeshBurial.Processing
                     {
                         if (_appliedAdjustments > 0)
                         {
-                            Debug.Log($"Mesh Burial Queue Depth: 0  [{Time.frameCount}]");
+                            AppaLog.Info($"Mesh Burial Queue Depth: 0  [{Time.frameCount}]");
                         }
 
                         StatusLog(
@@ -436,7 +437,7 @@ namespace Appalachia.Spatial.MeshBurial.Processing
                 }
                 catch (Exception ex)
                 {
-                    Debug.LogException(ex);
+                    AppaLog.Exception(ex);
 
                     resultDataFinalized = true;
 
@@ -596,7 +597,7 @@ namespace Appalachia.Spatial.MeshBurial.Processing
                                     var duration = (DateTime.Now - _itemStart).TotalSeconds;
                                     if (duration > _TIMELOGTIME.Value)
                                     {
-                                        Debug.Log($"Items [{item}] took {duration:F2} seconds to process.");
+                                        AppaLog.Info($"Items [{item}] took {duration:F2} seconds to process.");
                                     }
                                 }
 
@@ -607,8 +608,8 @@ namespace Appalachia.Spatial.MeshBurial.Processing
                 }
                 catch (Exception ex)
                 {
-                    Debug.LogError($"Error while burying meshes: \r\n{ex.Message}");
-                    Debug.LogException(ex);
+                    AppaLog.Error($"Error while burying meshes: \r\n{ex.Message}");
+                    AppaLog.Exception(ex);
                     _BURY.Value = false;
                 }
             }
@@ -785,7 +786,7 @@ namespace Appalachia.Spatial.MeshBurial.Processing
             {
                 if ((requeue == null) || !requeue.Value)
                 {
-                    Debug.Log(
+                    AppaLog.Info(
                         $" [BATCH]  [TOT |{total,4}" +
                         $"]  [AVG |{average:F3}" +
                         $"]  [+ |{good,4}" +
@@ -797,7 +798,7 @@ namespace Appalachia.Spatial.MeshBurial.Processing
                 }
                 else
                 {
-                    Debug.Log(
+                    AppaLog.Info(
                         $" [TOT |{total,4}" +
                         $"]  [AVG |{average:F3}" +
                         $"]  [+ |{good,4}" +

@@ -7,6 +7,7 @@ using Appalachia.Core.Debugging;
 using Appalachia.Editing.Debugging;
 using Appalachia.Editing.Debugging.Handle;
 using Appalachia.Spatial.Terrains.Utilities;
+using Appalachia.Utility.Logging;
 using Sirenix.OdinInspector;
 using Unity.Collections;
 using UnityEditor;
@@ -187,7 +188,7 @@ namespace Appalachia.Spatial.Terrains
                 }
                 catch (Exception ex)
                 {
-                    Debug.LogError($"Failed to create terrain job data: {ex}");
+                    AppaLog.Error($"Failed to create terrain job data: {ex}");
                 }
             }
 
@@ -249,7 +250,7 @@ namespace Appalachia.Spatial.Terrains
                 }
                 catch (Exception ex)
                 {
-                    Debug.LogError($"Failed to create terrain job data: {ex}");
+                    AppaLog.Error($"Failed to create terrain job data: {ex}");
                 }
             }
 
