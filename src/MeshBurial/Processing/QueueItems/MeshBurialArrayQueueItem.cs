@@ -1,6 +1,7 @@
 #region
 
 using System;
+using System.Diagnostics;
 using Unity.Collections;
 using Unity.Collections.NotBurstCompatible;
 using Unity.Mathematics;
@@ -75,7 +76,7 @@ namespace Appalachia.Spatial.MeshBurial.Processing.QueueItems
             }
         }
 
-        public override string ToString()
+        [DebuggerStepThrough] public override string ToString()
         {
             return name;
         }

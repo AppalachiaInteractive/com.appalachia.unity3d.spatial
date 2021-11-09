@@ -1,6 +1,7 @@
 #region
 
 using System;
+using System.Diagnostics;
 using Unity.Burst;
 using Unity.Mathematics;
 using UnityEngine;
@@ -42,7 +43,7 @@ namespace Appalachia.Spatial.SpatialKeys
             _descaledZ = _z / (float) groupingScale;
         }
 
-        public bool Equals(Vector3Key other)
+        [DebuggerStepThrough] public bool Equals(Vector3Key other)
         {
             return (_groupingScale == other._groupingScale) &&
                    (_x == other._x) &&
@@ -67,12 +68,12 @@ namespace Appalachia.Spatial.SpatialKeys
             return new float3(_x / fScale, _y / fScale, _z / fScale);
         }
 
-        public override bool Equals(object obj)
+        [DebuggerStepThrough] public override bool Equals(object obj)
         {
             return obj is Vector3Key other && Equals(other);
         }
 
-        public override int GetHashCode()
+        [DebuggerStepThrough] public override int GetHashCode()
         {
             unchecked
             {
@@ -84,18 +85,18 @@ namespace Appalachia.Spatial.SpatialKeys
             }
         }
 
-        public static bool operator ==(Vector3Key left, Vector3Key right)
+        [DebuggerStepThrough] public static bool operator ==(Vector3Key left, Vector3Key right)
         {
             return left.Equals(right);
         }
 
-        public static bool operator !=(Vector3Key left, Vector3Key right)
+        [DebuggerStepThrough] public static bool operator !=(Vector3Key left, Vector3Key right)
         {
             return !left.Equals(right);
         }
 
         [BurstDiscard]
-        public override string ToString()
+        [DebuggerStepThrough] public override string ToString()
         {
             const string float3format = "{0:F2}, {1:F2}, {2:F2}";
             return string.Format(float3format, _descaledX, _descaledY, _descaledZ);

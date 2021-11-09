@@ -72,7 +72,7 @@ namespace Appalachia.Spatial.MeshBurial.Processing.QueueItems
             }
         }
 
-        public override string ToString()
+        [DebuggerStepThrough] public override string ToString()
         {
             return _set.name + " Queue Item";
         }

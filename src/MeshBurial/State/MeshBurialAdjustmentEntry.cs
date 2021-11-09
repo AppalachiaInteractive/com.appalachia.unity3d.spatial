@@ -1,6 +1,7 @@
 #region
 
 using System;
+using System.Diagnostics;
 using Appalachia.Core.Attributes.Editing;
 using Sirenix.OdinInspector;
 using UnityEngine;
@@ -29,7 +30,7 @@ namespace Appalachia.Spatial.MeshBurial.State
         [SmartLabel]
         public Matrix4x4 adjustment;
 
-        public bool Equals(MeshBurialAdjustmentEntry other)
+        [DebuggerStepThrough] public bool Equals(MeshBurialAdjustmentEntry other)
         {
             return (adoptTerrainNormal == other.adoptTerrainNormal) &&
                    input.Equals(other.input) &&
@@ -37,7 +38,7 @@ namespace Appalachia.Spatial.MeshBurial.State
                    error.Equals(other.error);
         }
 
-        public override bool Equals(object obj)
+        [DebuggerStepThrough] public override bool Equals(object obj)
         {
             if (ReferenceEquals(null, obj))
             {
@@ -52,7 +53,7 @@ namespace Appalachia.Spatial.MeshBurial.State
             return Equals((MeshBurialAdjustmentEntry) obj);
         }
 
-        public override int GetHashCode()
+        [DebuggerStepThrough] public override int GetHashCode()
         {
             unchecked
             {
@@ -64,14 +65,14 @@ namespace Appalachia.Spatial.MeshBurial.State
             }
         }
 
-        public static bool operator ==(
+        [DebuggerStepThrough] public static bool operator ==(
             MeshBurialAdjustmentEntry left,
             MeshBurialAdjustmentEntry right)
         {
             return Equals(left, right);
         }
 
-        public static bool operator !=(
+        [DebuggerStepThrough] public static bool operator !=(
             MeshBurialAdjustmentEntry left,
             MeshBurialAdjustmentEntry right)
         {

@@ -1,5 +1,6 @@
 #if UNITY_EDITOR
 using System;
+using System.Diagnostics;
 using Appalachia.Core.Attributes.Editing;
 using Appalachia.Core.Preferences.Globals;
 using Sirenix.OdinInspector;
@@ -56,7 +57,7 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data.Review
         }
 
         private const string _format = "{0:F1}%";
-        public override string ToString()
+        [DebuggerStepThrough] public override string ToString()
         {
             using (_PRF_ToString.Auto())
             {

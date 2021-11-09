@@ -1,6 +1,7 @@
 #region
 
 using System;
+using System.Diagnostics;
 using Appalachia.Jobs.Burstable;
 using Unity.Mathematics;
 using UnityEngine;
@@ -24,7 +25,7 @@ namespace Appalachia.Spatial.Voxels
 
 #region IEquatable
 
-        public bool Equals(VoxelSamplePoint other)
+        [DebuggerStepThrough] public bool Equals(VoxelSamplePoint other)
         {
             return position.Equals(other.position) &&
                    (populated == other.populated) &&
@@ -32,12 +33,12 @@ namespace Appalachia.Spatial.Voxels
                    time.Equals(other.time);
         }
 
-        public override bool Equals(object obj)
+        [DebuggerStepThrough] public override bool Equals(object obj)
         {
             return obj is VoxelSamplePoint other && Equals(other);
         }
 
-        public override int GetHashCode()
+        [DebuggerStepThrough] public override int GetHashCode()
         {
             unchecked
             {
@@ -49,12 +50,12 @@ namespace Appalachia.Spatial.Voxels
             }
         }
 
-        public static bool operator ==(VoxelSamplePoint left, VoxelSamplePoint right)
+        [DebuggerStepThrough] public static bool operator ==(VoxelSamplePoint left, VoxelSamplePoint right)
         {
             return left.Equals(right);
         }
 
-        public static bool operator !=(VoxelSamplePoint left, VoxelSamplePoint right)
+        [DebuggerStepThrough] public static bool operator !=(VoxelSamplePoint left, VoxelSamplePoint right)
         {
             return !left.Equals(right);
         }

@@ -1,6 +1,7 @@
 #region
 
 using System;
+using System.Diagnostics;
 using Unity.Mathematics;
 using UnityEngine;
 
@@ -29,7 +30,7 @@ namespace Appalachia.Spatial.SpatialKeys
             _y = GetRounded(vector.y, groupingScale);
         }
 
-        public bool Equals(Vector2Key other)
+        [DebuggerStepThrough] public bool Equals(Vector2Key other)
         {
             return (_groupingScale == other._groupingScale) && (_x == other._x) && (_y == other._y);
         }
@@ -51,12 +52,12 @@ namespace Appalachia.Spatial.SpatialKeys
             return new float2(_x / fScale, _y / fScale);
         }
 
-        public override bool Equals(object obj)
+        [DebuggerStepThrough] public override bool Equals(object obj)
         {
             return obj is Vector2Key other && Equals(other);
         }
 
-        public override int GetHashCode()
+        [DebuggerStepThrough] public override int GetHashCode()
         {
             unchecked
             {
@@ -67,12 +68,12 @@ namespace Appalachia.Spatial.SpatialKeys
             }
         }
 
-        public static bool operator ==(Vector2Key left, Vector2Key right)
+        [DebuggerStepThrough] public static bool operator ==(Vector2Key left, Vector2Key right)
         {
             return left.Equals(right);
         }
 
-        public static bool operator !=(Vector2Key left, Vector2Key right)
+        [DebuggerStepThrough] public static bool operator !=(Vector2Key left, Vector2Key right)
         {
             return !left.Equals(right);
         }

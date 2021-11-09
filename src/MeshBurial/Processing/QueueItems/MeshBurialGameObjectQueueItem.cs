@@ -1,6 +1,7 @@
 #region
 
 using System;
+using System.Diagnostics;
 using Appalachia.Core.Extensions;
 using Appalachia.Utility.Extensions;
 using Unity.Collections;
@@ -50,7 +51,7 @@ namespace Appalachia.Spatial.MeshBurial.Processing.QueueItems
             _model.transform.Matrix4x4ToTransform(matrices[0]);
         }
 
-        public override string ToString()
+        [DebuggerStepThrough] public override string ToString()
         {
             return name;
         }

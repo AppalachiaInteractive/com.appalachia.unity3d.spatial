@@ -1,6 +1,7 @@
 #region
 
 using System;
+using System.Diagnostics;
 using Appalachia.Core.Extensions;
 using Appalachia.Utility.Constants;
 using Appalachia.Utility.Extensions;
@@ -183,7 +184,7 @@ namespace Appalachia.Spatial.Voxels
 
 #region IEquatable
 
-        public bool Equals(VoxelFaceData other)
+        [DebuggerStepThrough] public bool Equals(VoxelFaceData other)
         {
             return (forward == other.forward) &&
                    (back == other.back) &&
@@ -194,12 +195,12 @@ namespace Appalachia.Spatial.Voxels
                    _normal.Equals(other._normal);
         }
 
-        public override bool Equals(object obj)
+        [DebuggerStepThrough] public override bool Equals(object obj)
         {
             return obj is VoxelFaceData other && Equals(other);
         }
 
-        public override int GetHashCode()
+        [DebuggerStepThrough] public override int GetHashCode()
         {
             unchecked
             {
@@ -214,12 +215,12 @@ namespace Appalachia.Spatial.Voxels
             }
         }
 
-        public static bool operator ==(VoxelFaceData left, VoxelFaceData right)
+        [DebuggerStepThrough] public static bool operator ==(VoxelFaceData left, VoxelFaceData right)
         {
             return left.Equals(right);
         }
 
-        public static bool operator !=(VoxelFaceData left, VoxelFaceData right)
+        [DebuggerStepThrough] public static bool operator !=(VoxelFaceData left, VoxelFaceData right)
         {
             return !left.Equals(right);
         }

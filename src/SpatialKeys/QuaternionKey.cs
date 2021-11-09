@@ -1,6 +1,7 @@
 #region
 
 using System;
+using System.Diagnostics;
 using Unity.Mathematics;
 using UnityEngine;
 
@@ -35,7 +36,7 @@ namespace Appalachia.Spatial.SpatialKeys
             _w = GetRounded(vector.value.w, groupingScale);
         }
 
-        public bool Equals(QuaternionKey other)
+        [DebuggerStepThrough] public bool Equals(QuaternionKey other)
         {
             return (_groupingScale == other._groupingScale) &&
                    (_x == other._x) &&
@@ -67,12 +68,12 @@ namespace Appalachia.Spatial.SpatialKeys
             return new quaternion(_x / fScale, _y / fScale, _z / fScale, _w / fScale);
         }
 
-        public override bool Equals(object obj)
+        [DebuggerStepThrough] public override bool Equals(object obj)
         {
             return obj is QuaternionKey other && Equals(other);
         }
 
-        public override int GetHashCode()
+        [DebuggerStepThrough] public override int GetHashCode()
         {
             unchecked
             {
@@ -85,12 +86,12 @@ namespace Appalachia.Spatial.SpatialKeys
             }
         }
 
-        public static bool operator ==(QuaternionKey left, QuaternionKey right)
+        [DebuggerStepThrough] public static bool operator ==(QuaternionKey left, QuaternionKey right)
         {
             return left.Equals(right);
         }
 
-        public static bool operator !=(QuaternionKey left, QuaternionKey right)
+        [DebuggerStepThrough] public static bool operator !=(QuaternionKey left, QuaternionKey right)
         {
             return !left.Equals(right);
         }

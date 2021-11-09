@@ -1,6 +1,7 @@
 #region
 
 using System;
+using System.Diagnostics;
 using JetBrains.Annotations;
 using Unity.Collections;
 using Unity.Mathematics;
@@ -33,7 +34,7 @@ namespace Appalachia.Spatial.Terrains
             this.allocator = allocator;
         }
 
-        public bool Equals(TerrainJobData other)
+        [DebuggerStepThrough] public bool Equals(TerrainJobData other)
         {
             return (hashCode == other.hashCode) &&
                    terrainPosition.Equals(other.terrainPosition) &&
@@ -60,12 +61,12 @@ namespace Appalachia.Spatial.Terrains
             return false;
         }
 
-        public override bool Equals(object obj)
+        [DebuggerStepThrough] public override bool Equals(object obj)
         {
             return obj is TerrainJobData other && Equals(other);
         }
 
-        public override int GetHashCode()
+        [DebuggerStepThrough] public override int GetHashCode()
         {
             unchecked
             {
@@ -79,12 +80,12 @@ namespace Appalachia.Spatial.Terrains
             }
         }
 
-        public static bool operator ==(TerrainJobData left, TerrainJobData right)
+        [DebuggerStepThrough] public static bool operator ==(TerrainJobData left, TerrainJobData right)
         {
             return left.Equals(right);
         }
 
-        public static bool operator !=(TerrainJobData left, TerrainJobData right)
+        [DebuggerStepThrough] public static bool operator !=(TerrainJobData left, TerrainJobData right)
         {
             return !left.Equals(right);
         }

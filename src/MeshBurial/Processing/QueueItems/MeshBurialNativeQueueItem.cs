@@ -1,6 +1,7 @@
 #region
 
 using System;
+using System.Diagnostics;
 using Unity.Collections;
 using Unity.Mathematics;
 using UnityEngine;
@@ -65,7 +66,7 @@ namespace Appalachia.Spatial.MeshBurial.Processing.QueueItems
             _matrices.AddRange(matrices);
         }
 
-        public override string ToString()
+        [DebuggerStepThrough] public override string ToString()
         {
             return name;
         }

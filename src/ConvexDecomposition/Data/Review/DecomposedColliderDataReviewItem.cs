@@ -3,6 +3,7 @@
 #region
 
 using System;
+using System.Diagnostics;
 using Appalachia.Core.Attributes.Editing;
 using Appalachia.Core.Preferences.Globals;
 using Appalachia.Spatial.ConvexDecomposition.Generation;
@@ -188,7 +189,7 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data.Review
         private string _toString;
         private static readonly ProfilerMarker _PRF_ToString = new ProfilerMarker(_PRF_PFX + nameof(ToString));
 
-        public override string ToString()
+        [DebuggerStepThrough] public override string ToString()
         {
             using (_PRF_ToString.Auto())
             {

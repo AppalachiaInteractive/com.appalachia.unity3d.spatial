@@ -1,6 +1,7 @@
 #region
 
 using System;
+using System.Diagnostics;
 using Sirenix.OdinInspector;
 
 #endregion
@@ -15,7 +16,7 @@ namespace Appalachia.Spatial.MeshBurial.State
         [LabelWidth(0)]
         public MeshBurialAdjustmentEntry entry;
 
-        public override string ToString()
+        [DebuggerStepThrough] public override string ToString()
         {
             return $"Error {entry.error}: {entry.adjustment}";
         }

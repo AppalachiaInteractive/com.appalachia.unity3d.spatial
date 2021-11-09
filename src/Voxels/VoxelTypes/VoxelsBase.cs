@@ -1132,7 +1132,7 @@ namespace Appalachia.Spatial.Voxels.VoxelTypes
 
 #region IEquatable
 
-        public bool Equals(VoxelsBase<T, TRaycastHit> other)
+        [DebuggerStepThrough] public bool Equals(VoxelsBase<T, TRaycastHit> other)
         {
             if (ReferenceEquals(null, other))
             {
@@ -1174,7 +1174,7 @@ namespace Appalachia.Spatial.Voxels.VoxelTypes
                    Equals(_testHits, other._testHits);
         }
 
-        public override bool Equals(object obj)
+        [DebuggerStepThrough] public override bool Equals(object obj)
         {
             if (ReferenceEquals(null, obj))
             {
@@ -1194,7 +1194,7 @@ namespace Appalachia.Spatial.Voxels.VoxelTypes
             return Equals((VoxelsBase<T, TRaycastHit>) obj);
         }
 
-        public override int GetHashCode()
+        [DebuggerStepThrough] public override int GetHashCode()
         {
             unchecked
             {
@@ -1230,14 +1230,14 @@ namespace Appalachia.Spatial.Voxels.VoxelTypes
             }
         }
 
-        public static bool operator ==(
+        [DebuggerStepThrough] public static bool operator ==(
             VoxelsBase<T, TRaycastHit> left,
             VoxelsBase<T, TRaycastHit> right)
         {
             return Equals(left, right);
         }
 
-        public static bool operator !=(
+        [DebuggerStepThrough] public static bool operator !=(
             VoxelsBase<T, TRaycastHit> left,
             VoxelsBase<T, TRaycastHit> right)
         {

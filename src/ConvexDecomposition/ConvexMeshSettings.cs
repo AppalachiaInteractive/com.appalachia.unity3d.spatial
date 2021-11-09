@@ -3,6 +3,7 @@
 #region
 
 using System;
+using System.Diagnostics;
 using Appalachia.Core.Attributes.Editing;
 using Appalachia.Spatial.ConvexDecomposition.API;
 using Sirenix.OdinInspector;
@@ -347,7 +348,7 @@ namespace Appalachia.Spatial.ConvexDecomposition
 
 #region IEquatable
 
-        public bool Equals(ConvexMeshSettings other)
+        [DebuggerStepThrough] public bool Equals(ConvexMeshSettings other)
         {
             return (mode == other.mode) &&
                    (maxConvexHulls == other.maxConvexHulls) &&
@@ -367,12 +368,12 @@ namespace Appalachia.Spatial.ConvexDecomposition
                    (openClDevice == other.openClDevice);
         }
 
-        public override bool Equals(object obj)
+        [DebuggerStepThrough] public override bool Equals(object obj)
         {
             return obj is ConvexMeshSettings other && Equals(other);
         }
 
-        public override int GetHashCode()
+        [DebuggerStepThrough] public override int GetHashCode()
         {
             unchecked
             {
@@ -396,12 +397,12 @@ namespace Appalachia.Spatial.ConvexDecomposition
             }
         }
 
-        public static bool operator ==(ConvexMeshSettings left, ConvexMeshSettings right)
+        [DebuggerStepThrough] public static bool operator ==(ConvexMeshSettings left, ConvexMeshSettings right)
         {
             return left.Equals(right);
         }
 
-        public static bool operator !=(ConvexMeshSettings left, ConvexMeshSettings right)
+        [DebuggerStepThrough] public static bool operator !=(ConvexMeshSettings left, ConvexMeshSettings right)
         {
             return !left.Equals(right);
         }
@@ -410,7 +411,7 @@ namespace Appalachia.Spatial.ConvexDecomposition
 
 #region ToString
 
-        public override string ToString()
+        [DebuggerStepThrough] public override string ToString()
         {
             return $"{nameof(mode)}: {mode}, " +
                    $"{nameof(maxConvexHulls)}: {maxConvexHulls}, " +

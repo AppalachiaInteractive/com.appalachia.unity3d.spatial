@@ -1,6 +1,7 @@
 #region
 
 using System;
+using System.Diagnostics;
 using Appalachia.Core.Behaviours;
 using Appalachia.Spatial.MeshBurial.State;
 using Unity.Collections;
@@ -150,6 +151,6 @@ namespace Appalachia.Spatial.MeshBurial.Processing.QueueItems
 
         //public abstract int[] GetAllTerrainHashCodes();
 
-        public abstract override string ToString();
+        [DebuggerStepThrough] public abstract override string ToString();
     }
 }

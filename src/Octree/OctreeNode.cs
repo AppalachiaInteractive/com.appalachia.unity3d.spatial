@@ -6,18 +6,18 @@ namespace Appalachia.Spatial.Octree
         public TK key;
         public TV value;
 
-        public bool Equals(OctreeNode<TK, TV> other)
+        [DebuggerStepThrough] public bool Equals(OctreeNode<TK, TV> other)
         {
             return EqualityComparer<TK>.Default.Equals(key, other.key) &&
                 EqualityComparer<TV>.Default.Equals(value, other.value);
         }
 
-        public override bool Equals(object obj)
+        [DebuggerStepThrough] public override bool Equals(object obj)
         {
             return obj is OctreeNode<TK, TV> other && Equals(other);
         }
 
-        public override int GetHashCode()
+        [DebuggerStepThrough] public override int GetHashCode()
         {
             unchecked
             {
@@ -26,12 +26,12 @@ namespace Appalachia.Spatial.Octree
             }
         }
 
-        public static bool operator ==(OctreeNode<TK, TV> left, OctreeNode<TK, TV> right)
+        [DebuggerStepThrough] public static bool operator ==(OctreeNode<TK, TV> left, OctreeNode<TK, TV> right)
         {
             return left.Equals(right);
         }
 
-        public static bool operator !=(OctreeNode<TK, TV> left, OctreeNode<TK, TV> right)
+        [DebuggerStepThrough] public static bool operator !=(OctreeNode<TK, TV> left, OctreeNode<TK, TV> right)
         {
             return !left.Equals(right);
         }

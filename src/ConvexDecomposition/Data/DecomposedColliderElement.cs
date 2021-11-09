@@ -1,5 +1,6 @@
 #if UNITY_EDITOR
 using System;
+using System.Diagnostics;
 using Appalachia.CI.Integration.Assets;
 using Appalachia.CI.Integration.FileSystem;
 using Appalachia.Core.Attributes.Editing;
@@ -163,7 +164,7 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data
         
 #region IEquatable
 
-        public bool Equals(DecomposedColliderElement other)
+        [DebuggerStepThrough] public bool Equals(DecomposedColliderElement other)
         {
             if (ReferenceEquals(null, other))
             {
@@ -178,7 +179,7 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data
             return Equals(mesh, other.mesh) && Equals(material, other.material) && (externalMesh == other.externalMesh) && (index == other.index);
         }
 
-        public override bool Equals(object obj)
+        [DebuggerStepThrough] public override bool Equals(object obj)
         {
             if (ReferenceEquals(null, obj))
             {
@@ -198,7 +199,7 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data
             return Equals((DecomposedColliderElement) obj);
         }
 
-        public override int GetHashCode()
+        [DebuggerStepThrough] public override int GetHashCode()
         {
             unchecked
             {
@@ -210,12 +211,12 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data
             }
         }
 
-        public static bool operator ==(DecomposedColliderElement left, DecomposedColliderElement right)
+        [DebuggerStepThrough] public static bool operator ==(DecomposedColliderElement left, DecomposedColliderElement right)
         {
             return Equals(left, right);
         }
 
-        public static bool operator !=(DecomposedColliderElement left, DecomposedColliderElement right)
+        [DebuggerStepThrough] public static bool operator !=(DecomposedColliderElement left, DecomposedColliderElement right)
         {
             return !Equals(left, right);
         }

@@ -1,6 +1,7 @@
 #region
 
 using System;
+using System.Diagnostics;
 using Appalachia.CI.Constants;
 using Appalachia.Core.Extensions;
 using Appalachia.Utility.Extensions;
@@ -87,7 +88,7 @@ namespace Appalachia.Spatial.SpatialKeys
             _m33 = GetRounded(matrix.c3.w, groupingScale);
         }
 
-        public bool Equals(Matrix4x4Key other)
+        [DebuggerStepThrough] public bool Equals(Matrix4x4Key other)
         {
             return (_groupingScale == other._groupingScale) &&
                    (_m00 == other._m00) &&
@@ -188,12 +189,12 @@ namespace Appalachia.Spatial.SpatialKeys
             );
         }
 
-        public override bool Equals(object obj)
+        [DebuggerStepThrough] public override bool Equals(object obj)
         {
             return obj is Matrix4x4Key other && Equals(other);
         }
 
-        public override int GetHashCode()
+        [DebuggerStepThrough] public override int GetHashCode()
         {
             unchecked
             {
@@ -218,18 +219,18 @@ namespace Appalachia.Spatial.SpatialKeys
             }
         }
 
-        public static bool operator ==(Matrix4x4Key left, Matrix4x4Key right)
+        [DebuggerStepThrough] public static bool operator ==(Matrix4x4Key left, Matrix4x4Key right)
         {
             return left.Equals(right);
         }
 
-        public static bool operator !=(Matrix4x4Key left, Matrix4x4Key right)
+        [DebuggerStepThrough] public static bool operator !=(Matrix4x4Key left, Matrix4x4Key right)
         {
             return !left.Equals(right);
         }
 
         [BurstDiscard]
-        public override string ToString()
+        [DebuggerStepThrough] public override string ToString()
         {
             const string float3format = "{0:F2}, {1:F2}, {2:F2}";
             const string float4format = float3format + ", {3:F2}";
