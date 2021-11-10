@@ -14,6 +14,7 @@ C:/Users/Chris/com.appalachia/unity3d/appa/Assets/Appalachia.Spatial
 ## Releasing
 | Hash | Date | Author | Changes |
 |------|------|--------|---------|
+| 71ba998099b2bb9fdeb810d6fa897d29887742a2 | 2021-11-09 | Chris Schubert | Updating changelog and releaselog |
 | 44366245d42908feb532152c3baa15be0129fa66 | 2021-11-09 | Chris Schubert | Removing empty directories, adding some debugger passthroughs, and reformatting asmdefs |
 | 4ef63dd988760734970fc3a76c65b5b029845dba | 2021-11-08 | Chris Schubert | Updating changelog and releaselog |
 | 74d7c24799105da6e60631875041b89121b6507c | 2021-11-08 | Chris Schubert | Upgrading to new logging library |
