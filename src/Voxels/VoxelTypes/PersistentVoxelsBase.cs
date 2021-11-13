@@ -30,10 +30,12 @@ namespace Appalachia.Spatial.Voxels.VoxelTypes
 
         public override void OnInitialize()
         {
+#if UNITY_EDITOR
             if (dataStore == null)
             {
                 dataStore = AppalachiaObject<TDataStore>.LoadOrCreateNew(identifier);
             }
+#endif
         }
 
         public override void InitializeDataStore()

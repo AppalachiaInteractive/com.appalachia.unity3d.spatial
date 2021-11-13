@@ -1,9 +1,10 @@
+#if UNITY_EDITOR
+
 #region
 
 using Appalachia.CI.Integration.Assets;
 using Appalachia.Core.Attributes.Editing;
 using Unity.Profiling;
-using UnityEditor;
 using UnityEngine;
 
 #endregion
@@ -30,8 +31,8 @@ namespace Appalachia.Spatial.MeshBurial.State
         {
             using (_PRF_Get.Auto())
             {
-                if (PrefabUtility.IsPartOfPrefabAsset(go) ||
-                    PrefabUtility.IsAnyPrefabInstanceRoot(go))
+                if (UnityEditor.PrefabUtility.IsPartOfPrefabAsset(go) ||
+                    UnityEditor.PrefabUtility.IsAnyPrefabInstanceRoot(go))
                 {
                     AssetDatabaseManager.TryGetGUIDAndLocalFileIdentifier(go, out var guid, out long _);
 
@@ -89,3 +90,5 @@ namespace Appalachia.Spatial.MeshBurial.State
         }
     }
 }
+
+#endif

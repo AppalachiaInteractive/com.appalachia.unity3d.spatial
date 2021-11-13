@@ -1,3 +1,5 @@
+#if UNITY_EDITOR
+
 #region
 
 using Appalachia.CI.Constants;
@@ -7,7 +9,6 @@ using Appalachia.Core.Collections.NonSerialized;
 using Appalachia.Core.Scriptables;
 using Appalachia.Spatial.MeshBurial.Processing.QueueItems;
 using Unity.Profiling;
-using UnityEditor;
 
 #endregion
 
@@ -113,3 +114,5 @@ namespace Appalachia.Spatial.MeshBurial.Processing
         }
     }
 }
+
+#endif

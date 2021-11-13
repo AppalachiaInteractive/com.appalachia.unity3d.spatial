@@ -1,14 +1,11 @@
 using System;
 using Appalachia.Core.Behaviours;
 using Appalachia.Core.Debugging;
-using Appalachia.Core.Extensions;
-using Appalachia.Editing.Debugging;
 using Appalachia.Editing.Debugging.Handle;
 using Appalachia.Utility.Extensions;
 using AwesomeTechnologies.VegetationSystem;
 using Sirenix.OdinInspector;
 using Unity.Mathematics;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.Serialization;
 
@@ -182,7 +179,11 @@ namespace Appalachia.Spatial.Terrains
             {
                 if (label == null)
                 {
-                    label = new GUIStyle(EditorStyles.label);
+                    #if UNITY_EDITOR
+                    label = new GUIStyle(UnityEditor.EditorStyles.label);
+                    #else
+                    label = new GUIStyle();
+                    #endif
 
                     label.normal.textColor = Color.black;
                     label.normal.background = Texture2D.whiteTexture;
@@ -208,6 +209,7 @@ namespace Appalachia.Spatial.Terrains
             }
         }
 
+#if UNITY_EDITOR
         public void OnDrawGizmosSelected()
         {
             if (!GizmoCameraChecker.ShouldRenderGizmos())
@@ -215,7 +217,7 @@ namespace Appalachia.Spatial.Terrains
                 return;
             }
 
-            var cam = SceneView.GetAllSceneCameras()[0];
+            var cam = UnityEditor.SceneView.GetAllSceneCameras()[0];
 
             var terrainData = terrain.terrainData;
             float3 terrainPosition_WS = terrain.transform.position;
@@ -312,7 +314,7 @@ namespace Appalachia.Spatial.Terrains
                         _ => sampleHeight - rootHeight
                     };
 
-                    Handles.Label(samplePosition_WS, $"{sampleValue:F3}", Label);
+                    UnityEditor.Handles.Label(samplePosition_WS, $"{sampleValue:F3}", Label);
 
                     sampleSum += sampleValue;
                     sampleCount += 1;
@@ -383,6 +385,7 @@ namespace Appalachia.Spatial.Terrains
                 indicatorSphereSize
             );
         }
+#endif
 
         private string GetDirectionalString(float direction)
         {
@@ -534,6 +537,7 @@ namespace Appalachia.Spatial.Terrains
             return !keep;
         }
 
+#if UNITY_EDITOR
         private void DrawSpheres(
             float3[] samplePositions,
             Color[] sampleColors,
@@ -635,7 +639,8 @@ namespace Appalachia.Spatial.Terrains
                 }
             }
 
-            Handles.Label(offset + lblOffset, $"{testValue:F3}", MiniLabel);
+            UnityEditor.Handles.Label(offset + lblOffset, $"{testValue:F3}", MiniLabel);
         }
+#endif
     }
 }

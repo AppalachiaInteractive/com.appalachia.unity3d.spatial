@@ -1,3 +1,5 @@
+#if UNITY_EDITOR
+
 #region
 
 using System.Collections.Generic;
@@ -49,3 +51,5 @@ namespace Appalachia.Spatial.MeshBurial.State
         }
     }
 }
+
+#endif

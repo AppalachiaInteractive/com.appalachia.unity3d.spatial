@@ -44,10 +44,12 @@ namespace Appalachia.Spatial.Voxels.Components
 
         private Collider[] _colliders;
 
+#if UNITY_EDITOR
         [NonSerialized]
         [ShowInInspector]
         [InlineEditor]
         private VoxelDataGizmoSettings _gizmoSettings;
+#endif
 
         private MeshRenderer[] _renderers;
         private VoxelTypes.Voxels _voxels;
@@ -92,6 +94,7 @@ namespace Appalachia.Spatial.Voxels.Components
             _voxels?.Dispose();
         }
 
+#if UNITY_EDITOR
         private void OnDrawGizmosSelected()
         {
             if (_voxels == null)
@@ -109,6 +112,7 @@ namespace Appalachia.Spatial.Voxels.Components
 
             _voxels.DrawGizmos(_gizmoSettings);
         }
+#endif
 
         [EnableIf(nameof(_canProcess))]
         [ButtonGroup]

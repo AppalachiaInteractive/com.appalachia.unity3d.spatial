@@ -1,3 +1,5 @@
+#if UNITY_EDITOR
+
 #region
 
 using Appalachia.Core.Assets;
@@ -8,9 +10,6 @@ using Sirenix.OdinInspector;
 using Unity.Profiling;
 using UnityEngine;
 
-#if UNITY_EDITOR
-
-#endif
 
 #endregion
 
@@ -126,3 +125,5 @@ namespace Appalachia.Spatial.MeshBurial.State
         }
     }
 }
+
+#endif

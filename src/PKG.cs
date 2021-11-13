@@ -8,10 +8,12 @@ namespace Appalachia.Spatial
 {
     internal static partial class PKG
     {
-        public const int Priority = -308000;
+        public const int Priority = -309000;
         public const string Name = "Spatial";
         public const string Prefix = Root + Name + "/";
         public const string Root = "Appalachia/";
+        public const string Version = "0.2.0";
+        public const string BuildDate = "2021-11-12T21:38:46.5452702Z";
         
         public static partial class Prefs
         {
@@ -31,14 +33,14 @@ namespace Appalachia.Spatial
                 public const string Base =  "Assets/" + Prefix;
             }
 
-            public static partial class GameObject
+            public static partial class GameObjects
             {
                 public const int Priority = PKG.Priority;
                 public const string Base = "GameObject/" + Prefix;
                     
                 public static partial class Create
                 {
-                    public const int Priority = GameObject.Priority + 0;
+                    public const int Priority = GameObjects.Priority + 0;
                     public const string Base =  "GameObject/Create/" + Prefix;
                 }
             }

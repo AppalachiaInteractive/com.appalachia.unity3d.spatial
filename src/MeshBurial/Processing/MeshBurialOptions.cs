@@ -1,3 +1,5 @@
+#if UNITY_EDITOR
+
 #region
 
 using Unity.Mathematics;
@@ -19,3 +21,4 @@ namespace Appalachia.Spatial.MeshBurial.Processing
         public int permissiveness;
     }
 }
+#endif

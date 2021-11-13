@@ -1,3 +1,5 @@
+#if UNITY_EDITOR
+
 #region
 
 using UnityEngine;
@@ -51,3 +53,5 @@ namespace Appalachia.Spatial.MeshBurial.State
         }
     }
 }
+
+#endif

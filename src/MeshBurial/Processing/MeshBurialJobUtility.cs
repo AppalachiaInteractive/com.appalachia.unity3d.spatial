@@ -1,3 +1,5 @@
+#if UNITY_EDITOR
+
 #region
 
 using Appalachia.Core.Collections.Native;
@@ -278,3 +280,5 @@ namespace Appalachia.Spatial.MeshBurial.Processing
         }
     }
 }
+
+#endif

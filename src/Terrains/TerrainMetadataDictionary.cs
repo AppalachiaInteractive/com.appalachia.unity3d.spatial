@@ -30,9 +30,10 @@ namespace Appalachia.Spatial.Terrains
                 if (_state == null)
                 {
                     _state = new TerrainMetadataLookup();
+#if UNITY_EDITOR
                     SetDirty();
-
                     _state.SetDirtyAction(SetDirty);
+#endif
                 }
 
                 return _state;
@@ -44,10 +45,11 @@ namespace Appalachia.Spatial.Terrains
             if (_state == null)
             {
                 _state = new TerrainMetadataLookup();
+#if UNITY_EDITOR
                 SetDirty();
+                _state.SetDirtyAction(SetDirty);
+#endif
             }
-
-            _state.SetDirtyAction(SetDirty);
         }
     }
 }

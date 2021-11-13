@@ -17,7 +17,6 @@ using Appalachia.Utility.Extensions;
 using Appalachia.Utility.Logging;
 using Sirenix.OdinInspector;
 using Unity.Profiling;
-using UnityEditor;
 using UnityEngine;
 
 #endregion
@@ -57,7 +56,7 @@ namespace Appalachia.Spatial.ConvexDecomposition.Generation
                     return;
                 }
 
-                if (PrefabUtility.IsPartOfPrefabAsset(this.gameObject))
+                if (UnityEditor.PrefabUtility.IsPartOfPrefabAsset(this.gameObject))
                 {
                     return;
                 }
@@ -73,7 +72,7 @@ namespace Appalachia.Spatial.ConvexDecomposition.Generation
                 return;
             }
 
-            if (PrefabUtility.IsPartOfPrefabAsset(this.gameObject))
+            if (UnityEditor.PrefabUtility.IsPartOfPrefabAsset(this.gameObject))
             {
                 return;
             }
@@ -88,7 +87,7 @@ namespace Appalachia.Spatial.ConvexDecomposition.Generation
                 return;
             }
 
-            if (PrefabUtility.IsPartOfPrefabAsset(this.gameObject))
+            if (UnityEditor.PrefabUtility.IsPartOfPrefabAsset(this.gameObject))
             {
                 return;
             }
@@ -123,7 +122,7 @@ namespace Appalachia.Spatial.ConvexDecomposition.Generation
 
                     data = DecomposedColliderData.LoadOrCreateNew(directory, assetName);
 
-                    if (DecomposedColliderData.dirtyLogging.v)AppaLog.Warning("Setting dirty: created data.");
+                    if (DecomposedColliderData.dirtyLogging.v)AppaLog.Warn("Setting dirty: created data.");
                     data.SetDirty();
                     SetDirty();
                 }

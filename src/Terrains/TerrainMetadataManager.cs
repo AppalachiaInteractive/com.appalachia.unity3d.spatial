@@ -6,7 +6,6 @@ using Appalachia.Core.Collections.Native;
 using Appalachia.Spatial.Terrains.Utilities;
 using Unity.Collections;
 using Unity.Profiling;
-using UnityEditor;
 using UnityEngine;
 
 #endregion
@@ -14,7 +13,6 @@ using UnityEngine;
 namespace Appalachia.Spatial.Terrains
 {
     [AlwaysInitializeOnLoad]
-    
     public static class TerrainMetadataManager
     {
         private const string _PRF_PFX = nameof(TerrainMetadataManager) + ".";
@@ -52,14 +50,17 @@ namespace Appalachia.Spatial.Terrains
 
         static TerrainMetadataManager()
         {
+#if UNITY_EDITOR
             using (_PRF_TerrainMetadataManager.Auto())
             {
-                EditorApplication.delayCall += Initialize;
+                UnityEditor.EditorApplication.delayCall += Initialize;
             }
+#endif
         }
 
         public static bool Initialized => _initialized;
 
+        [ExecuteOnAwake]
         public static void Initialize()
         {
             if (_initialized)
@@ -82,7 +83,6 @@ namespace Appalachia.Spatial.Terrains
                 {
                     results = TerrainMetadataComponent.AddToAllTerrains();
                 }
-
 #else
                 results = TerrainMetadataComponent.GetFromAllTerrains();
 #endif

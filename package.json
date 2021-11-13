@@ -25,6 +25,7 @@
     "com.appalachia.unity3d.ci": "0.2.0",
     "com.appalachia.unity3d.core": "0.2.0",
     "com.appalachia.unity3d.editing": "0.2.0",
+    "com.appalachia.unity3d.editor": "0.2.0",
     "com.appalachia.unity3d.jobs": "0.2.0",
     "com.appalachia.unity3d.rendering": "0.2.0",
     "com.appalachia.unity3d.simulation": "0.2.0",

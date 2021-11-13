@@ -1,3 +1,4 @@
+
 namespace Appalachia.Spatial.Voxels.Gizmos
 {
     public enum VoxelDataGizmoStyle

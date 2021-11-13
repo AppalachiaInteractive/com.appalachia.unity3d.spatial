@@ -1,3 +1,5 @@
+#if UNITY_EDITOR
+
 #region
 
 using Appalachia.Core.Collections;
@@ -32,3 +34,5 @@ namespace Appalachia.Spatial.Voxels.Gizmos
         }
     }
 }
+
+#endif

@@ -1,3 +1,5 @@
+#if UNITY_EDITOR
+
 #region
 
 #endregion
@@ -10,3 +12,5 @@ namespace Appalachia.Spatial.Voxels.Gizmos
     {
     }
 }
+
+#endif

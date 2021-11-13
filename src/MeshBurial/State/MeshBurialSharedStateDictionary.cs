@@ -1,3 +1,5 @@
+#if UNITY_EDITOR
+
 #region
 
 using Appalachia.Core.Collections.Interfaces;
@@ -50,3 +52,5 @@ namespace Appalachia.Spatial.MeshBurial.State
         }
     }
 }
+
+#endif

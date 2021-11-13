@@ -1,3 +1,5 @@
+#if UNITY_EDITOR
+
 #region
 
 using System;
@@ -213,3 +215,5 @@ namespace Appalachia.Spatial.Voxels.Gizmos
         public float rayHitGizmoSize;
     }
 }
+
+#endif

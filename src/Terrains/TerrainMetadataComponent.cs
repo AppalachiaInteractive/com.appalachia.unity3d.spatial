@@ -4,13 +4,11 @@ using System;
 using System.Collections.Generic;
 using Appalachia.CI.Integration.Assets;
 using Appalachia.Core.Debugging;
-using Appalachia.Editing.Debugging;
 using Appalachia.Editing.Debugging.Handle;
 using Appalachia.Spatial.Terrains.Utilities;
 using Appalachia.Utility.Logging;
 using Sirenix.OdinInspector;
 using Unity.Collections;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.Serialization;
 
@@ -63,6 +61,7 @@ namespace Appalachia.Spatial.Terrains
             TerrainMetadataManager.Remove(terrain);
         }
 
+#if UNITY_EDITOR
         public void OnDrawGizmos()
         {
             if (!gizmosEnabled || selectedOnly)
@@ -151,6 +150,7 @@ namespace Appalachia.Spatial.Terrains
                 }
             }
         }
+#endif
 
         public static List<TerrainMetadata> GetFromAllTerrains()
         {

@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 161e6a270f964e8399d62997c767d92a, type: 3}
   m_Name: TerrainThreadsafeDataDictionary_20200807-014649907
   m_EditorClassIdentifier: 
-  _niceName: Terrain Threadsafe Data Dictionary_20200807-014649907
   _cachedName: TerrainThreadsafeDataDictionary_20200807-014649907
+  _niceName: Terrain Threadsafe Data Dictionary_20200807-014649907
   _state:
     initializerCount: 64
     values:

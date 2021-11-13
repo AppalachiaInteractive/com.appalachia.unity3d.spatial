@@ -1,3 +1,5 @@
+#if UNITY_EDITOR
+
 #region
 
 using Appalachia.CI.Constants;
@@ -40,8 +42,8 @@ namespace Appalachia.Spatial.MeshBurial.Processing
 
         private static readonly ProfilerMarker
             _PRF_ScheduleMeshBurialJobs_ScheduleOptimizationJobs = new(_PRF_PFX +
-                nameof(ScheduleMeshBurialJobs) +
-                ".ScheduleOptimizationJobs");
+                                                                       nameof(ScheduleMeshBurialJobs) +
+                                                                       ".ScheduleOptimizationJobs");
 
         private static readonly ProfilerMarker _PRF_ScheduleMeshBurialJobs_ScheduleJobs =
             new(_PRF_PFX + nameof(ScheduleMeshBurialJobs) + ".ScheduleJobs");
@@ -573,3 +575,5 @@ namespace Appalachia.Spatial.MeshBurial.Processing
         }
     }
 }
+
+#endif

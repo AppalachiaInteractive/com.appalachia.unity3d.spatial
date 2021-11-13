@@ -10,7 +10,6 @@ using Appalachia.Spatial.ConvexDecomposition.Generation;
 using Appalachia.Utility.Colors;
 using Sirenix.OdinInspector;
 using Unity.Profiling;
-using UnityEditor;
 using UnityEngine;
 
 #endregion
@@ -133,7 +132,7 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data.Review
         {
             using (_PRF_SelectComponent.Auto())
             {
-                Selection.SetActiveObjectWithContext(dc, data);
+                UnityEditor.Selection.SetActiveObjectWithContext(dc, data);
             }
         }
 
@@ -178,7 +177,7 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data.Review
         {
             using (_PRF_SelectReplacement.Auto())
             {
-                Selection.activeObject = replacementModel;
+                UnityEditor.Selection.activeObject = replacementModel;
             }
         }
 

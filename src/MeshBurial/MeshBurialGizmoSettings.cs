@@ -1,3 +1,5 @@
+#if UNITY_EDITOR
+
 #region
 
 using System;
@@ -38,3 +40,5 @@ namespace Appalachia.Spatial.MeshBurial
         public int triangle2;
     }
 }
+
+#endif

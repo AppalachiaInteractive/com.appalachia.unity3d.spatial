@@ -1,7 +1,4 @@
-#region
-
-#endregion
-
+#if UNITY_EDITOR
 using Appalachia.Jobs.Burstable;
 
 namespace Appalachia.Spatial.MeshBurial.Processing
@@ -19,3 +16,4 @@ namespace Appalachia.Spatial.MeshBurial.Processing
         public bool requeue;
     }
 }
+#endif

@@ -1,6 +1,5 @@
 using Appalachia.Core.Scriptables;
 using Appalachia.Utility.Logging;
-using UnityEditor;
 using UnityEngine;
 
 namespace Appalachia.Spatial.ConvexDecomposition

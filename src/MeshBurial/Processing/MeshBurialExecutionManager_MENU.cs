@@ -3,10 +3,9 @@
 #region
 
 using System;
-using Appalachia.CI.Constants;
 using Appalachia.Core.Preferences;
 using Unity.Mathematics;
-using UnityEditor;
+
 // ReSharper disable CompareOfFloatsByEqualityOperator
 
 #endregion
@@ -15,9 +14,7 @@ namespace Appalachia.Spatial.MeshBurial.Processing
 {
     public static partial class MeshBurialExecutionManager
     {
-
-#region PKG.Menu.Appalachia.Enable
-
+        #region PKG.Menu.Appalachia.Enable
 
         [NonSerialized] public static readonly PREF<bool> _BURY = PREFS.REG(PKG.Prefs.Group, "Enabled", true);
 
@@ -29,7 +26,7 @@ namespace Appalachia.Spatial.MeshBurial.Processing
                 return false;
             }
 
-            Menu.SetChecked(PKG.Menu.Appalachia.Tools.Enable.Base, _BURY.Value);
+            UnityEditor.Menu.SetChecked(PKG.Menu.Appalachia.Tools.Enable.Base, _BURY.Value);
             return true;
         }
 
@@ -43,7 +40,7 @@ namespace Appalachia.Spatial.MeshBurial.Processing
         {
             if (!_BURY.IsAwake)
             {
-                EditorApplication.delayCall += InitializeEnableMeshBurials;
+                UnityEditor.EditorApplication.delayCall += InitializeEnableMeshBurials;
                 return;
             }
 
@@ -65,11 +62,11 @@ namespace Appalachia.Spatial.MeshBurial.Processing
             if (_BURY.Value)
             {
                 _processed = 0;
-                EditorApplication.update += _processFrame;
+                UnityEditor.EditorApplication.update += _processFrame;
             }
             else
             {
-                EditorApplication.update -= _processFrame;
+                UnityEditor.EditorApplication.update -= _processFrame;
 
                 pendingHandle.Complete();
 
@@ -80,17 +77,21 @@ namespace Appalachia.Spatial.MeshBurial.Processing
             }
         }
 
-#endregion
+        #endregion
 
-#region MENU_DEBUGLOG_
+        #region MENU_DEBUGLOG_
 
         [NonSerialized]
-        public static readonly PREF<bool> _DEBUGLOG = PREFS.REG(PKG.Prefs.Group, "Enable Debug Logging", false);
+        public static readonly PREF<bool> _DEBUGLOG = PREFS.REG(
+            PKG.Prefs.Group,
+            "Enable Debug Logging",
+            false
+        );
 
         [UnityEditor.MenuItem(PKG.Menu.Appalachia.Logging.Base, true)]
         private static bool MENU_DEBUGLOG_VALIDATE()
         {
-            Menu.SetChecked(PKG.Menu.Appalachia.Logging.Base, _DEBUGLOG.Value);
+            UnityEditor.Menu.SetChecked(PKG.Menu.Appalachia.Logging.Base, _DEBUGLOG.Value);
             return true;
         }
 
@@ -100,11 +101,12 @@ namespace Appalachia.Spatial.MeshBurial.Processing
             _DEBUGLOG.v = !_DEBUGLOG.v;
         }
 
-#endregion
+        #endregion
 
-#region MENU_DEBUGZEROLOG_
+        #region MENU_DEBUGZEROLOG_
 
-        private const string MENU_DEBUGZEROLOG_ = PKG.Menu.Appalachia.Logging.Base + "Enable Zero Matrix Logging";
+        private const string MENU_DEBUGZEROLOG_ =
+            PKG.Menu.Appalachia.Logging.Base + "Enable Zero Matrix Logging";
 
         [NonSerialized]
         public static readonly PREF<bool> _DEBUGZEROLOG = PREFS.REG(
@@ -116,7 +118,7 @@ namespace Appalachia.Spatial.MeshBurial.Processing
         [UnityEditor.MenuItem(MENU_DEBUGZEROLOG_, true)]
         private static bool MENU_DEBUGZEROLOG_VALIDATE()
         {
-            Menu.SetChecked(MENU_DEBUGZEROLOG_, _DEBUGZEROLOG.Value);
+            UnityEditor.Menu.SetChecked(MENU_DEBUGZEROLOG_, _DEBUGZEROLOG.Value);
             return true;
         }
 
@@ -126,11 +128,12 @@ namespace Appalachia.Spatial.MeshBurial.Processing
             _DEBUGZEROLOG.v = !_DEBUGZEROLOG.v;
         }
 
-#endregion
+        #endregion
 
-#region MENU_JOBS_MESH_NORMALS_
+        #region MENU_JOBS_MESH_NORMALS_
 
-        private const string MENU_JOBS_MESH_NORMALS_ = PKG.Menu.Appalachia.Jobs.Base + "Account for Mesh Normals";
+        private const string MENU_JOBS_MESH_NORMALS_ =
+            PKG.Menu.Appalachia.Jobs.Base + "Account for Mesh Normals";
 
         [NonSerialized]
         public static readonly PREF<bool> _MESH_NORMALS = PREFS.REG(
@@ -147,7 +150,7 @@ namespace Appalachia.Spatial.MeshBurial.Processing
                 return false;
             }
 
-            Menu.SetChecked(MENU_JOBS_MESH_NORMALS_, _MESH_NORMALS.Value);
+            UnityEditor.Menu.SetChecked(MENU_JOBS_MESH_NORMALS_, _MESH_NORMALS.Value);
             return true;
         }
 
@@ -162,15 +165,19 @@ namespace Appalachia.Spatial.MeshBurial.Processing
             _MESH_NORMALS.Value = !_MESH_NORMALS.Value;
         }
 
-#endregion
+        #endregion
 
-#region MENU_JOBS_TERRAIN_NORMALS_
+        #region MENU_JOBS_TERRAIN_NORMALS_
 
         private const string MENU_JOBS_TERRAIN_NORMALS_ =
             PKG.Menu.Appalachia.Jobs.Base + "Compensate for Terrain Normals";
 
         [NonSerialized]
-        public static readonly PREF<bool> _TERRAIN_NORMALS = PREFS.REG(PKG.Prefs.Group, "Terrain Normals", true);
+        public static readonly PREF<bool> _TERRAIN_NORMALS = PREFS.REG(
+            PKG.Prefs.Group,
+            "Terrain Normals",
+            true
+        );
 
         [UnityEditor.MenuItem(MENU_JOBS_TERRAIN_NORMALS_, true)]
         private static bool MENU_JOBS_TERRAIN_NORMALS_VALIDATE()
@@ -180,7 +187,7 @@ namespace Appalachia.Spatial.MeshBurial.Processing
                 return false;
             }
 
-            Menu.SetChecked(MENU_JOBS_TERRAIN_NORMALS_, _TERRAIN_NORMALS.Value);
+            UnityEditor.Menu.SetChecked(MENU_JOBS_TERRAIN_NORMALS_, _TERRAIN_NORMALS.Value);
             return true;
         }
 
@@ -195,9 +202,9 @@ namespace Appalachia.Spatial.MeshBurial.Processing
             _TERRAIN_NORMALS.Value = !_TERRAIN_NORMALS.Value;
         }
 
-#endregion
+        #endregion
 
-#region MENU_JOBS_HEIGHTS_
+        #region MENU_JOBS_HEIGHTS_
 
         private const string MENU_JOBS_HEIGHTS_ = PKG.Menu.Appalachia.Jobs.Base + "Adjust Height To Terrain";
 
@@ -212,7 +219,7 @@ namespace Appalachia.Spatial.MeshBurial.Processing
                 return false;
             }
 
-            Menu.SetChecked(MENU_JOBS_HEIGHTS_, _HEIGHT.Value);
+            UnityEditor.Menu.SetChecked(MENU_JOBS_HEIGHTS_, _HEIGHT.Value);
             return true;
         }
 
@@ -227,11 +234,12 @@ namespace Appalachia.Spatial.MeshBurial.Processing
             _HEIGHT.Value = !_HEIGHT.Value;
         }
 
-#endregion
+        #endregion
 
-#region MENU_JOBS_PARAMS_
+        #region MENU_JOBS_PARAMS_
 
-        private const string MENU_JOBS_PARAMS_ = PKG.Menu.Appalachia.Jobs.Base + "Apply Parameterized Rotation";
+        private const string MENU_JOBS_PARAMS_ =
+            PKG.Menu.Appalachia.Jobs.Base + "Apply Parameterized Rotation";
 
         [NonSerialized]
         public static readonly PREF<bool> _PARAMS = PREFS.REG(PKG.Prefs.Group, "Apply Params", true);
@@ -244,7 +252,7 @@ namespace Appalachia.Spatial.MeshBurial.Processing
                 return false;
             }
 
-            Menu.SetChecked(MENU_JOBS_PARAMS_, _PARAMS.Value);
+            UnityEditor.Menu.SetChecked(MENU_JOBS_PARAMS_, _PARAMS.Value);
             return true;
         }
 
@@ -259,9 +267,9 @@ namespace Appalachia.Spatial.MeshBurial.Processing
             _PARAMS.Value = !_PARAMS.Value;
         }
 
-#endregion
+        #endregion
 
-#region MENU_JOBS_TESTS_
+        #region MENU_JOBS_TESTS_
 
         private const string MENU_JOBS_TESTS_ = PKG.Menu.Appalachia.Jobs.Base + "Apply Fixed Test Value";
 
@@ -276,7 +284,7 @@ namespace Appalachia.Spatial.MeshBurial.Processing
                 return false;
             }
 
-            Menu.SetChecked(MENU_JOBS_TESTS_, _TEST.Value);
+            UnityEditor.Menu.SetChecked(MENU_JOBS_TESTS_, _TEST.Value);
             return true;
         }
 
@@ -291,9 +299,9 @@ namespace Appalachia.Spatial.MeshBurial.Processing
             _TEST.Value = !_TEST.Value;
         }
 
-#endregion
+        #endregion
 
-#region Fixed Test Value
+        #region Fixed Test Value
 
         [NonSerialized]
         public static readonly PREF<float3> _TEST_VALUE = PREFS.REG(
@@ -388,7 +396,7 @@ namespace Appalachia.Spatial.MeshBurial.Processing
         [UnityEditor.MenuItem(_TS_z0_z0_z0s, true)]
         private static bool _TS_z0_z0_z0_V()
         {
-            Menu.SetChecked(_TS_z0_z0_z0s, _TS_z0_z0_z0);
+            UnityEditor.Menu.SetChecked(_TS_z0_z0_z0s, _TS_z0_z0_z0);
             return true;
         }
 
@@ -401,7 +409,7 @@ namespace Appalachia.Spatial.MeshBurial.Processing
         [UnityEditor.MenuItem(_TS_z0_z0_p1s, true)]
         private static bool _TS_z0_z0_p1_V()
         {
-            Menu.SetChecked(_TS_z0_z0_p1s, _TS_z0_z0_p1);
+            UnityEditor.Menu.SetChecked(_TS_z0_z0_p1s, _TS_z0_z0_p1);
             return true;
         }
 
@@ -414,7 +422,7 @@ namespace Appalachia.Spatial.MeshBurial.Processing
         [UnityEditor.MenuItem(_TS_z0_z0_n1s, true)]
         private static bool _TS_z0_z0_n1_V()
         {
-            Menu.SetChecked(_TS_z0_z0_n1s, _TS_z0_z0_n1);
+            UnityEditor.Menu.SetChecked(_TS_z0_z0_n1s, _TS_z0_z0_n1);
             return true;
         }
 
@@ -427,7 +435,7 @@ namespace Appalachia.Spatial.MeshBurial.Processing
         [UnityEditor.MenuItem(_TS_z0_p1_z0s, true)]
         private static bool _TS_z0_p1_z0_V()
         {
-            Menu.SetChecked(_TS_z0_p1_z0s, _TS_z0_p1_z0);
+            UnityEditor.Menu.SetChecked(_TS_z0_p1_z0s, _TS_z0_p1_z0);
             return true;
         }
 
@@ -440,7 +448,7 @@ namespace Appalachia.Spatial.MeshBurial.Processing
         [UnityEditor.MenuItem(_TS_z0_p1_p1s, true)]
         private static bool _TS_z0_p1_p1_V()
         {
-            Menu.SetChecked(_TS_z0_p1_p1s, _TS_z0_p1_p1);
+            UnityEditor.Menu.SetChecked(_TS_z0_p1_p1s, _TS_z0_p1_p1);
             return true;
         }
 
@@ -453,7 +461,7 @@ namespace Appalachia.Spatial.MeshBurial.Processing
         [UnityEditor.MenuItem(_TS_z0_p1_n1s, true)]
         private static bool _TS_z0_p1_n1_V()
         {
-            Menu.SetChecked(_TS_z0_p1_n1s, _TS_z0_p1_n1);
+            UnityEditor.Menu.SetChecked(_TS_z0_p1_n1s, _TS_z0_p1_n1);
             return true;
         }
 
@@ -466,7 +474,7 @@ namespace Appalachia.Spatial.MeshBurial.Processing
         [UnityEditor.MenuItem(_TS_z0_n1_z0s, true)]
         private static bool _TS_z0_n1_z0_V()
         {
-            Menu.SetChecked(_TS_z0_n1_z0s, _TS_z0_n1_z0);
+            UnityEditor.Menu.SetChecked(_TS_z0_n1_z0s, _TS_z0_n1_z0);
             return true;
         }
 
@@ -479,7 +487,7 @@ namespace Appalachia.Spatial.MeshBurial.Processing
         [UnityEditor.MenuItem(_TS_z0_n1_p1s, true)]
         private static bool _TS_z0_n1_p1_V()
         {
-            Menu.SetChecked(_TS_z0_n1_p1s, _TS_z0_n1_p1);
+            UnityEditor.Menu.SetChecked(_TS_z0_n1_p1s, _TS_z0_n1_p1);
             return true;
         }
 
@@ -492,7 +500,7 @@ namespace Appalachia.Spatial.MeshBurial.Processing
         [UnityEditor.MenuItem(_TS_z0_n1_n1s, true)]
         private static bool _TS_z0_n1_n1_V()
         {
-            Menu.SetChecked(_TS_z0_n1_n1s, _TS_z0_n1_n1);
+            UnityEditor.Menu.SetChecked(_TS_z0_n1_n1s, _TS_z0_n1_n1);
             return true;
         }
 
@@ -505,7 +513,7 @@ namespace Appalachia.Spatial.MeshBurial.Processing
         [UnityEditor.MenuItem(_TS_p1_z0_z0s, true)]
         private static bool _TS_p1_z0_z0_V()
         {
-            Menu.SetChecked(_TS_p1_z0_z0s, _TS_p1_z0_z0);
+            UnityEditor.Menu.SetChecked(_TS_p1_z0_z0s, _TS_p1_z0_z0);
             return true;
         }
 
@@ -518,7 +526,7 @@ namespace Appalachia.Spatial.MeshBurial.Processing
         [UnityEditor.MenuItem(_TS_p1_z0_p1s, true)]
         private static bool _TS_p1_z0_p1_V()
         {
-            Menu.SetChecked(_TS_p1_z0_p1s, _TS_p1_z0_p1);
+            UnityEditor.Menu.SetChecked(_TS_p1_z0_p1s, _TS_p1_z0_p1);
             return true;
         }
 
@@ -531,7 +539,7 @@ namespace Appalachia.Spatial.MeshBurial.Processing
         [UnityEditor.MenuItem(_TS_p1_z0_n1s, true)]
         private static bool _TS_p1_z0_n1_V()
         {
-            Menu.SetChecked(_TS_p1_z0_n1s, _TS_p1_z0_n1);
+            UnityEditor.Menu.SetChecked(_TS_p1_z0_n1s, _TS_p1_z0_n1);
             return true;
         }
 
@@ -544,7 +552,7 @@ namespace Appalachia.Spatial.MeshBurial.Processing
         [UnityEditor.MenuItem(_TS_p1_p1_z0s, true)]
         private static bool _TS_p1_p1_z0_V()
         {
-            Menu.SetChecked(_TS_p1_p1_z0s, _TS_p1_p1_z0);
+            UnityEditor.Menu.SetChecked(_TS_p1_p1_z0s, _TS_p1_p1_z0);
             return true;
         }
 
@@ -557,7 +565,7 @@ namespace Appalachia.Spatial.MeshBurial.Processing
         [UnityEditor.MenuItem(_TS_p1_p1_p1s, true)]
         private static bool _TS_p1_p1_p1_V()
         {
-            Menu.SetChecked(_TS_p1_p1_p1s, _TS_p1_p1_p1);
+            UnityEditor.Menu.SetChecked(_TS_p1_p1_p1s, _TS_p1_p1_p1);
             return true;
         }
 
@@ -570,7 +578,7 @@ namespace Appalachia.Spatial.MeshBurial.Processing
         [UnityEditor.MenuItem(_TS_p1_p1_n1s, true)]
         private static bool _TS_p1_p1_n1_V()
         {
-            Menu.SetChecked(_TS_p1_p1_n1s, _TS_p1_p1_n1);
+            UnityEditor.Menu.SetChecked(_TS_p1_p1_n1s, _TS_p1_p1_n1);
             return true;
         }
 
@@ -583,7 +591,7 @@ namespace Appalachia.Spatial.MeshBurial.Processing
         [UnityEditor.MenuItem(_TS_p1_n1_z0s, true)]
         private static bool _TS_p1_n1_z0_V()
         {
-            Menu.SetChecked(_TS_p1_n1_z0s, _TS_p1_n1_z0);
+            UnityEditor.Menu.SetChecked(_TS_p1_n1_z0s, _TS_p1_n1_z0);
             return true;
         }
 
@@ -596,7 +604,7 @@ namespace Appalachia.Spatial.MeshBurial.Processing
         [UnityEditor.MenuItem(_TS_p1_n1_p1s, true)]
         private static bool _TS_p1_n1_p1_V()
         {
-            Menu.SetChecked(_TS_p1_n1_p1s, _TS_p1_n1_p1);
+            UnityEditor.Menu.SetChecked(_TS_p1_n1_p1s, _TS_p1_n1_p1);
             return true;
         }
 
@@ -609,7 +617,7 @@ namespace Appalachia.Spatial.MeshBurial.Processing
         [UnityEditor.MenuItem(_TS_p1_n1_n1s, true)]
         private static bool _TS_p1_n1_n1_V()
         {
-            Menu.SetChecked(_TS_p1_n1_n1s, _TS_p1_n1_n1);
+            UnityEditor.Menu.SetChecked(_TS_p1_n1_n1s, _TS_p1_n1_n1);
             return true;
         }
 
@@ -622,7 +630,7 @@ namespace Appalachia.Spatial.MeshBurial.Processing
         [UnityEditor.MenuItem(_TS_n1_z0_z0s, true)]
         private static bool _TS_n1_z0_z0_V()
         {
-            Menu.SetChecked(_TS_n1_z0_z0s, _TS_n1_z0_z0);
+            UnityEditor.Menu.SetChecked(_TS_n1_z0_z0s, _TS_n1_z0_z0);
             return true;
         }
 
@@ -635,7 +643,7 @@ namespace Appalachia.Spatial.MeshBurial.Processing
         [UnityEditor.MenuItem(_TS_n1_z0_p1s, true)]
         private static bool _TS_n1_z0_p1_V()
         {
-            Menu.SetChecked(_TS_n1_z0_p1s, _TS_n1_z0_p1);
+            UnityEditor.Menu.SetChecked(_TS_n1_z0_p1s, _TS_n1_z0_p1);
             return true;
         }
 
@@ -648,7 +656,7 @@ namespace Appalachia.Spatial.MeshBurial.Processing
         [UnityEditor.MenuItem(_TS_n1_z0_n1s, true)]
         private static bool _TS_n1_z0_n1_V()
         {
-            Menu.SetChecked(_TS_n1_z0_n1s, _TS_n1_z0_n1);
+            UnityEditor.Menu.SetChecked(_TS_n1_z0_n1s, _TS_n1_z0_n1);
             return true;
         }
 
@@ -661,7 +669,7 @@ namespace Appalachia.Spatial.MeshBurial.Processing
         [UnityEditor.MenuItem(_TS_n1_p1_z0s, true)]
         private static bool _TS_n1_p1_z0_V()
         {
-            Menu.SetChecked(_TS_n1_p1_z0s, _TS_n1_p1_z0);
+            UnityEditor.Menu.SetChecked(_TS_n1_p1_z0s, _TS_n1_p1_z0);
             return true;
         }
 
@@ -674,7 +682,7 @@ namespace Appalachia.Spatial.MeshBurial.Processing
         [UnityEditor.MenuItem(_TS_n1_p1_p1s, true)]
         private static bool _TS_n1_p1_p1_V()
         {
-            Menu.SetChecked(_TS_n1_p1_p1s, _TS_n1_p1_p1);
+            UnityEditor.Menu.SetChecked(_TS_n1_p1_p1s, _TS_n1_p1_p1);
             return true;
         }
 
@@ -687,7 +695,7 @@ namespace Appalachia.Spatial.MeshBurial.Processing
         [UnityEditor.MenuItem(_TS_n1_p1_n1s, true)]
         private static bool _TS_n1_p1_n1_V()
         {
-            Menu.SetChecked(_TS_n1_p1_n1s, _TS_n1_p1_n1);
+            UnityEditor.Menu.SetChecked(_TS_n1_p1_n1s, _TS_n1_p1_n1);
             return true;
         }
 
@@ -700,7 +708,7 @@ namespace Appalachia.Spatial.MeshBurial.Processing
         [UnityEditor.MenuItem(_TS_n1_n1_z0s, true)]
         private static bool _TS_n1_n1_z0_V()
         {
-            Menu.SetChecked(_TS_n1_n1_z0s, _TS_n1_n1_z0);
+            UnityEditor.Menu.SetChecked(_TS_n1_n1_z0s, _TS_n1_n1_z0);
             return true;
         }
 
@@ -713,7 +721,7 @@ namespace Appalachia.Spatial.MeshBurial.Processing
         [UnityEditor.MenuItem(_TS_n1_n1_p1s, true)]
         private static bool _TS_n1_n1_p1_V()
         {
-            Menu.SetChecked(_TS_n1_n1_p1s, _TS_n1_n1_p1);
+            UnityEditor.Menu.SetChecked(_TS_n1_n1_p1s, _TS_n1_n1_p1);
             return true;
         }
 
@@ -723,13 +731,12 @@ namespace Appalachia.Spatial.MeshBurial.Processing
             _TEST_VALUE.Value = _TS_n1_n1_p1v;
         }
 
-#endregion
+        #endregion
 
-#region Timing (Milliseconds)
+        #region Timing (Milliseconds)
 
         [NonSerialized]
         public static readonly PREF<int> _TIME = PREFS.REG(PKG.Prefs.Group, "Frame Time", _T_030v);
-
 
         private const int _T_010v = 010;
         private const int _T_020v = 020;
@@ -752,67 +759,67 @@ namespace Appalachia.Spatial.MeshBurial.Processing
         private static bool _T_250 => _TIME.Value == _T_250v;
 
         private const string TIME = PKG.Menu.Appalachia.Timing.Base;
-        
+
         [UnityEditor.MenuItem(TIME + "10", true)]
         private static bool TIME_010_v()
         {
-            Menu.SetChecked(TIME + "10", _T_010);
+            UnityEditor.Menu.SetChecked(TIME + "10", _T_010);
             return true;
         }
 
         [UnityEditor.MenuItem(TIME + "20", true)]
         private static bool TIME_020_v()
         {
-            Menu.SetChecked(TIME + "20", _T_020);
+            UnityEditor.Menu.SetChecked(TIME + "20", _T_020);
             return true;
         }
 
         [UnityEditor.MenuItem(TIME + "30", true)]
         private static bool TIME_030_v()
         {
-            Menu.SetChecked(TIME + "30", _T_030);
+            UnityEditor.Menu.SetChecked(TIME + "30", _T_030);
             return true;
         }
 
         [UnityEditor.MenuItem(TIME + "40", true)]
         private static bool TIME_040_v()
         {
-            Menu.SetChecked(TIME + "40", _T_040);
+            UnityEditor.Menu.SetChecked(TIME + "40", _T_040);
             return true;
         }
 
         [UnityEditor.MenuItem(TIME + "50", true)]
         private static bool TIME_050_v()
         {
-            Menu.SetChecked(TIME + "50", _T_050);
+            UnityEditor.Menu.SetChecked(TIME + "50", _T_050);
             return true;
         }
 
         [UnityEditor.MenuItem(TIME + "100", true)]
         private static bool TIME_100_v()
         {
-            Menu.SetChecked(TIME + "100", _T_100);
+            UnityEditor.Menu.SetChecked(TIME + "100", _T_100);
             return true;
         }
 
         [UnityEditor.MenuItem(TIME + "150", true)]
         private static bool TIME_150_v()
         {
-            Menu.SetChecked(TIME + "150", _T_150);
+            UnityEditor.Menu.SetChecked(TIME + "150", _T_150);
             return true;
         }
 
         [UnityEditor.MenuItem(TIME + "200", true)]
         private static bool TIME_200_v()
         {
-            Menu.SetChecked(TIME + "200", _T_200);
+            UnityEditor.Menu.SetChecked(TIME + "200", _T_200);
             return true;
         }
 
         [UnityEditor.MenuItem(TIME + "250", true)]
         private static bool TIME_250_v()
         {
-            Menu.SetChecked(TIME + "250", _T_250);
+            UnityEditor.Menu.SetChecked(TIME + "250", _T_250);
             return true;
         }
 
@@ -870,9 +877,9 @@ namespace Appalachia.Spatial.MeshBurial.Processing
             _TIME.Value = _T_250v;
         }
 
-#endregion
+        #endregion
 
-#region Long Item Log Timing (Milliseconds)
+        #region Long Item Log Timing (Milliseconds)
 
         private const string MENU_TIMELOG_ = PKG.Menu.Appalachia.Logging.Base + "Enable Long Item Logging";
 
@@ -886,7 +893,7 @@ namespace Appalachia.Spatial.MeshBurial.Processing
         [UnityEditor.MenuItem(MENU_TIMELOG_, true)]
         private static bool MENU_TIMELOG_VALIDATE()
         {
-            Menu.SetChecked(MENU_TIMELOG_, _TIMELOG.Value);
+            UnityEditor.Menu.SetChecked(MENU_TIMELOG_, _TIMELOG.Value);
             return true;
         }
 
@@ -899,7 +906,8 @@ namespace Appalachia.Spatial.MeshBurial.Processing
         [NonSerialized]
         public static readonly PREF<int> _TIMELOGTIME = PREFS.REG(PKG.Prefs.Group, "Frame Time", _TLT_030v);
 
-        private const string TIMELOGTIME = PKG.Menu.Appalachia.Logging.Base + "Item Timing Log Threshold (Seconds)/";
+        private const string TIMELOGTIME =
+            PKG.Menu.Appalachia.Logging.Base + "Item Timing Log Threshold (Seconds)/";
 
         private const int _TLT_001v = 001;
         private const int _TLT_002v = 002;
@@ -943,144 +951,143 @@ namespace Appalachia.Spatial.MeshBurial.Processing
         private static bool _TLT_360 => _TIMELOGTIME.Value == _TLT_360v;
         private static bool _TLT_420 => _TIMELOGTIME.Value == _TLT_420v;
 
-
         [UnityEditor.MenuItem(TIMELOGTIME + "1", true)]
         private static bool _TLT_001_v()
         {
-            Menu.SetChecked(TIMELOGTIME + "1", _TLT_001);
+            UnityEditor.Menu.SetChecked(TIMELOGTIME + "1", _TLT_001);
             return true;
         }
 
         [UnityEditor.MenuItem(TIMELOGTIME + "2", true)]
         private static bool _TLT_002_v()
         {
-            Menu.SetChecked(TIMELOGTIME + "2", _TLT_002);
+            UnityEditor.Menu.SetChecked(TIMELOGTIME + "2", _TLT_002);
             return true;
         }
 
         [UnityEditor.MenuItem(TIMELOGTIME + "3", true)]
         private static bool _TLT_003_v()
         {
-            Menu.SetChecked(TIMELOGTIME + "3", _TLT_003);
+            UnityEditor.Menu.SetChecked(TIMELOGTIME + "3", _TLT_003);
             return true;
         }
 
         [UnityEditor.MenuItem(TIMELOGTIME + "4", true)]
         private static bool _TLT_004_v()
         {
-            Menu.SetChecked(TIMELOGTIME + "4", _TLT_004);
+            UnityEditor.Menu.SetChecked(TIMELOGTIME + "4", _TLT_004);
             return true;
         }
 
         [UnityEditor.MenuItem(TIMELOGTIME + "5", true)]
         private static bool _TLT_005_v()
         {
-            Menu.SetChecked(TIMELOGTIME + "5", _TLT_005);
+            UnityEditor.Menu.SetChecked(TIMELOGTIME + "5", _TLT_005);
             return true;
         }
 
         [UnityEditor.MenuItem(TIMELOGTIME + "10", true)]
         private static bool _TLT_010_v()
         {
-            Menu.SetChecked(TIMELOGTIME + "10", _TLT_010);
+            UnityEditor.Menu.SetChecked(TIMELOGTIME + "10", _TLT_010);
             return true;
         }
 
         [UnityEditor.MenuItem(TIMELOGTIME + "15", true)]
         private static bool _TLT_015_v()
         {
-            Menu.SetChecked(TIMELOGTIME + "15", _TLT_015);
+            UnityEditor.Menu.SetChecked(TIMELOGTIME + "15", _TLT_015);
             return true;
         }
 
         [UnityEditor.MenuItem(TIMELOGTIME + "20", true)]
         private static bool _TLT_020_v()
         {
-            Menu.SetChecked(TIMELOGTIME + "20", _TLT_020);
+            UnityEditor.Menu.SetChecked(TIMELOGTIME + "20", _TLT_020);
             return true;
         }
 
         [UnityEditor.MenuItem(TIMELOGTIME + "25", true)]
         private static bool _TLT_025_v()
         {
-            Menu.SetChecked(TIMELOGTIME + "25", _TLT_025);
+            UnityEditor.Menu.SetChecked(TIMELOGTIME + "25", _TLT_025);
             return true;
         }
 
         [UnityEditor.MenuItem(TIMELOGTIME + "30", true)]
         private static bool _TLT_030_v()
         {
-            Menu.SetChecked(TIMELOGTIME + "30", _TLT_030);
+            UnityEditor.Menu.SetChecked(TIMELOGTIME + "30", _TLT_030);
             return true;
         }
 
         [UnityEditor.MenuItem(TIMELOGTIME + "45", true)]
         private static bool _TLT_045_v()
         {
-            Menu.SetChecked(TIMELOGTIME + "45", _TLT_045);
+            UnityEditor.Menu.SetChecked(TIMELOGTIME + "45", _TLT_045);
             return true;
         }
 
         [UnityEditor.MenuItem(TIMELOGTIME + "60", true)]
         private static bool _TLT_060_v()
         {
-            Menu.SetChecked(TIMELOGTIME + "60", _TLT_060);
+            UnityEditor.Menu.SetChecked(TIMELOGTIME + "60", _TLT_060);
             return true;
         }
 
         [UnityEditor.MenuItem(TIMELOGTIME + "90", true)]
         private static bool _TLT_090_v()
         {
-            Menu.SetChecked(TIMELOGTIME + "90", _TLT_090);
+            UnityEditor.Menu.SetChecked(TIMELOGTIME + "90", _TLT_090);
             return true;
         }
 
         [UnityEditor.MenuItem(TIMELOGTIME + "120", true)]
         private static bool _TLT_120_v()
         {
-            Menu.SetChecked(TIMELOGTIME + "120", _TLT_120);
+            UnityEditor.Menu.SetChecked(TIMELOGTIME + "120", _TLT_120);
             return true;
         }
 
         [UnityEditor.MenuItem(TIMELOGTIME + "150", true)]
         private static bool _TLT_150_v()
         {
-            Menu.SetChecked(TIMELOGTIME + "150", _TLT_150);
+            UnityEditor.Menu.SetChecked(TIMELOGTIME + "150", _TLT_150);
             return true;
         }
 
         [UnityEditor.MenuItem(TIMELOGTIME + "180", true)]
         private static bool _TLT_180_v()
         {
-            Menu.SetChecked(TIMELOGTIME + "180", _TLT_180);
+            UnityEditor.Menu.SetChecked(TIMELOGTIME + "180", _TLT_180);
             return true;
         }
 
         [UnityEditor.MenuItem(TIMELOGTIME + "240", true)]
         private static bool _TLT_240_v()
         {
-            Menu.SetChecked(TIMELOGTIME + "240", _TLT_240);
+            UnityEditor.Menu.SetChecked(TIMELOGTIME + "240", _TLT_240);
             return true;
         }
 
         [UnityEditor.MenuItem(TIMELOGTIME + "300", true)]
         private static bool _TLT_300_v()
         {
-            Menu.SetChecked(TIMELOGTIME + "300", _TLT_300);
+            UnityEditor.Menu.SetChecked(TIMELOGTIME + "300", _TLT_300);
             return true;
         }
 
         [UnityEditor.MenuItem(TIMELOGTIME + "360", true)]
         private static bool _TLT_360_v()
         {
-            Menu.SetChecked(TIMELOGTIME + "360", _TLT_360);
+            UnityEditor.Menu.SetChecked(TIMELOGTIME + "360", _TLT_360);
             return true;
         }
 
         [UnityEditor.MenuItem(TIMELOGTIME + "420", true)]
         private static bool _TLT_420_v()
         {
-            Menu.SetChecked(TIMELOGTIME + "420", _TLT_420);
+            UnityEditor.Menu.SetChecked(TIMELOGTIME + "420", _TLT_420);
             return true;
         }
 
@@ -1204,11 +1211,12 @@ namespace Appalachia.Spatial.MeshBurial.Processing
             _TIMELOGTIME.Value = _TLT_420v;
         }
 
-#endregion
+        #endregion
 
-#region Logging (Frames)
+        #region Logging (Frames)
 
-        [NonSerialized] public static readonly PREF<int> _LOG = PREFS.REG(PKG.Prefs.Group, "Log Threshold", 300);
+        [NonSerialized]
+        public static readonly PREF<int> _LOG = PREFS.REG(PKG.Prefs.Group, "Log Threshold", 300);
 
         private const string LOG = PKG.Menu.Appalachia.Tools.Base + "Logging (Frames)/";
 
@@ -1235,63 +1243,63 @@ namespace Appalachia.Spatial.MeshBurial.Processing
         [UnityEditor.MenuItem(LOG + "Off", true)]
         private static bool LOG_OFF_v()
         {
-            Menu.SetChecked(LOG + "Off", _L_OFF);
+            UnityEditor.Menu.SetChecked(LOG + "Off", _L_OFF);
             return true;
         }
 
         [UnityEditor.MenuItem(LOG + "30", true)]
         private static bool LOG_030_v()
         {
-            Menu.SetChecked(LOG + "30", _L_030);
+            UnityEditor.Menu.SetChecked(LOG + "30", _L_030);
             return true;
         }
 
         [UnityEditor.MenuItem(LOG + "60", true)]
         private static bool LOG_060_v()
         {
-            Menu.SetChecked(LOG + "60", _L_060);
+            UnityEditor.Menu.SetChecked(LOG + "60", _L_060);
             return true;
         }
 
         [UnityEditor.MenuItem(LOG + "90", true)]
         private static bool LOG_090_v()
         {
-            Menu.SetChecked(LOG + "90", _L_090);
+            UnityEditor.Menu.SetChecked(LOG + "90", _L_090);
             return true;
         }
 
         [UnityEditor.MenuItem(LOG + "120", true)]
         private static bool LOG_120_v()
         {
-            Menu.SetChecked(LOG + "120", _L_120);
+            UnityEditor.Menu.SetChecked(LOG + "120", _L_120);
             return true;
         }
 
         [UnityEditor.MenuItem(LOG + "150", true)]
         private static bool LOG_150_v()
         {
-            Menu.SetChecked(LOG + "150", _L_150);
+            UnityEditor.Menu.SetChecked(LOG + "150", _L_150);
             return true;
         }
 
         [UnityEditor.MenuItem(LOG + "300", true)]
         private static bool LOG_300_v()
         {
-            Menu.SetChecked(LOG + "300", _L_300);
+            UnityEditor.Menu.SetChecked(LOG + "300", _L_300);
             return true;
         }
 
         [UnityEditor.MenuItem(LOG + "600", true)]
         private static bool LOG_600_v()
         {
-            Menu.SetChecked(LOG + "600", _L_600);
+            UnityEditor.Menu.SetChecked(LOG + "600", _L_600);
             return true;
         }
 
         [UnityEditor.MenuItem(LOG + "900", true)]
         private static bool LOG_900_v()
         {
-            Menu.SetChecked(LOG + "900", _L_900);
+            UnityEditor.Menu.SetChecked(LOG + "900", _L_900);
             return true;
         }
 
@@ -1349,9 +1357,9 @@ namespace Appalachia.Spatial.MeshBurial.Processing
             _LOG.Value = _L_900v;
         }
 
-#endregion
+        #endregion
 
-#region Allowed Error
+        #region Allowed Error
 
         [NonSerialized]
         public static readonly PREF<double> _ERROR = PREFS.REG(PKG.Prefs.Group, "Allowed Error", _E_030v);
@@ -1389,91 +1397,91 @@ namespace Appalachia.Spatial.MeshBurial.Processing
         [UnityEditor.MenuItem(ERROR + "1.00", true)]
         private static bool ERROR_100_v()
         {
-            Menu.SetChecked(ERROR + "1.00", _E_100);
+            UnityEditor.Menu.SetChecked(ERROR + "1.00", _E_100);
             return true;
         }
 
         [UnityEditor.MenuItem(ERROR + "0.99", true)]
         private static bool ERROR_099_v()
         {
-            Menu.SetChecked(ERROR + "0.99", _E_099);
+            UnityEditor.Menu.SetChecked(ERROR + "0.99", _E_099);
             return true;
         }
 
         [UnityEditor.MenuItem(ERROR + "0.95", true)]
         private static bool ERROR_095_v()
         {
-            Menu.SetChecked(ERROR + "0.95", _E_095);
+            UnityEditor.Menu.SetChecked(ERROR + "0.95", _E_095);
             return true;
         }
 
         [UnityEditor.MenuItem(ERROR + "0.90", true)]
         private static bool ERROR_090_v()
         {
-            Menu.SetChecked(ERROR + "0.90", _E_090);
+            UnityEditor.Menu.SetChecked(ERROR + "0.90", _E_090);
             return true;
         }
 
         [UnityEditor.MenuItem(ERROR + "0.85", true)]
         private static bool ERROR_085_v()
         {
-            Menu.SetChecked(ERROR + "0.85", _E_085);
+            UnityEditor.Menu.SetChecked(ERROR + "0.85", _E_085);
             return true;
         }
 
         [UnityEditor.MenuItem(ERROR + "0.80", true)]
         private static bool ERROR_080_v()
         {
-            Menu.SetChecked(ERROR + "0.80", _E_080);
+            UnityEditor.Menu.SetChecked(ERROR + "0.80", _E_080);
             return true;
         }
 
         [UnityEditor.MenuItem(ERROR + "0.70", true)]
         private static bool ERROR_070_v()
         {
-            Menu.SetChecked(ERROR + "0.70", _E_070);
+            UnityEditor.Menu.SetChecked(ERROR + "0.70", _E_070);
             return true;
         }
 
         [UnityEditor.MenuItem(ERROR + "0.60", true)]
         private static bool ERROR_060_v()
         {
-            Menu.SetChecked(ERROR + "0.60", _E_060);
+            UnityEditor.Menu.SetChecked(ERROR + "0.60", _E_060);
             return true;
         }
 
         [UnityEditor.MenuItem(ERROR + "0.50", true)]
         private static bool ERROR_050_v()
         {
-            Menu.SetChecked(ERROR + "0.50", _E_050);
+            UnityEditor.Menu.SetChecked(ERROR + "0.50", _E_050);
             return true;
         }
 
         [UnityEditor.MenuItem(ERROR + "0.40", true)]
         private static bool ERROR_040_v()
         {
-            Menu.SetChecked(ERROR + "0.40", _E_040);
+            UnityEditor.Menu.SetChecked(ERROR + "0.40", _E_040);
             return true;
         }
 
         [UnityEditor.MenuItem(ERROR + "0.30", true)]
         private static bool ERROR_030_v()
         {
-            Menu.SetChecked(ERROR + "0.30", _E_030);
+            UnityEditor.Menu.SetChecked(ERROR + "0.30", _E_030);
             return true;
         }
 
         [UnityEditor.MenuItem(ERROR + "0.20", true)]
         private static bool ERROR_020_v()
         {
-            Menu.SetChecked(ERROR + "0.20", _E_020);
+            UnityEditor.Menu.SetChecked(ERROR + "0.20", _E_020);
             return true;
         }
 
         [UnityEditor.MenuItem(ERROR + "0.10", true)]
         private static bool ERROR_0100_v()
         {
-            Menu.SetChecked(ERROR + "0.10", _E_010);
+            UnityEditor.Menu.SetChecked(ERROR + "0.10", _E_010);
             return true;
         }
 
@@ -1555,14 +1563,14 @@ namespace Appalachia.Spatial.MeshBurial.Processing
             _ERROR.Value = _E_010v;
         }
 
-#endregion
+        #endregion
 
-#region Allowed Iterations
+        #region Allowed Iterations
 
         [NonSerialized]
         public static readonly PREF<int> _ITER = PREFS.REG(PKG.Prefs.Group, "Allowed Iterations", _I_0010v);
 
-        private const string _IT_ = PKG.Menu.Appalachia.Tools.Base +  "Allowed Iterations/";
+        private const string _IT_ = PKG.Menu.Appalachia.Tools.Base + "Allowed Iterations/";
 
         private const int _I_0000v = 0000;
         private const int _I_0010v = 0010;
@@ -1589,70 +1597,70 @@ namespace Appalachia.Spatial.MeshBurial.Processing
         [UnityEditor.MenuItem(_IT_ + "Unlimited", true)]
         private static bool IT_0000_v()
         {
-            Menu.SetChecked(_IT_ + "Unlimited", _I_0000);
+            UnityEditor.Menu.SetChecked(_IT_ + "Unlimited", _I_0000);
             return true;
         }
 
         [UnityEditor.MenuItem(_IT_ + "10", true)]
         private static bool IT_0010_v()
         {
-            Menu.SetChecked(_IT_ + "10", _I_0010);
+            UnityEditor.Menu.SetChecked(_IT_ + "10", _I_0010);
             return true;
         }
 
         [UnityEditor.MenuItem(_IT_ + "20", true)]
         private static bool IT_0020_v()
         {
-            Menu.SetChecked(_IT_ + "20", _I_0020);
+            UnityEditor.Menu.SetChecked(_IT_ + "20", _I_0020);
             return true;
         }
 
         [UnityEditor.MenuItem(_IT_ + "30", true)]
         private static bool IT_0030_v()
         {
-            Menu.SetChecked(_IT_ + "30", _I_0030);
+            UnityEditor.Menu.SetChecked(_IT_ + "30", _I_0030);
             return true;
         }
 
         [UnityEditor.MenuItem(_IT_ + "40", true)]
         private static bool IT_0040_v()
         {
-            Menu.SetChecked(_IT_ + "40", _I_0040);
+            UnityEditor.Menu.SetChecked(_IT_ + "40", _I_0040);
             return true;
         }
 
         [UnityEditor.MenuItem(_IT_ + "50", true)]
         private static bool IT_0050_v()
         {
-            Menu.SetChecked(_IT_ + "50", _I_0050);
+            UnityEditor.Menu.SetChecked(_IT_ + "50", _I_0050);
             return true;
         }
 
         [UnityEditor.MenuItem(_IT_ + "125", true)]
         private static bool IT_0125_v()
         {
-            Menu.SetChecked(_IT_ + "125", _I_0125);
+            UnityEditor.Menu.SetChecked(_IT_ + "125", _I_0125);
             return true;
         }
 
         [UnityEditor.MenuItem(_IT_ + "250", true)]
         private static bool IT_0250_v()
         {
-            Menu.SetChecked(_IT_ + "250", _I_0250);
+            UnityEditor.Menu.SetChecked(_IT_ + "250", _I_0250);
             return true;
         }
 
         [UnityEditor.MenuItem(_IT_ + "500", true)]
         private static bool IT_0500_v()
         {
-            Menu.SetChecked(_IT_ + "500", _I_0500);
+            UnityEditor.Menu.SetChecked(_IT_ + "500", _I_0500);
             return true;
         }
 
         [UnityEditor.MenuItem(_IT_ + "1000", true)]
         private static bool IT_1000_v()
         {
-            Menu.SetChecked(_IT_ + "1000", _I_1000);
+            UnityEditor.Menu.SetChecked(_IT_ + "1000", _I_1000);
             return true;
         }
 
@@ -1716,9 +1724,9 @@ namespace Appalachia.Spatial.MeshBurial.Processing
             _ITER.Value = _I_1000v;
         }
 
-#endregion
+        #endregion
 
-#region Instance Iterations
+        #region Instance Iterations
 
         [NonSerialized]
         public static readonly PREF<int> _INST_ITER = PREFS.REG(
@@ -1764,105 +1772,105 @@ namespace Appalachia.Spatial.MeshBurial.Processing
         [UnityEditor.MenuItem(_II + "128", true)]
         private static bool II_00128v_v()
         {
-            Menu.SetChecked(_II + "128", _II_00128);
+            UnityEditor.Menu.SetChecked(_II + "128", _II_00128);
             return true;
         }
 
         [UnityEditor.MenuItem(_II + "192", true)]
         private static bool II_00192v_v()
         {
-            Menu.SetChecked(_II + "192", _II_00192);
+            UnityEditor.Menu.SetChecked(_II + "192", _II_00192);
             return true;
         }
 
         [UnityEditor.MenuItem(_II + "256", true)]
         private static bool II_00256v_v()
         {
-            Menu.SetChecked(_II + "256", _II_00256);
+            UnityEditor.Menu.SetChecked(_II + "256", _II_00256);
             return true;
         }
 
         [UnityEditor.MenuItem(_II + "384", true)]
         private static bool II_00384v_v()
         {
-            Menu.SetChecked(_II + "384", _II_00384);
+            UnityEditor.Menu.SetChecked(_II + "384", _II_00384);
             return true;
         }
 
         [UnityEditor.MenuItem(_II + "512", true)]
         private static bool II_00512v_v()
         {
-            Menu.SetChecked(_II + "512", _II_00512);
+            UnityEditor.Menu.SetChecked(_II + "512", _II_00512);
             return true;
         }
 
         [UnityEditor.MenuItem(_II + "768", true)]
         private static bool II_00768v_v()
         {
-            Menu.SetChecked(_II + "768", _II_00768);
+            UnityEditor.Menu.SetChecked(_II + "768", _II_00768);
             return true;
         }
 
         [UnityEditor.MenuItem(_II + "1024", true)]
         private static bool II_01024v_v()
         {
-            Menu.SetChecked(_II + "1024", _II_01024);
+            UnityEditor.Menu.SetChecked(_II + "1024", _II_01024);
             return true;
         }
 
         [UnityEditor.MenuItem(_II + "1536", true)]
         private static bool II_01536v_v()
         {
-            Menu.SetChecked(_II + "1536", _II_01536);
+            UnityEditor.Menu.SetChecked(_II + "1536", _II_01536);
             return true;
         }
 
         [UnityEditor.MenuItem(_II + "2048", true)]
         private static bool II_02048v_v()
         {
-            Menu.SetChecked(_II + "2048", _II_02048);
+            UnityEditor.Menu.SetChecked(_II + "2048", _II_02048);
             return true;
         }
 
         [UnityEditor.MenuItem(_II + "3072", true)]
         private static bool II_03072v_v()
         {
-            Menu.SetChecked(_II + "3072", _II_03072);
+            UnityEditor.Menu.SetChecked(_II + "3072", _II_03072);
             return true;
         }
 
         [UnityEditor.MenuItem(_II + "4096", true)]
         private static bool II_04096v_v()
         {
-            Menu.SetChecked(_II + "4096", _II_04096);
+            UnityEditor.Menu.SetChecked(_II + "4096", _II_04096);
             return true;
         }
 
         [UnityEditor.MenuItem(_II + "6144", true)]
         private static bool II_06144v_v()
         {
-            Menu.SetChecked(_II + "6144", _II_06144);
+            UnityEditor.Menu.SetChecked(_II + "6144", _II_06144);
             return true;
         }
 
         [UnityEditor.MenuItem(_II + "8192", true)]
         private static bool II_08192v_v()
         {
-            Menu.SetChecked(_II + "8192", _II_08192);
+            UnityEditor.Menu.SetChecked(_II + "8192", _II_08192);
             return true;
         }
 
         [UnityEditor.MenuItem(_II + "12228", true)]
         private static bool II_12228v_v()
         {
-            Menu.SetChecked(_II + "12228", _II_12228);
+            UnityEditor.Menu.SetChecked(_II + "12228", _II_12228);
             return true;
         }
 
         [UnityEditor.MenuItem(_II + "16384", true)]
         private static bool II_16384v_v()
         {
-            Menu.SetChecked(_II + "16384", _II_16384);
+            UnityEditor.Menu.SetChecked(_II + "16384", _II_16384);
             return true;
         }
 
@@ -1956,7 +1964,7 @@ namespace Appalachia.Spatial.MeshBurial.Processing
             _INST_ITER.Value = _II_16384v;
         }
 
-#endregion
+        #endregion
     }
 }
 

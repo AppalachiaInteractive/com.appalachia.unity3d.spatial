@@ -1,3 +1,5 @@
+#if UNITY_EDITOR
+
 #region
 
 using System;
@@ -19,21 +21,20 @@ using Unity.Collections;
 using Unity.Jobs;
 using Unity.Mathematics;
 using Unity.Profiling;
-using UnityEditor;
 using UnityEngine;
 
 #endregion
 
 namespace Appalachia.Spatial.MeshBurial.Processing
 {
-    [InitializeOnLoad]
+    [UnityEditor.InitializeOnLoad]
     public static partial class MeshBurialExecutionManager
     {
         #region Profiling And Tracing Markers
 
         private const string _PRF_PFX = nameof(MeshBurialExecutionManager) + ".";
 
-        private static readonly EditorApplication.CallbackFunction _processFrame =
+        private static readonly UnityEditor.EditorApplication.CallbackFunction _processFrame =
             MeshBurialExecutionManager_ProcessFrame;
 
         private static readonly ProfilerMarker _PRF_MeshBurialExecutionManager =
@@ -122,7 +123,7 @@ namespace Appalachia.Spatial.MeshBurial.Processing
                 if (_BURY.Value)
                 {
                     _BURY.Value = false;
-                    EditorApplication.delayCall += ToggleEnableMeshBurials;
+                    UnityEditor.EditorApplication.delayCall += ToggleEnableMeshBurials;
                 }
             }
         }
@@ -815,3 +816,5 @@ namespace Appalachia.Spatial.MeshBurial.Processing
         }
     }
 }
+
+#endif

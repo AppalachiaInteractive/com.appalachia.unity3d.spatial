@@ -141,7 +141,7 @@ namespace Appalachia.Spatial.Terrains
             {
                 if ((names == null) || (_terrainData == null))
                 {
-                   AppaLog.Warning("Failed to initialize foley map");
+                   AppaLog.Warn("Failed to initialize foley map");
                     return;
                 }
 
@@ -173,7 +173,7 @@ namespace Appalachia.Spatial.Terrains
 
                     if (!found)
                     {
-                        AppaLog.Warning($"Failed to bind footstep foley to terrain texture '{texture.name}'");
+                        AppaLog.Warn($"Failed to bind footstep foley to terrain texture '{texture.name}'");
                     }
                 }
             }

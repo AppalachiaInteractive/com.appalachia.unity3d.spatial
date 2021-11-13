@@ -1,3 +1,4 @@
+#if UNITY_EDITOR
 namespace Appalachia.Spatial.MeshBurial.Processing
 {
     public struct MeshBurialInstanceTracking
@@ -9,3 +10,5 @@ namespace Appalachia.Spatial.MeshBurial.Processing
         public bool excluded;
     }
 }
+
+#endif

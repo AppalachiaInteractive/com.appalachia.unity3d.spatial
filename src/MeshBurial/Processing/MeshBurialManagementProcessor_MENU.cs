@@ -6,7 +6,6 @@ using Appalachia.CI.Constants;
 using Appalachia.CI.Integration.Assets;
 using Appalachia.Spatial.MeshBurial.State;
 using AwesomeTechnologies.VegetationSystem;
-using UnityEditor;
 using UnityEngine;
 
 #endregion
@@ -26,7 +25,7 @@ namespace Appalachia.Spatial.MeshBurial.Processing
         [UnityEditor.MenuItem(PKG.Menu.Appalachia.External.Base + "Enable", true)]
         public static bool ToggleEnableVSPMeshBurialsValidate()
         {
-            Menu.SetChecked(PKG.Menu.Appalachia.External.Base + "Enable", _vspMeshBurialEnabled);
+            UnityEditor.Menu.SetChecked(PKG.Menu.Appalachia.External.Base + "Enable", _vspMeshBurialEnabled);
             return true;
         }
 

@@ -248,7 +248,7 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data.Review
 
                     if (data.originalMesh == null)
                     {
-                       AppaLog.Warning($"No mesh for {data.name}", data);
+                       AppaLog.Warn($"No mesh for {data.name}", data);
                         continue;
                     }
 

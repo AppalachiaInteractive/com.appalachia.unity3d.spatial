@@ -1,3 +1,5 @@
+#if UNITY_EDITOR
+
 #region
 
 using System;
@@ -154,3 +156,5 @@ namespace Appalachia.Spatial.MeshBurial.Processing.QueueItems
         [DebuggerStepThrough] public abstract override string ToString();
     }
 }
+
+#endif

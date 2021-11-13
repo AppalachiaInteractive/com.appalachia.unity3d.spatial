@@ -31,7 +31,6 @@ using Appalachia.Utility.Logging;
 using Sirenix.OdinInspector;
 using Unity.Mathematics;
 using Unity.Profiling;
-using UnityEditor;
 using UnityEngine;
 
 #endregion
@@ -862,7 +861,7 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data
 
                 if (string.IsNullOrWhiteSpace(originalMeshPath))
                 {
-                    AppaLog.Warning($"Could not find mesh asset path for {name}.");
+                    AppaLog.Warn($"Could not find mesh asset path for {name}.");
 
                     originalMeshPath = AssetPath;
                 }
@@ -916,7 +915,7 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data
                 }
 
                 var modelPath = AssetDatabaseManager.GetAssetPath(originalMesh);
-                var importer = AssetImporter.GetAtPath(modelPath) as ModelImporter;
+                var importer = UnityEditor.AssetImporter.GetAtPath(modelPath) as UnityEditor.ModelImporter;
 
                 if (importer is not null && (Math.Abs(originalScale - importer.globalScale) > float.Epsilon))
                 {
@@ -1000,7 +999,7 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data
                     localPosition = t.localPosition;
                     if (dirtyLogging.v)
                     {
-                        AppaLog.Warning("Setting dirty: cached position updated.");
+                        AppaLog.Warn("Setting dirty: cached position updated.");
                     }
 
                     SetDirty();
@@ -1011,7 +1010,7 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data
                     localRotation = t.localRotation;
                     if (dirtyLogging.v)
                     {
-                        AppaLog.Warning("Setting dirty: cached rotation updated.");
+                        AppaLog.Warn("Setting dirty: cached rotation updated.");
                     }
 
                     SetDirty();
@@ -1022,7 +1021,7 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data
                     localScale = t.localScale;
                     if (dirtyLogging.v)
                     {
-                        AppaLog.Warning("Setting dirty: cached scale updated.");
+                        AppaLog.Warn("Setting dirty: cached scale updated.");
                     }
 
                     SetDirty();
@@ -1102,7 +1101,7 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data
                             elements.RemoveAt(i);
                             if (dirtyLogging.v)
                             {
-                                AppaLog.Warning("Setting dirty: Invalid element removed");
+                                AppaLog.Warn("Setting dirty: Invalid element removed");
                             }
 
                             SetDirty();
@@ -1178,7 +1177,7 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data
                     {
                         if (extraLogging.v)
                         {
-                            AppaLog.Warning($"Would delete mesh at {path}");
+                            AppaLog.Warn($"Would delete mesh at {path}");
                         }
                         else
                         {
@@ -1192,7 +1191,7 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data
         [ButtonGroup(_MAINTENANCE2_)]
         public void SelectReview()
         {
-            Selection.activeObject = DecomposedColliderDataReview.instance;
+            UnityEditor.Selection.activeObject = DecomposedColliderDataReview.instance;
         }
 
         [ButtonGroup(_MAINTENANCE3_)]
@@ -1251,7 +1250,7 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data
 
                 if (dirtyLogging.v)
                 {
-                    AppaLog.Warning("Setting dirty");
+                    AppaLog.Warn("Setting dirty");
                 }
 
                 SetDirty();
@@ -1316,9 +1315,9 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data
                 {
                     foundColliderObj = false;
 
-                    if (PrefabUtility.IsAnyPrefabInstanceRoot(go))
+                    if (UnityEditor.PrefabUtility.IsAnyPrefabInstanceRoot(go))
                     {
-                        var asset = PrefabUtility.GetPrefabAssetPathOfNearestInstanceRoot(go);
+                        var asset = UnityEditor.PrefabUtility.GetPrefabAssetPathOfNearestInstanceRoot(go);
                         var pf = AssetDatabaseManager.LoadAssetAtPath<GameObject>(asset);
 
                         using (var mutable = pf.ToMutable())
@@ -1350,7 +1349,7 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data
                             }
                         }
 
-                        PrefabUtility.ApplyPrefabInstance(go, InteractionMode.AutomatedAction);
+                        UnityEditor.PrefabUtility.ApplyPrefabInstance(go, UnityEditor.InteractionMode.AutomatedAction);
                     }
                     else
                     {
@@ -1481,7 +1480,7 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data
             materialModel = mat;
             if (dirtyLogging.v)
             {
-                AppaLog.Warning("Setting dirty: material model updating");
+                AppaLog.Warn("Setting dirty: material model updating");
             }
 
             SetDirty();
@@ -1508,7 +1507,7 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data
 
             if (dirtyLogging.v)
             {
-                AppaLog.Warning("Setting selected dirty: material assigned");
+                AppaLog.Warn("Setting selected dirty: material assigned");
             }
 
             ApplyMaterials();
@@ -1829,7 +1828,7 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data
 
             if (generationDisabled.v)
             {
-                AppaLog.Warning(
+                AppaLog.Warn(
                     $"{name}: Breaking before round {nextIter}. Generation Disabled. | {volume_string} | Settings: {settings}"
                 );
                 return true;
@@ -1839,7 +1838,7 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data
             {
                 if (performanceLogging.v)
                 {
-                    AppaLog.Warning(
+                    AppaLog.Warn(
                         $"{name}: Breaking before round {nextIter}. Maximum Resolution Reached. | {volume_string} | Settings: {settings}"
                     );
                 }
@@ -1853,7 +1852,7 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data
             {
                 if (performanceLogging.v)
                 {
-                    AppaLog.Warning(
+                    AppaLog.Warn(
                         $"{name}: Breaking before round {nextIter}. Maximum Hulls Reached. | {volume_string} | Settings: {settings}"
                     );
                 }
@@ -1865,7 +1864,7 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data
             {
                 if (performanceLogging.v)
                 {
-                    AppaLog.Warning(
+                    AppaLog.Warn(
                         $"{name}: Breaking before round {nextIter}. Maximum Iterations Reached. | {volume_string} | Settings: {settings}"
                     );
                 }
@@ -1884,7 +1883,7 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data
                 {
                     if (performanceLogging.v)
                     {
-                        AppaLog.Warning(
+                        AppaLog.Warn(
                             $"{name}: Abandoning before round {nextIter}. Volume Not Improving. | {volume_string} | Settings: {settings}"
                         );
                     }
@@ -1898,7 +1897,7 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data
                 {
                     if (performanceLogging.v)
                     {
-                        AppaLog.Warning(
+                        AppaLog.Warn(
                             $"{name}: Abandoning before round {nextIter}. Hulls Not Increasingly Utilized. | {volume_string} | Settings: {settings}"
                         );
                     }
@@ -2093,7 +2092,7 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data
 
                         if (dirtyLogging.v)
                         {
-                            AppaLog.Warning("Setting dirty: elements added");
+                            AppaLog.Warn("Setting dirty: elements added");
                         }
 
                         SetDirty();
@@ -2191,7 +2190,7 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data
         {
             using (_PRF_SelectReplacement.Auto())
             {
-                Selection.activeObject = suggestedReplacementModel;
+                UnityEditor.Selection.activeObject = suggestedReplacementModel;
             }
         }
 
@@ -2233,7 +2232,7 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data
                 return;
             }
 
-            var importer = AssetImporter.GetAtPath(AssetDatabaseManager.GetAssetPath(model)) as ModelImporter;
+            var importer = UnityEditor.AssetImporter.GetAtPath(AssetDatabaseManager.GetAssetPath(model)) as UnityEditor.ModelImporter;
 
             if (importer == null)
             {
@@ -2241,26 +2240,26 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data
             }
 
             importer.addCollider = false;
-            importer.animationCompression = ModelImporterAnimationCompression.Off;
-            importer.avatarSetup = ModelImporterAvatarSetup.NoAvatar;
-            importer.animationType = ModelImporterAnimationType.None;
-            importer.generateAnimations = ModelImporterGenerateAnimations.None;
+            importer.animationCompression = UnityEditor.ModelImporterAnimationCompression.Off;
+            importer.avatarSetup = UnityEditor.ModelImporterAvatarSetup.NoAvatar;
+            importer.animationType = UnityEditor.ModelImporterAnimationType.None;
+            importer.generateAnimations = UnityEditor.ModelImporterGenerateAnimations.None;
             importer.importAnimation = false;
             importer.importCameras = false;
             importer.importConstraints = false;
             importer.importLights = false;
 
             //importer.importNormals = ModelImporterNormals.None;
-            importer.importTangents = ModelImporterTangents.None;
+            importer.importTangents = UnityEditor.ModelImporterTangents.None;
             importer.importVisibility = false;
             importer.isReadable = false;
             importer.keepQuads = false;
-            importer.materialImportMode = ModelImporterMaterialImportMode.None;
-            importer.meshCompression = ModelImporterMeshCompression.Low;
+            importer.materialImportMode = UnityEditor.ModelImporterMaterialImportMode.None;
+            importer.meshCompression = UnityEditor.ModelImporterMeshCompression.Low;
             importer.preserveHierarchy = false;
             importer.weldVertices = true;
             importer.importBlendShapes = false;
-            importer.meshOptimizationFlags = MeshOptimizationFlags.Everything;
+            importer.meshOptimizationFlags = UnityEditor.MeshOptimizationFlags.Everything;
 
             if (original == null)
             {
@@ -2269,7 +2268,7 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data
             }
 
             var originalImporter =
-                AssetImporter.GetAtPath(AssetDatabaseManager.GetAssetPath(original)) as ModelImporter;
+                UnityEditor.AssetImporter.GetAtPath(AssetDatabaseManager.GetAssetPath(original)) as UnityEditor.ModelImporter;
 
             if (originalImporter == null)
             {
@@ -2310,7 +2309,7 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data
 
                     if (string.IsNullOrWhiteSpace(path))
                     {
-                        AppaLog.Warning($"Object [{externalModel.name}] is not an asset.");
+                        AppaLog.Warn($"Object [{externalModel.name}] is not an asset.");
                         return;
                     }
 
@@ -2322,7 +2321,7 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data
 
                     if (meshes.Count == 0)
                     {
-                        AppaLog.Warning($"No meshes found in asset [{externalModel.name}].");
+                        AppaLog.Warn($"No meshes found in asset [{externalModel.name}].");
                         return;
                     }
 
@@ -2421,7 +2420,7 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data
 
                         if (dirtyLogging.v)
                         {
-                            AppaLog.Warning("Setting dirty: elements added");
+                            AppaLog.Warn("Setting dirty: elements added");
                         }
 
                         SetDirty();
@@ -2467,7 +2466,7 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data
             var frameCount = Time.frameCount;
             if (Time.frameCount > _cacheFrameCount)
             {
-                _cachedSelections = Selection.transforms;
+                _cachedSelections = UnityEditor.Selection.transforms;
                 _cacheFrameCount = frameCount;
             }
 
@@ -2494,7 +2493,7 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data
 
             PushParent(c);
 
-            var multiple = Selection.objects.Length > 1;
+            var multiple = UnityEditor.Selection.objects.Length > 1;
 
             var firstCollider = _parent.colliders.FirstOrDefault_NoAlloc();
 
@@ -2582,11 +2581,11 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data
                 _gizmoMesh.CombineMeshes(combine, false, false);
                 if (dirtyLogging.v)
                 {
-                    AppaLog.Warning("Setting dirty: Saving gizmo mesh");
+                    AppaLog.Warn("Setting dirty: Saving gizmo mesh");
                 }
 
-                EditorUtility.SetDirty(_gizmoMesh);
-                EditorUtility.SetDirty(this);
+                UnityEditor.EditorUtility.SetDirty(_gizmoMesh);
+                UnityEditor.EditorUtility.SetDirty(this);
             }
 
             if (_gizmoMeshFilter == null)
