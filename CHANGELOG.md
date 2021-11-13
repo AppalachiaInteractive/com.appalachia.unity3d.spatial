@@ -14,14 +14,10 @@ C:/Users/Chris/com.appalachia/unity3d/appa/Assets/Appalachia.Spatial
 ## Releasing
 | Hash | Date | Author | Changes |
 |------|------|--------|---------|
+| b7542096cd3555cb911ac2c6851228418719c7ff | 2021-11-13 | Chris Schubert | Updating changelog and releaselog |
 | 47c75540074c31aed7610b50f69d32e619efeafb | 2021-11-13 | Chris Schubert | EXR to gitlfs |
 | 8d98be64e566c192562cc30b65ec939c07e40367 | 2021-11-13 | Chris Schubert | Editor exlusions fro runtime build |
 | cfbf7e87e14e02dc8df218b3fa165d9742a769c0 | 2021-11-13 | Chris Schubert | fixing editor exclusions for runtime build |
-
-
- ## Tag: `v0.2.0`
-| Hash | Date | Author | Changes |
-|------|------|--------|---------|
 | 94a4fd3ab5acda5f1c688294fcd11c76b69ed76c | 2021-11-09 | Chris Schubert | Updating changelog and releaselog |
 | 71ba998099b2bb9fdeb810d6fa897d29887742a2 | 2021-11-09 | Chris Schubert | Updating changelog and releaselog |
 | 44366245d42908feb532152c3baa15be0129fa66 | 2021-11-09 | Chris Schubert | Removing empty directories, adding some debugger passthroughs, and reformatting asmdefs |
