@@ -1,6 +1,6 @@
 ```
 C:/Users/Chris/com.appalachia/unity3d/appa/Assets/Appalachia.Spatial
-Let's go!  
+Development environment loaded!  
  ________   ___  ___   ________   ________    ________   _______    ________      
 |\   ____\ |\  \|\  \ |\   __  \ |\   ___  \ |\   ____\ |\  ___ \  |\   ____\     
 \ \  \___| \ \  \\\  \\ \  \|\  \\ \  \\ \  \\ \  \___| \ \   __/| \ \  \___|_    
@@ -14,6 +14,8 @@ Let's go!
 ## Releasing
 | Hash | Date | Author | Changes |
 |------|------|--------|---------|
+| 7a99b15be1ce785d6487aefa7ac072fe04cfe18c | 2021-11-20 | Chris Schubert | Packaging updates and formatting for titles |
+| 375284ce2fdfe515be14bef0f8aa7349d004f836 | 2021-11-20 | Chris Schubert | Updating changelog and releaselog |
 | 9a2c5bb2bdf0feb197f48a12434acd44424ed310 | 2021-11-20 | Chris Schubert | Code cleanup and base class refactoring |
 | 8b11af6a04097de87bea7b1fbc9ea51cb05cef5f | 2021-11-14 | Chris Schubert | Updating changelog and releaselog |
 | 321e242c92b1c3c0ab527bf040804c7db8f4d8dc | 2021-11-13 | Chris Schubert | Updating changelog and releaselog |
