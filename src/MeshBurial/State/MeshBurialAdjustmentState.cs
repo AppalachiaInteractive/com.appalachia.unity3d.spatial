@@ -79,10 +79,11 @@ namespace Appalachia.Spatial.MeshBurial.State
             }
         }
 
-        private void OnEnable()
+        protected override void OnEnable()
         {
             using (_PRF_OnEnable.Auto())
             {
+                base.OnEnable();
                 InitializeLookup();
             }
         }

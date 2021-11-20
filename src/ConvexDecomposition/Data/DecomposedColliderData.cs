@@ -655,8 +655,9 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data
 
         #region Unity Events
 
-        private void OnEnable()
+        protected override void OnEnable()
         {
+            base.OnEnable();
             modelSelector = LookupSelectionGenerator.CreatePhysicMaterialSelector(
                 AssignMaterialModel,
                 ColorPrefs.Instance.DecomposedColliderSelectorModel
