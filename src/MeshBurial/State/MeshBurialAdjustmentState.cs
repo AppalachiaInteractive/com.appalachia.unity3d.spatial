@@ -20,7 +20,7 @@ using UnityEngine;
 namespace Appalachia.Spatial.MeshBurial.State
 {
     [Serializable]
-    public class MeshBurialAdjustmentState : AppalachiaObject<MeshBurialAdjustmentState>
+    public class MeshBurialAdjustmentState  : AppalachiaObject
     {
         private const string _PRF_PFX = nameof(MeshBurialAdjustmentState) + ".";
 

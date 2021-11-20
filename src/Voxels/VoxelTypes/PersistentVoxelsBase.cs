@@ -12,35 +12,38 @@ namespace Appalachia.Spatial.Voxels.VoxelTypes
 {
     [Serializable]
     public abstract class
-        PersistentVoxelsBase<TVoxelData, TDataStore, TRaycastHit> : VoxelsBase<TVoxelData,
-            TRaycastHit>
+        PersistentVoxelsBase<TVoxelData, TDataStore, TRaycastHit> : VoxelsBase<TVoxelData, TRaycastHit>
         where TVoxelData : PersistentVoxelsBase<TVoxelData, TDataStore, TRaycastHit>
         where TDataStore : VoxelPersistentDataStoreBase<TVoxelData, TDataStore, TRaycastHit>
         where TRaycastHit : struct, IVoxelRaycastHit
     {
-        [SerializeField] public string identifier;
-        [SerializeField] public TDataStore dataStore;
-
         protected PersistentVoxelsBase(string identifier)
         {
             this.identifier = identifier;
         }
 
+        #region Fields and Autoproperties
+
+        [SerializeField] public string identifier;
+        [SerializeField] public TDataStore dataStore;
+
+        #endregion
+
         public override bool IsPersistent => true;
+
+        public override void InitializeDataStore()
+        {
+            dataStore.Record((TVoxelData) this);
+        }
 
         public override void OnInitialize()
         {
 #if UNITY_EDITOR
             if (dataStore == null)
             {
-                dataStore = AppalachiaObject<TDataStore>.LoadOrCreateNew(identifier);
+                dataStore = AppalachiaObject.LoadOrCreateNew<TDataStore>(identifier);
             }
 #endif
-        }
-
-        public override void InitializeDataStore()
-        {
-            dataStore.Record((TVoxelData) this);
         }
 
         public void RestoreFromDataStore(

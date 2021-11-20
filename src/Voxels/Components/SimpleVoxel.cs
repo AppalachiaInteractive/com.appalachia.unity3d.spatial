@@ -7,6 +7,7 @@ using Appalachia.Core.Filtering;
 using Appalachia.Spatial.Voxels.Gizmos;
 using Sirenix.OdinInspector;
 using Unity.Mathematics;
+using Unity.Profiling;
 using UnityEngine;
 
 #endregion
@@ -16,6 +17,8 @@ namespace Appalachia.Spatial.Voxels.Components
     [Serializable]
     public class SimpleVoxel : AppalachiaBehaviour
     {
+        #region Fields and Autoproperties
+
         [OnValueChanged(nameof(RefreshChildCollections))]
         public VoxelPopulationStyle style;
 
@@ -54,6 +57,8 @@ namespace Appalachia.Spatial.Voxels.Components
         private MeshRenderer[] _renderers;
         private VoxelTypes.Voxels _voxels;
 
+        #endregion
+
         [ShowInInspector]
         public float3 resolution
         {
@@ -67,75 +72,119 @@ namespace Appalachia.Spatial.Voxels.Components
             }
         }
 
-        private bool _canProcessColliderStyle =>
-            (style == VoxelPopulationStyle.Colliders) &&
-            (_colliders != null) &&
-            (_colliders.Length > 0);
-
-        private bool _canProcessRendererStyle =>
-            (style == VoxelPopulationStyle.Meshes) &&
-            (_renderers != null) &&
-            (_renderers.Length > 0);
-
         private bool _canProcess => _canProcessColliderStyle || _canProcessRendererStyle;
 
-        private void OnEnable()
+        private bool _canProcessColliderStyle =>
+            (style == VoxelPopulationStyle.Colliders) && (_colliders != null) && (_colliders.Length > 0);
+
+        private bool _canProcessRendererStyle =>
+            (style == VoxelPopulationStyle.Meshes) && (_renderers != null) && (_renderers.Length > 0);
+
+        #region Event Functions
+
+        protected override void OnEnable()
         {
-            RefreshChildCollections();
+            using (_PRF_OnEnable.Auto())
+            {
+                base.OnEnable();
+                RefreshChildCollections();
+            }
         }
 
-        private void OnDisable()
+        protected override void OnDisable()
         {
-            _voxels?.Dispose();
+            using (_PRF_OnDisable.Auto())
+            {
+                base.OnDisable();
+
+                _voxels?.Dispose();
+            }
         }
 
-        private void OnDestroy()
+        protected override void OnDestroy()
         {
-            _voxels?.Dispose();
+            using (_PRF_OnDestroy.Auto())
+            {
+                base.OnDestroy();
+
+                _voxels?.Dispose();
+            }
         }
 
 #if UNITY_EDITOR
+        private static readonly ProfilerMarker _PRF_OnDrawGizmosSelected = new ProfilerMarker(_PRF_PFX + nameof(OnDrawGizmosSelected));
         private void OnDrawGizmosSelected()
         {
-            if (_voxels == null)
+            using (_PRF_OnDrawGizmosSelected.Auto())
             {
-                return;
-            }
+                if (_voxels == null)
+                {
+                    return;
+                }
 
-            if (_gizmoSettings == null)
-            {
-                _gizmoSettings = VoxelDataGizmoSettingsLookup.instance.GetOrLoadOrCreateNew(
-                    VoxelDataGizmoStyle.Simple,
-                    nameof(VoxelDataGizmoStyle.Simple)
-                );
-            }
+                if (_gizmoSettings == null)
+                {
+                    _gizmoSettings = VoxelDataGizmoSettingsLookup.instance.GetOrLoadOrCreateNew(
+                        VoxelDataGizmoStyle.Simple,
+                        nameof(VoxelDataGizmoStyle.Simple)
+                    );
+                }
 
-            _voxels.DrawGizmos(_gizmoSettings);
+                _voxels.DrawGizmos(_gizmoSettings);
+            }
         }
 #endif
+
+        #endregion
 
         [EnableIf(nameof(_canProcess))]
         [ButtonGroup]
         public void Process()
         {
-            if (!_canProcess)
+            using (_PRF_Process.Auto())
             {
-                return;
-            }
+                if (!_canProcess)
+                {
+                    return;
+                }
 
-            _voxels = style == VoxelPopulationStyle.Colliders
-                ? VoxelTypes.Voxels.Voxelize(_transform, _colliders, resolution)
-                : VoxelTypes.Voxels.Voxelize(_transform, _renderers, resolution);
+                _voxels = style == VoxelPopulationStyle.Colliders
+                    ? VoxelTypes.Voxels.Voxelize(_transform, _colliders, resolution)
+                    : VoxelTypes.Voxels.Voxelize(_transform, _renderers, resolution);
+            }
         }
 
         [ButtonGroup]
         private void RefreshChildCollections()
         {
-            _colliders = _transform.FilterComponentsFromChildren<Collider>()
-                                   .NoTriggers()
-                                   .ActiveOnly()
-                                   .RunFilter();
-            _renderers = _transform.FilterComponentsFromChildren<MeshRenderer>().RunFilter();
+            using (_PRF_RefreshChildCollections.Auto())
+            {
+                _colliders = _transform.FilterComponentsFromChildren<Collider>()
+                                       .NoTriggers()
+                                       .ActiveOnly()
+                                       .RunFilter();
+                _renderers = _transform.FilterComponentsFromChildren<MeshRenderer>().RunFilter();
+            }
         }
+
+        #region Profiling
+
+        private const string _PRF_PFX = nameof(SimpleVoxel) + ".";
+
+        private static readonly ProfilerMarker _PRF_Process = new ProfilerMarker(_PRF_PFX + nameof(Process));
+
+        private static readonly ProfilerMarker _PRF_RefreshChildCollections =
+            new ProfilerMarker(_PRF_PFX + nameof(RefreshChildCollections));
+
+        private static readonly ProfilerMarker
+            _PRF_OnEnable = new ProfilerMarker(_PRF_PFX + nameof(OnEnable));
+
+        private static readonly ProfilerMarker _PRF_OnDisable =
+            new ProfilerMarker(_PRF_PFX + nameof(OnDisable));
+
+        private static readonly ProfilerMarker _PRF_OnDestroy =
+            new ProfilerMarker(_PRF_PFX + nameof(OnDestroy));
+
+        #endregion
     }
 }

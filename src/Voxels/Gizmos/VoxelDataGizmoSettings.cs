@@ -15,7 +15,7 @@ using UnityEngine;
 namespace Appalachia.Spatial.Voxels.Gizmos
 {
     [Serializable]
-    public class VoxelDataGizmoSettings : AppalachiaObject<VoxelDataGizmoSettings>
+    public class VoxelDataGizmoSettings  : AppalachiaObject
     {
         public VoxelDataGizmoStyle style;
 

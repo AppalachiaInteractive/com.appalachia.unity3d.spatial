@@ -2,7 +2,6 @@
 
 using System;
 using Appalachia.Core.Collections.Native;
-using Appalachia.Core.Extensions;
 using Appalachia.Core.Scriptables;
 using Appalachia.Spatial.Terrains.Utilities;
 using Appalachia.Utility.Extensions;
@@ -16,43 +15,28 @@ using UnityEngine;
 namespace Appalachia.Spatial.Terrains
 {
     [Serializable]
-    public class TerrainMetadata : AutonamedIdentifiableAppalachiaObject<TerrainMetadata>
+    public class TerrainMetadata : AutonamedIdentifiableAppalachiaObject
     {
-        private const string _PRF_PFX = nameof(TerrainMetadata) + ".";
+        #region Fields and Autoproperties
 
-        private static readonly ProfilerMarker _PRF_OnEnable = new(_PRF_PFX + nameof(OnEnable));
-
-        private static readonly ProfilerMarker _PRF_Initialize = new(_PRF_PFX + nameof(Initialize));
-
-        private static readonly ProfilerMarker _PRF_InitializeFoley =
-            new(_PRF_PFX + nameof(InitializeFoley));
-
-        private static readonly ProfilerMarker _PRF_CheckHeights =
-            new(_PRF_PFX + nameof(CheckHeights));
-
-        private static readonly ProfilerMarker _PRF_GetSplatIndexAtPosition =
-            new(_PRF_PFX + nameof(GetSplatIndexAtPosition));
-
-        private static readonly ProfilerMarker _PRF_GetFoleyIndexAtPosition =
-            new(_PRF_PFX + nameof(GetFoleyIndexAtPosition));
-
-        [SerializeField] private TerrainData _terrainData;
+        [NonSerialized] public int[] alphamapTextureFoleyIndex;
         [SerializeField] private Allocator _allocator = Allocator.Persistent;
-        [NonSerialized] private int _alphamapHeight;
         [NonSerialized] private float[,,] _alphamaps;
+        [NonSerialized] private int _alphamapHeight;
         [NonSerialized] private int _alphamapTextureCount;
         [NonSerialized] private int _alphamapWidth;
         [NonSerialized] private NativeArray<float> _heights;
-        [NonSerialized] private Vector3 _origin;
 
         [NonSerialized] private Terrain _terrain;
-        [NonSerialized] public int[] alphamapTextureFoleyIndex;
+
+        [SerializeField] private TerrainData _terrainData;
 
         [NonSerialized] private TerrainJobData jobData;
+        [NonSerialized] private Vector3 _origin;
 
-        public Vector3 terrainPosition => jobData.terrainPosition;
+        #endregion
+
         public int resolution => jobData.resolution;
-        public Vector3 scale => jobData.scale;
 
         public NativeArray<float> heights
         {
@@ -72,6 +56,12 @@ namespace Appalachia.Spatial.Terrains
                 return jobData;
             }
         }
+
+        public Vector3 scale => jobData.scale;
+
+        public Vector3 terrainPosition => jobData.terrainPosition;
+
+        #region Event Functions
 
         protected override void OnEnable()
         {
@@ -96,11 +86,77 @@ namespace Appalachia.Spatial.Terrains
                     _terrain = terrains.First_NoAlloc(t => t.terrainData == _terrainData);
                 }
 
-                Initialize(
-                    _terrain,
-                    _allocator == Allocator.Invalid ? Allocator.Persistent : _allocator
-                );
+                Initialize(_terrain, _allocator == Allocator.Invalid ? Allocator.Persistent : _allocator);
             }
+        }
+
+        #endregion
+
+        public void CheckHeights()
+        {
+            using (_PRF_CheckHeights.Auto())
+            {
+                if (_heights.ShouldAllocate())
+                {
+                    _heights.SafeDispose();
+
+                    _heights = TerrainJobHelper.LoadHeightData(_terrain, jobData.allocator);
+                }
+            }
+        }
+
+        public int GetFoleyIndexAtPosition(Vector3 position)
+        {
+            using (_PRF_GetFoleyIndexAtPosition.Auto())
+            {
+                if (alphamapTextureFoleyIndex == null)
+                {
+                    return -1;
+                }
+
+                var splatIndex = GetSplatIndexAtPosition(position);
+
+                if ((splatIndex < 0) || (splatIndex >= alphamapTextureFoleyIndex.Length))
+                {
+                    return -1;
+                }
+
+                return alphamapTextureFoleyIndex[splatIndex];
+            }
+        }
+
+        public int GetSplatIndexAtPosition(Vector3 position)
+        {
+            using (_PRF_GetSplatIndexAtPosition.Auto())
+            {
+                if ((_terrainData == null) || (_alphamaps == null))
+                {
+                    return -1;
+                }
+
+                var x = Mathf.FloorToInt(((position.x - _origin.x) / _terrainData.size.x) * _alphamapWidth);
+                var z = Mathf.FloorToInt(((position.z - _origin.z) / _terrainData.size.z) * _alphamapHeight);
+                var primarySplatIndex = 0;
+                var maximumSplatWeight = 0f;
+
+                for (int textureIndex = 0, n = _alphamapTextureCount; textureIndex < n; ++textureIndex)
+                {
+                    var splatWeight = _alphamaps[z, x, textureIndex];
+
+                    if (maximumSplatWeight < splatWeight)
+                    {
+                        primarySplatIndex = textureIndex;
+                        maximumSplatWeight = splatWeight;
+                    }
+                }
+
+                return primarySplatIndex;
+            }
+        }
+
+        public Terrain GetTerrain()
+        {
+            return _terrain;
         }
 
         public void Initialize(Terrain terrain, Allocator allocator)
@@ -141,7 +197,7 @@ namespace Appalachia.Spatial.Terrains
             {
                 if ((names == null) || (_terrainData == null))
                 {
-                   AppaLog.Warn("Failed to initialize foley map");
+                    AppaLog.Warn("Failed to initialize foley map");
                     return;
                 }
 
@@ -179,77 +235,23 @@ namespace Appalachia.Spatial.Terrains
             }
         }
 
-        public void CheckHeights()
-        {
-            using (_PRF_CheckHeights.Auto())
-            {
-                if (_heights.ShouldAllocate())
-                {
-                    _heights.SafeDispose();
+        #region Profiling
 
-                    _heights = TerrainJobHelper.LoadHeightData(_terrain, jobData.allocator);
-                }
-            }
-        }
+        private const string _PRF_PFX = nameof(TerrainMetadata) + ".";
 
-        public Terrain GetTerrain()
-        {
-            return _terrain;
-        }
+        private static readonly ProfilerMarker _PRF_OnEnable = new(_PRF_PFX + nameof(OnEnable));
+        private static readonly ProfilerMarker _PRF_Initialize = new(_PRF_PFX + nameof(Initialize));
 
-        public int GetSplatIndexAtPosition(Vector3 position)
-        {
-            using (_PRF_GetSplatIndexAtPosition.Auto())
-            {
-                if ((_terrainData == null) || (_alphamaps == null))
-                {
-                    return -1;
-                }
+        private static readonly ProfilerMarker _PRF_InitializeFoley = new(_PRF_PFX + nameof(InitializeFoley));
 
-                var x = Mathf.FloorToInt(
-                    ((position.x - _origin.x) / _terrainData.size.x) * _alphamapWidth
-                );
-                var z = Mathf.FloorToInt(
-                    ((position.z - _origin.z) / _terrainData.size.z) * _alphamapHeight
-                );
-                var primarySplatIndex = 0;
-                var maximumSplatWeight = 0f;
+        private static readonly ProfilerMarker _PRF_CheckHeights = new(_PRF_PFX + nameof(CheckHeights));
 
-                for (int textureIndex = 0, n = _alphamapTextureCount;
-                    textureIndex < n;
-                    ++textureIndex)
-                {
-                    var splatWeight = _alphamaps[z, x, textureIndex];
+        private static readonly ProfilerMarker _PRF_GetSplatIndexAtPosition =
+            new(_PRF_PFX + nameof(GetSplatIndexAtPosition));
 
-                    if (maximumSplatWeight < splatWeight)
-                    {
-                        primarySplatIndex = textureIndex;
-                        maximumSplatWeight = splatWeight;
-                    }
-                }
+        private static readonly ProfilerMarker _PRF_GetFoleyIndexAtPosition =
+            new(_PRF_PFX + nameof(GetFoleyIndexAtPosition));
 
-                return primarySplatIndex;
-            }
-        }
-
-        public int GetFoleyIndexAtPosition(Vector3 position)
-        {
-            using (_PRF_GetFoleyIndexAtPosition.Auto())
-            {
-                if (alphamapTextureFoleyIndex == null)
-                {
-                    return -1;
-                }
-
-                var splatIndex = GetSplatIndexAtPosition(position);
-
-                if ((splatIndex < 0) || (splatIndex >= alphamapTextureFoleyIndex.Length))
-                {
-                    return -1;
-                }
-
-                return alphamapTextureFoleyIndex[splatIndex];
-            }
-        }
+        #endregion
     }
 }

@@ -103,7 +103,7 @@ namespace Appalachia.Spatial.MeshBurial.State
                     if (adjustment == null)
                     {
                         //adjustment = new MeshBurialAdjustmentState() {prefab = prefab, assetGUID = assetGUID};
-                        adjustment = MeshBurialAdjustmentState.LoadOrCreateNew(prefab.name);
+                        adjustment = AppalachiaObject.LoadOrCreateNew<MeshBurialAdjustmentState>(prefab.name);
                         adjustment.InitializeLookupStorage(prefab);
 
                         _state.AddOrUpdate(prefab, adjustment);
@@ -113,7 +113,7 @@ namespace Appalachia.Spatial.MeshBurial.State
                     return adjustment;
                 }
 
-                var newState = MeshBurialAdjustmentState.LoadOrCreateNew(prefab.name);
+                var newState = AppalachiaObject.LoadOrCreateNew<MeshBurialAdjustmentState>(prefab.name);
                 newState.InitializeLookupStorage(prefab);
 
                 _state.AddOrUpdate(prefab, newState);

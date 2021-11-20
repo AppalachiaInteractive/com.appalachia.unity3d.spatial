@@ -21,8 +21,8 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data.Review
     {
         [HideInInspector] public DecomposedCollider dc;
 
-        [SmartTitle(_TITLE,  _SUBTITLE,  TitleAlignments.Split, false, true, nameof(_titleColor))]
-        [SmartTitle(_TITLE2, _SUBTITLE2, TitleAlignments.Split, false, true, nameof(reviewColor))]
+        [SmartTitle(_TITLE,  _SUBTITLE,  TitleAlignment.Split, false, true, titleColor: nameof(_titleColor))]
+        [SmartTitle(_TITLE2, _SUBTITLE2, TitleAlignment.Split, false, true, titleColor: nameof(reviewColor))]
         [PropertyOrder(0)]
         [SerializeField]
         [SmartLabel]

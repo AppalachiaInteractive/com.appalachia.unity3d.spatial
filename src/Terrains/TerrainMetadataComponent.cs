@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using Appalachia.CI.Integration.Assets;
 using Appalachia.Core.Debugging;
+using Appalachia.Core.Scriptables;
 using Appalachia.Editing.Debugging.Handle;
 using Appalachia.Spatial.Terrains.Utilities;
 using Appalachia.Utility.Logging;
@@ -20,23 +21,28 @@ namespace Appalachia.Spatial.Terrains
     [RequireComponent(typeof(Terrain))]
     public class TerrainMetadataComponent : MonoBehaviour
     {
+        #region Fields and Autoproperties
+
+        [FoldoutGroup("Gizmos")] public bool gizmosEnabled;
+        [FoldoutGroup("Gizmos")] public bool selectedOnly;
+
+        [FoldoutGroup("Gizmos")] public Color color;
+
+        [FoldoutGroup("Gizmos")] public Color interpolated;
+
+        [FoldoutGroup("Gizmos")] public float radius;
+
+        [FoldoutGroup("Gizmos")] public float size;
         public Terrain terrain;
 
         [FormerlySerializedAs("terrainThreadsafeData")]
         public TerrainMetadata terrainMetadata;
 
-        [FoldoutGroup("Gizmos")] public bool gizmosEnabled;
-        [FoldoutGroup("Gizmos")] public bool selectedOnly;
-
         [FoldoutGroup("Gizmos")] public Vector3 center;
 
-        [FoldoutGroup("Gizmos")] public float radius;
+        #endregion
 
-        [FoldoutGroup("Gizmos")] public float size;
-
-        [FoldoutGroup("Gizmos")] public Color color;
-
-        [FoldoutGroup("Gizmos")] public Color interpolated;
+        #region Event Functions
 
         private void OnEnable()
         {
@@ -59,6 +65,49 @@ namespace Appalachia.Spatial.Terrains
             }
 
             TerrainMetadataManager.Remove(terrain);
+        }
+
+        #endregion
+
+        public static List<TerrainMetadata> GetFromAllTerrains()
+        {
+            var results = new List<TerrainMetadata>();
+
+            var terrains = FindObjectsOfType<Terrain>();
+
+            for (var i = 0; i < terrains.Length; i++)
+            {
+                try
+                {
+                    var terrain = terrains[i];
+
+                    var comp = terrain.GetComponent<TerrainMetadataComponent>();
+
+                    if (comp == null)
+                    {
+                        throw new NotSupportedException($"Missing {nameof(TerrainMetadataComponent)}!");
+                    }
+
+                    var terrainThreadsafeData = comp.terrainMetadata;
+
+                    if (terrainThreadsafeData == null)
+                    {
+                        throw new NotSupportedException($"Missing {nameof(TerrainMetadata)}!");
+                    }
+
+                    terrainThreadsafeData.Initialize(terrain, Allocator.Persistent);
+
+                    comp.terrainMetadata = terrainThreadsafeData;
+
+                    results.Add(terrainThreadsafeData);
+                }
+                catch (Exception ex)
+                {
+                    AppaLog.Error($"Failed to create terrain job data: {ex}");
+                }
+            }
+
+            return results;
         }
 
 #if UNITY_EDITOR
@@ -133,10 +182,8 @@ namespace Appalachia.Spatial.Terrains
 
                     var realworldHeight = terrainMetadata.terrainPosition.y + scaledHeight;
 
-                    var realworldX = terrainMetadata.terrainPosition.x +
-                                     (xIndex * terrainMetadata.scale.x);
-                    var realworldZ = terrainMetadata.terrainPosition.z +
-                                     (yIndex * terrainMetadata.scale.z);
+                    var realworldX = terrainMetadata.terrainPosition.x + (xIndex * terrainMetadata.scale.x);
+                    var realworldZ = terrainMetadata.terrainPosition.z + (yIndex * terrainMetadata.scale.z);
 
                     var pos = new Vector3(realworldX, realworldHeight, realworldZ);
 
@@ -151,49 +198,6 @@ namespace Appalachia.Spatial.Terrains
             }
         }
 #endif
-
-        public static List<TerrainMetadata> GetFromAllTerrains()
-        {
-            var results = new List<TerrainMetadata>();
-
-            var terrains = FindObjectsOfType<Terrain>();
-
-            for (var i = 0; i < terrains.Length; i++)
-            {
-                try
-                {
-                    var terrain = terrains[i];
-
-                    var comp = terrain.GetComponent<TerrainMetadataComponent>();
-
-                    if (comp == null)
-                    {
-                        throw new NotSupportedException(
-                            $"Missing {nameof(TerrainMetadataComponent)}!"
-                        );
-                    }
-
-                    var terrainThreadsafeData = comp.terrainMetadata;
-
-                    if (terrainThreadsafeData == null)
-                    {
-                        throw new NotSupportedException($"Missing {nameof(TerrainMetadata)}!");
-                    }
-
-                    terrainThreadsafeData.Initialize(terrain, Allocator.Persistent);
-
-                    comp.terrainMetadata = terrainThreadsafeData;
-
-                    results.Add(terrainThreadsafeData);
-                }
-                catch (Exception ex)
-                {
-                    AppaLog.Error($"Failed to create terrain job data: {ex}");
-                }
-            }
-
-            return results;
-        }
 
 #if UNITY_EDITOR
 
@@ -226,7 +230,7 @@ namespace Appalachia.Spatial.Terrains
                     AssetDatabaseManager.TryGetGUIDAndLocalFileIdentifier(
                         terrain.terrainData,
                         out var guid,
-                        out long _
+                        out var _
                     );
 
                     var terrainName = $"{terrain.terrainData.name}_{guid}";
@@ -236,7 +240,8 @@ namespace Appalachia.Spatial.Terrains
 
                     if (terrainThreadsafeData == null)
                     {
-                        terrainThreadsafeData = TerrainMetadata.LoadOrCreateNew(terrainName);
+                        terrainThreadsafeData =
+                            AppalachiaObject.LoadOrCreateNew<TerrainMetadata>(terrainName);
                     }
 
                     terrainThreadsafeData.profileName = terrainName;

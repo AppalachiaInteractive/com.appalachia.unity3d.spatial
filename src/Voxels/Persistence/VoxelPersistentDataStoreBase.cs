@@ -5,7 +5,6 @@ using Appalachia.Core.Collections.Extensions;
 using Appalachia.Core.Collections.Native;
 using Appalachia.Core.Collections.Native.Pointers;
 using Appalachia.Core.Comparisons.ComponentEquality;
-using Appalachia.Core.Extensions;
 using Appalachia.Core.Scriptables;
 using Appalachia.Spatial.Voxels.Casting;
 using Appalachia.Spatial.Voxels.VoxelTypes;
@@ -22,31 +21,35 @@ namespace Appalachia.Spatial.Voxels.Persistence
     [Serializable]
     public abstract class
         VoxelPersistentDataStoreBase<TVoxelData, TDataStore, TRaycastHit> :
-            AutonamedIdentifiableAppalachiaObject<TDataStore>
+            AutonamedIdentifiableAppalachiaObject
         where TVoxelData : PersistentVoxelsBase<TVoxelData, TDataStore, TRaycastHit>
         where TDataStore : VoxelPersistentDataStoreBase<TVoxelData, TDataStore, TRaycastHit>
         where TRaycastHit : struct, IVoxelRaycastHit
     {
-        [SerializeField] public string identifier;
+        #region Fields and Autoproperties
+
+        [SerializeField] public bool[] voxelsActive;
 
         [SerializeField] public Bounds rawBounds;
         [SerializeField] public Bounds voxelBounds;
+        [SerializeField] public ColliderEqualityState[] colliderEqualityStates;
+        [SerializeField] public float activeRatio;
 
         [SerializeField] public float volume;
         [SerializeField] public float3 centerOfMass;
-        [SerializeField] public int faceCount;
-
-        [SerializeField] public VoxelSamplePoint[] samplePoints;
-        [SerializeField] public int3 samplePointDimensions;
-        [SerializeField] public Voxel[] voxels;
-        [SerializeField] public bool[] voxelsActive;
-        [SerializeField] public int voxelsActiveCount;
-        [SerializeField] public float activeRatio;
 
         [SerializeField] public float3 resolution;
-        [SerializeField] public VoxelPopulationStyle style;
-        [SerializeField] public ColliderEqualityState[] colliderEqualityStates;
+        [SerializeField] public int faceCount;
+        [SerializeField] public int voxelsActiveCount;
+        [SerializeField] public int3 samplePointDimensions;
         [SerializeField] public MeshEqualityState[] meshEqualityStates;
+        [SerializeField] public string identifier;
+        [SerializeField] public Voxel[] voxels;
+        [SerializeField] public VoxelPopulationStyle style;
+
+        [SerializeField] public VoxelSamplePoint[] samplePoints;
+
+        #endregion
 
         public void Record(TVoxelData data)
         {
@@ -68,8 +71,6 @@ namespace Appalachia.Spatial.Voxels.Persistence
 
             RecordAdditional(data);
         }
-
-        protected abstract void RecordAdditional(TVoxelData data);
 
         public void Restore(TVoxelData data)
         {
@@ -94,8 +95,6 @@ namespace Appalachia.Spatial.Voxels.Persistence
             RestoreAdditional(data);
         }
 
-        protected abstract void RestoreAdditional(TVoxelData data);
-
         public bool ShouldRestore(
             float3 resolution,
             VoxelPopulationStyle style,
@@ -104,7 +103,7 @@ namespace Appalachia.Spatial.Voxels.Persistence
         {
             if (!Equals(this.resolution, resolution))
             {
-               AppaLog.Warn(
+                AppaLog.Warn(
                     $"Cannot reuse voxel data store.  Resolution has changed from [{this.resolution}] to [{resolution}]"
                 );
                 return false;
@@ -112,7 +111,7 @@ namespace Appalachia.Spatial.Voxels.Persistence
 
             if (style != this.style)
             {
-               AppaLog.Warn(
+                AppaLog.Warn(
                     $"Cannot reuse voxel data store.  Style has changed from [{this.style}] to [{style}]"
                 );
                 return false;
@@ -122,7 +121,7 @@ namespace Appalachia.Spatial.Voxels.Persistence
                 (colliderEqualityStates != null) &&
                 (colliderEqualityStates.Length > 0))
             {
-               AppaLog.Warn(
+                AppaLog.Warn(
                     $"Cannot reuse voxel data store.  Collider amount has changed from [{colliderEqualityStates?.Length ?? 0}] to [{colliders?.Length ?? 0}]"
                 );
                 return false;
@@ -132,7 +131,7 @@ namespace Appalachia.Spatial.Voxels.Persistence
                 (colliders != null) &&
                 (colliders.Length > 0))
             {
-               AppaLog.Warn(
+                AppaLog.Warn(
                     $"Cannot reuse voxel data store.  Collider amount has changed from [{colliderEqualityStates?.Length ?? 0}] to [{colliders?.Length ?? 0}]"
                 );
                 return false;
@@ -142,7 +141,7 @@ namespace Appalachia.Spatial.Voxels.Persistence
                 (colliders != null) &&
                 (colliderEqualityStates.Length != colliders.Length))
             {
-               AppaLog.Warn(
+                AppaLog.Warn(
                     $"Cannot reuse voxel data store.  Collider amount has changed from [{colliderEqualityStates?.Length ?? 0}] to [{colliders?.Length ?? 0}]"
                 );
                 return false;
@@ -152,9 +151,7 @@ namespace Appalachia.Spatial.Voxels.Persistence
             {
                 if (!colliderEqualityStates[i].Equals(colliders[i]))
                 {
-                   AppaLog.Warn(
-                        $"Cannot reuse voxel data store.  Collider [{i}] has changed."
-                    );
+                    AppaLog.Warn($"Cannot reuse voxel data store.  Collider [{i}] has changed.");
                     return false;
                 }
             }
@@ -163,7 +160,7 @@ namespace Appalachia.Spatial.Voxels.Persistence
                 (meshEqualityStates != null) &&
                 (meshEqualityStates.Length > 0))
             {
-               AppaLog.Warn(
+                AppaLog.Warn(
                     $"Cannot reuse voxel data store.  Renderer amount has changed from [{meshEqualityStates?.Length ?? 0}] to [{renderers?.Length ?? 0}]"
                 );
                 return false;
@@ -173,7 +170,7 @@ namespace Appalachia.Spatial.Voxels.Persistence
                 (renderers != null) &&
                 (renderers.Length > 0))
             {
-               AppaLog.Warn(
+                AppaLog.Warn(
                     $"Cannot reuse voxel data store.  Renderer amount has changed from [{meshEqualityStates?.Length ?? 0}] to [{renderers?.Length ?? 0}]"
                 );
                 return false;
@@ -183,7 +180,7 @@ namespace Appalachia.Spatial.Voxels.Persistence
                 (renderers != null) &&
                 (meshEqualityStates.Length != renderers.Length))
             {
-               AppaLog.Warn(
+                AppaLog.Warn(
                     $"Cannot reuse voxel data store.  Renderer amount has changed from [{meshEqualityStates?.Length ?? 0}] to [{renderers?.Length ?? 0}]"
                 );
                 return false;
@@ -193,12 +190,16 @@ namespace Appalachia.Spatial.Voxels.Persistence
             {
                 if (!meshEqualityStates[i].Equals(renderers[i].GetSharedMesh()))
                 {
-                   AppaLog.Warn($"Cannot reuse voxel data store.  Mesh [{i}] has changed.");
+                    AppaLog.Warn($"Cannot reuse voxel data store.  Mesh [{i}] has changed.");
                     return false;
                 }
             }
 
             return true;
         }
+
+        protected abstract void RecordAdditional(TVoxelData data);
+
+        protected abstract void RestoreAdditional(TVoxelData data);
     }
 }

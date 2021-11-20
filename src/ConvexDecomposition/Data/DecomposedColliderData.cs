@@ -39,7 +39,7 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data
 {
     public delegate void OnPostDecompose();
 
-    public class DecomposedColliderData : AppalachiaObject<DecomposedColliderData>
+    public class DecomposedColliderData  : AppalachiaObject
     {
         #region UI Groups
 

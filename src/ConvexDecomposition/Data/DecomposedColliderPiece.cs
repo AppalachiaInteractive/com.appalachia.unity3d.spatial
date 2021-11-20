@@ -9,7 +9,7 @@ using UnityEngine;
 namespace Appalachia.Spatial.ConvexDecomposition.Data
 {
     [Serializable]
-    public class DecomposedColliderPiece : AppalachiaObject<DecomposedColliderPiece>
+    public class DecomposedColliderPiece : AppalachiaObject
     {
         [SerializeField, SmartLabel(AlignWith = "Collider")] 
         public Mesh mesh;

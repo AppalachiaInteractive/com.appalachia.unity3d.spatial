@@ -47,10 +47,12 @@ namespace Appalachia.Spatial.MeshBurial.Processing
 
         public int Count => vegetation.Count + native.Count + array.Count + gameObject.Count; // +
 
-        public void Initialize()
+        public override void Initialize()
         {
             using (_PRF_Initialize.Auto())
             {
+                base.Initialize();
+                
                 if (pendingVegetationKeys == null)
                 {
                     pendingVegetationKeys = new NonSerializedAppaLookup2<int, int, AppaSet_int>();
