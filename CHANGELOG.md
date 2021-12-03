@@ -1,6 +1,4 @@
 ```
-C:/Users/Chris/com.appalachia/unity3d/appa/Assets/Appalachia.Spatial
-Development environment loaded!  
  ________   ___  ___   ________   ________    ________   _______    ________      
 |\   ____\ |\  \|\  \ |\   __  \ |\   ___  \ |\   ____\ |\  ___ \  |\   ____\     
 \ \  \___| \ \  \\\  \\ \  \|\  \\ \  \\ \  \\ \  \___| \ \   __/| \ \  \___|_    
@@ -14,6 +12,8 @@ Development environment loaded!
 ## Releasing
 | Hash | Date | Author | Changes |
 |------|------|--------|---------|
+| 271aa3d6f334630219c4fff48dac7180c7650e10 | 2021-12-02 | Chris Schubert | General code cleanup |
+| 9fc67936ea554ee1bd6b5c0e63f7cceae5b9c7b8 | 2021-11-21 | Chris Schubert | Updating changelog and releaselog |
 | aaca8b3e3181b5e3e52615f8f625c5cda31a9633 | 2021-11-20 | Chris Schubert | Updating changelog and releaselog |
 | b1210e5dad2fcf6f67c59888a3b3eff71f826b6f | 2021-11-20 | Chris Schubert | Updating changelog and releaselog |
 | d60aa9eb5b02e6ab62e4ae2af6acb76144ffe47c | 2021-11-20 | Chris Schubert | Expanding initialization setup class, and fixing some initialization in appa object bases |
