@@ -13,6 +13,7 @@
 `0.2.0`
 | Hash | Date | Author | Changes |
 |------|------|--------|---------|
+| 725fc7d8f351652db7cc8c27810628a7fae1b067 | 2021-12-02 | Chris Schubert | Updating changelog and releaselog |
 | 271aa3d6f334630219c4fff48dac7180c7650e10 | 2021-12-02 | Chris Schubert | General code cleanup |
 | 9fc67936ea554ee1bd6b5c0e63f7cceae5b9c7b8 | 2021-11-21 | Chris Schubert | Updating changelog and releaselog |
 | aaca8b3e3181b5e3e52615f8f625c5cda31a9633 | 2021-11-20 | Chris Schubert | Updating changelog and releaselog |
