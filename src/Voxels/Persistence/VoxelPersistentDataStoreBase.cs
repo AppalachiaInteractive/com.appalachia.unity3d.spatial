@@ -20,10 +20,10 @@ namespace Appalachia.Spatial.Voxels.Persistence
 {
     [Serializable]
     public abstract class
-        VoxelPersistentDataStoreBase<TVoxelData, TDataStore, TRaycastHit> :
+        VoxelPersistentDataStoreBase<TVoxelData, TThis, TRaycastHit> :
             AutonamedIdentifiableAppalachiaObject
-        where TVoxelData : PersistentVoxelsBase<TVoxelData, TDataStore, TRaycastHit>
-        where TDataStore : VoxelPersistentDataStoreBase<TVoxelData, TDataStore, TRaycastHit>
+        where TVoxelData : PersistentVoxelsBase<TVoxelData, TThis, TRaycastHit>
+        where TThis : VoxelPersistentDataStoreBase<TVoxelData, TThis, TRaycastHit>
         where TRaycastHit : struct, IVoxelRaycastHit
     {
         #region Fields and Autoproperties

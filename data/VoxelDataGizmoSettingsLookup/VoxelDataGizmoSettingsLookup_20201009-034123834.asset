@@ -12,5 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2b74641683824373899a5385778e9bb2, type: 3}
   m_Name: VoxelDataGizmoSettingsLookup_20201009-034123834
   m_EditorClassIdentifier: 
-  _niceName: 
+  _initializationData:
+    _nonSerializedTags: []
+    _tags: []
+    _resetToken: 
   _cachedName: 
+  _niceName: 
+  _defaultValue: {fileID: 0}

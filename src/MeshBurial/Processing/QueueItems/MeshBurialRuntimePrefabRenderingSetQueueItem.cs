@@ -66,8 +66,8 @@ namespace Appalachia.Spatial.MeshBurial.Processing.QueueItems
 
                     mats.AsArray().CopyTo(_set.locations.locations);
 
-                    _set.SetDirty();
-                    _set.locations.SetDirty();
+                    _set.MarkAsModified();
+                    _set.locations.MarkAsModified();
                 }
             }
         }

@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Appalachia.Core.Behaviours;
 using Appalachia.Utility.Extensions;
 using Sirenix.OdinInspector;
 using Unity.Mathematics;
@@ -14,7 +15,7 @@ using Random = UnityEngine.Random;
 
 namespace Appalachia.Spatial
 {
-    public class SimpleGridPositioner : MonoBehaviour
+    public class SimpleGridPositioner: AppalachiaBehaviour
     {
         public enum GridObjectTypes
         {
@@ -115,8 +116,10 @@ namespace Appalachia.Spatial
 
         #region Event Functions
 
-        private void Awake()
+        protected override void Awake()
         {
+            base.Awake();
+            
             /*
             if (PrefabUtility.IsPartOfPrefabAsset(this))
             {

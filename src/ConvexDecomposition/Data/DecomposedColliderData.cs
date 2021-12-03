@@ -692,7 +692,7 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data
 
                 migrated = true;
 
-                SetDirty();
+               this.MarkAsModified();
             }
 
             if (locked)
@@ -1003,7 +1003,7 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data
                         AppaLog.Warn("Setting dirty: cached position updated.");
                     }
 
-                    SetDirty();
+                   this.MarkAsModified();
                 }
 
                 if (localRotation != t.localRotation)
@@ -1014,7 +1014,7 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data
                         AppaLog.Warn("Setting dirty: cached rotation updated.");
                     }
 
-                    SetDirty();
+                   this.MarkAsModified();
                 }
 
                 if ((Vector3) localScale != t.localScale)
@@ -1025,7 +1025,7 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data
                         AppaLog.Warn("Setting dirty: cached scale updated.");
                     }
 
-                    SetDirty();
+                   this.MarkAsModified();
                 }
             }
         }
@@ -1105,7 +1105,7 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data
                                 AppaLog.Warn("Setting dirty: Invalid element removed");
                             }
 
-                            SetDirty();
+                           this.MarkAsModified();
                         }
                     }
                 }
@@ -1254,7 +1254,7 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data
                     AppaLog.Warn("Setting dirty");
                 }
 
-                SetDirty();
+               this.MarkAsModified();
 
                 SetIndices();
                 CheckForMissingAssets();
@@ -1484,7 +1484,7 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data
                 AppaLog.Warn("Setting dirty: material model updating");
             }
 
-            SetDirty();
+           this.MarkAsModified();
         }
 
         public void AssignMaterialToSelected(PhysicMaterialWrapper mat)
@@ -1740,7 +1740,7 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data
             var significantChangeThreshold = successVolume * -.04f;
 
             settings.maxConvexHulls = math.max(settings.maxConvexHulls, leveragedParts);
-            SetDirty();
+           this.MarkAsModified();
 
             var shouldContinue = true;
             while (shouldContinue)
@@ -1770,7 +1770,7 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data
                 {
                     var diff = settings.maxConvexHulls - meshes.Count;
                     IncreaseResolution(ref settings, diff, false);
-                    SetDirty();
+                   this.MarkAsModified();
                 }
             }
 
@@ -2096,7 +2096,7 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data
                             AppaLog.Warn("Setting dirty: elements added");
                         }
 
-                        SetDirty();
+                       this.MarkAsModified();
 
                         bar.IncrementAndShowProgressBasic(progressItemQuarter);
 
@@ -2424,7 +2424,7 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data
                             AppaLog.Warn("Setting dirty: elements added");
                         }
 
-                        SetDirty();
+                       this.MarkAsModified();
 
                         SetIndices();
 
@@ -2585,8 +2585,8 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data
                     AppaLog.Warn("Setting dirty: Saving gizmo mesh");
                 }
 
-                UnityEditor.EditorUtility.SetDirty(_gizmoMesh);
-                UnityEditor.EditorUtility.SetDirty(this);
+                _gizmoMesh.MarkAsModified();
+                this.MarkAsModified();
             }
 
             if (_gizmoMeshFilter == null)

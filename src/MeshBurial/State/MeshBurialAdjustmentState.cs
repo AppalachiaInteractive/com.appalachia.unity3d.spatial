@@ -10,6 +10,7 @@ using Appalachia.Jobs.MeshData;
 using Appalachia.Spatial.MeshBurial.Collections;
 using Appalachia.Spatial.MeshBurial.Processing;
 using Appalachia.Spatial.SpatialKeys;
+using Appalachia.Utility.Extensions;
 using Sirenix.OdinInspector;
 using Unity.Collections;
 using Unity.Profiling;
@@ -75,7 +76,7 @@ namespace Appalachia.Spatial.MeshBurial.State
                     _nativeAdjustments.Clear();
                 }
 
-                SetDirty();
+               this.MarkAsModified();
             }
         }
 
@@ -113,10 +114,10 @@ namespace Appalachia.Spatial.MeshBurial.State
                 if (_state == null)
                 {
                     _state = new MeshBurialAdjustmentEntryWrapperLookup();
-                    SetDirty();
+                   this.MarkAsModified();
                 }
 
-                _state.SetDirtyAction(SetDirty);
+                _state.SetMarkModifiedAction(this.MarkAsModified);
 
                 if (_nativeAdjustments.ShouldAllocate())
                 {
@@ -213,7 +214,7 @@ namespace Appalachia.Spatial.MeshBurial.State
                         _state.AddOrUpdate(key, newAdjustment);
                     }
 
-                    SetDirty();
+                   this.MarkAsModified();
                 }
             }
         }
@@ -236,7 +237,7 @@ namespace Appalachia.Spatial.MeshBurial.State
                         _state.AddIfKeyNotPresent(key, otherUpdate);
                     }
 
-                    SetDirty();
+                   this.MarkAsModified();
                 }
             }
         }

@@ -3,6 +3,7 @@
 using Appalachia.Core.Collections.Interfaces;
 using Appalachia.Core.Scriptables;
 using Appalachia.Spatial.Terrains.Collections;
+using Appalachia.Utility.Extensions;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
@@ -31,8 +32,8 @@ namespace Appalachia.Spatial.Terrains
                 {
                     _state = new TerrainMetadataLookup();
 #if UNITY_EDITOR
-                    SetDirty();
-                    _state.SetDirtyAction(SetDirty);
+                   this.MarkAsModified();
+                    _state.SetMarkModifiedAction(this.MarkAsModified);
 #endif
                 }
 
@@ -46,8 +47,8 @@ namespace Appalachia.Spatial.Terrains
             {
                 _state = new TerrainMetadataLookup();
 #if UNITY_EDITOR
-                SetDirty();
-                _state.SetDirtyAction(SetDirty);
+               this.MarkAsModified();
+                _state.SetMarkModifiedAction(this.MarkAsModified);
 #endif
             }
         }

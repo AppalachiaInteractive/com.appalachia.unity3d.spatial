@@ -1,39 +1,41 @@
 ﻿#if UNITY_EDITOR
+using Appalachia.Core.Behaviours;
 using UnityEngine;
 
 namespace Appalachia.Spatial.ConvexDecomposition.MeshCutting.Runtime
 {
-    public class ScreenLineRenderer : MonoBehaviour {
-
+    public class ScreenLineRenderer : AppalachiaBehaviour
+    {
         // Line Drawn event handler
         public delegate void LineDrawnHandler(Vector3 begin, Vector3 end, Vector3 depth);
-        public event LineDrawnHandler OnLineDrawn;
 
-        bool dragging;
-        Vector3 start;
-        Vector3 end;
-        Camera cam;
+        #region Fields and Autoproperties
+
+        private bool dragging;
+        private Vector3 start;
+        private Vector3 end;
+        private Camera cam;
 
         public Material lineMaterial;
 
+        #endregion
+
+        public event LineDrawnHandler OnLineDrawn;
+
+        #region Event Functions
+
         // Use this for initialization
-        void Start () {
+        protected override void Start()
+        {
+            base.Start();
+
             cam = Camera.main;
             dragging = false;
         }
 
-        private void OnEnable()
-        {
-            Camera.onPostRender += PostRenderDrawLine;
-        }
-
-        private void OnDisable()
-        {
-            Camera.onPostRender -= PostRenderDrawLine;
-        }
-
         // Update is called once per frame
-        void Update () {
+        private void Update()
+        {
             if (!dragging && Input.GetMouseButtonDown(0))
             {
                 start = cam.ScreenToViewportPoint(Input.mousePosition);
@@ -58,13 +60,27 @@ namespace Appalachia.Spatial.ConvexDecomposition.MeshCutting.Runtime
                 OnLineDrawn?.Invoke(
                     startRay.GetPoint(cam.nearClipPlane),
                     endRay.GetPoint(cam.nearClipPlane),
-                    endRay.direction.normalized);
+                    endRay.direction.normalized
+                );
             }
         }
-    
+
+        protected override void OnEnable()
+        {
+            base.OnEnable();
+            Camera.onPostRender += PostRenderDrawLine;
+        }
+
+        protected override void OnDisable()
+        {
+            base.OnDisable();
+            Camera.onPostRender -= PostRenderDrawLine;
+        }
+
+        #endregion
 
         /// <summary>
-        /// Draws the line in viewport space using start and end variables
+        ///     Draws the line in viewport space using start and end variables
         /// </summary>
         private void PostRenderDrawLine(Camera c)
         {

@@ -1,4 +1,5 @@
 ﻿#if UNITY_EDITOR
+using Appalachia.CI.Integration.Assets;
 using UnityEngine;
 using UnityEditor;
 
@@ -29,13 +30,13 @@ namespace Appalachia.Spatial.SDF
 
             var voxels = Generator.Generate();
 
-            AssetDatabase.CreateAsset(voxels, path);
-            AssetDatabase.SaveAssets();
-            AssetDatabase.Refresh();
+            AssetDatabaseManager.CreateAsset(voxels, path);
+            AssetDatabaseManager.SaveAssets();
+            AssetDatabaseManager.Refresh();
 
             Close();
 
-            Selection.activeObject = AssetDatabase.LoadMainAssetAtPath(path);
+            Selection.activeObject = AssetDatabaseManager.LoadMainAssetAtPath(path);
         }
 
         private void OnGUI()

@@ -22,9 +22,9 @@ using UnityEngine;
 
 namespace Appalachia.Spatial.Voxels.VoxelTypes
 {
-    public abstract partial class VoxelsBase<T, TRaycastHit> : IDisposable,
-                                                       IEquatable<VoxelsBase<T, TRaycastHit>>
-        where T : VoxelsBase<T, TRaycastHit>
+    public abstract partial class VoxelsBase<TThis, TRaycastHit> : IDisposable,
+                                                       IEquatable<VoxelsBase<TThis, TRaycastHit>>
+        where TThis : VoxelsBase<TThis, TRaycastHit>
         where TRaycastHit : struct, IVoxelRaycastHit
     {
         protected float3 _centerOfMass;
@@ -66,7 +66,7 @@ namespace Appalachia.Spatial.Voxels.VoxelTypes
             {
                 if (_transform == default)
                 {
-                    throw new ClassNotProperlyInitializedException(nameof(T), nameof(_transform));
+                    throw new ClassNotProperlyInitializedException(nameof(TThis), nameof(_transform));
                 }
 
                 return _transform.localToWorldMatrix;
@@ -79,7 +79,7 @@ namespace Appalachia.Spatial.Voxels.VoxelTypes
             {
                 if (_transform == default)
                 {
-                    throw new ClassNotProperlyInitializedException(nameof(T), nameof(_transform));
+                    throw new ClassNotProperlyInitializedException(nameof(TThis), nameof(_transform));
                 }
 
                 return _transform.worldToLocalMatrix;
@@ -92,7 +92,7 @@ namespace Appalachia.Spatial.Voxels.VoxelTypes
             {
                 if (_rawBounds == default)
                 {
-                    throw new ClassNotProperlyInitializedException(nameof(T), nameof(_rawBounds));
+                    throw new ClassNotProperlyInitializedException(nameof(TThis), nameof(_rawBounds));
                 }
 
                 return _rawBounds;
@@ -107,7 +107,7 @@ namespace Appalachia.Spatial.Voxels.VoxelTypes
                 if (_rawWorldBounds == default)
                 {
                     throw new ClassNotProperlyInitializedException(
-                        nameof(T),
+                        nameof(TThis),
                         nameof(_rawWorldBounds)
                     );
                 }
@@ -122,7 +122,7 @@ namespace Appalachia.Spatial.Voxels.VoxelTypes
             {
                 if (_voxelBounds == default)
                 {
-                    throw new ClassNotProperlyInitializedException(nameof(T), nameof(_voxelBounds));
+                    throw new ClassNotProperlyInitializedException(nameof(TThis), nameof(_voxelBounds));
                 }
 
                 return _voxelBounds;
@@ -137,7 +137,7 @@ namespace Appalachia.Spatial.Voxels.VoxelTypes
                 if (_voxelWorldBounds == default)
                 {
                     throw new ClassNotProperlyInitializedException(
-                        nameof(T),
+                        nameof(TThis),
                         nameof(_voxelWorldBounds)
                     );
                 }
@@ -1128,7 +1128,7 @@ namespace Appalachia.Spatial.Voxels.VoxelTypes
 
 #region IEquatable
 
-        [DebuggerStepThrough] public bool Equals(VoxelsBase<T, TRaycastHit> other)
+        [DebuggerStepThrough] public bool Equals(VoxelsBase<TThis, TRaycastHit> other)
         {
             if (ReferenceEquals(null, other))
             {
@@ -1191,7 +1191,7 @@ namespace Appalachia.Spatial.Voxels.VoxelTypes
                 return false;
             }
 
-            return Equals((VoxelsBase<T, TRaycastHit>) obj);
+            return Equals((VoxelsBase<TThis, TRaycastHit>) obj);
         }
 
         [DebuggerStepThrough] public override int GetHashCode()
@@ -1233,15 +1233,15 @@ namespace Appalachia.Spatial.Voxels.VoxelTypes
         }
 
         [DebuggerStepThrough] public static bool operator ==(
-            VoxelsBase<T, TRaycastHit> left,
-            VoxelsBase<T, TRaycastHit> right)
+            VoxelsBase<TThis, TRaycastHit> left,
+            VoxelsBase<TThis, TRaycastHit> right)
         {
             return Equals(left, right);
         }
 
         [DebuggerStepThrough] public static bool operator !=(
-            VoxelsBase<T, TRaycastHit> left,
-            VoxelsBase<T, TRaycastHit> right)
+            VoxelsBase<TThis, TRaycastHit> left,
+            VoxelsBase<TThis, TRaycastHit> right)
         {
             return !Equals(left, right);
         }
@@ -1331,7 +1331,7 @@ namespace Appalachia.Spatial.Voxels.VoxelTypes
 
 #region Profiling
 
-        private const string _PRF_PFX = nameof(VoxelsBase<T, TRaycastHit>) + ".";
+        private const string _PRF_PFX = nameof(VoxelsBase<TThis, TRaycastHit>) + ".";
 
         private static readonly ProfilerMarker _PRF_Initialize = new(_PRF_PFX + nameof(Initialize));
 

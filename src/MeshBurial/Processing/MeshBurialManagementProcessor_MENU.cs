@@ -5,6 +5,7 @@
 using Appalachia.CI.Constants;
 using Appalachia.CI.Integration.Assets;
 using Appalachia.Spatial.MeshBurial.State;
+using Appalachia.Utility.Extensions;
 using AwesomeTechnologies.VegetationSystem;
 using UnityEngine;
 
@@ -116,10 +117,10 @@ namespace Appalachia.Spatial.MeshBurial.Processing
 
             for (var i = 0; i < collection.State.Count; i++)
             {
-                collection.State.at[i].SetDirty();
+                collection.State.at[i].MarkAsModified();
             }
 
-            MeshBurialAdjustmentCollection.instance.SetDirty();
+            MeshBurialAdjustmentCollection.instance.MarkAsModified();
             AssetDatabaseManager.SaveAssets();
         }
     }

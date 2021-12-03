@@ -96,7 +96,7 @@ namespace Appalachia.Spatial.ConvexDecomposition.Generation
                         colliderTransform.localPosition = data.localPosition;
                         colliderTransform.localRotation = data.localRotation;
                         colliderTransform.localScale = data.localScale;
-                        SetDirty();
+                       this.MarkAsModified();
                     }
                 }
 
@@ -122,7 +122,7 @@ namespace Appalachia.Spatial.ConvexDecomposition.Generation
 
             if (data.settings.dirty)
             {
-                data.SetDirty();
+                data.MarkAsModified();
             }
 
             OnPostDecompose();
@@ -244,8 +244,8 @@ namespace Appalachia.Spatial.ConvexDecomposition.Generation
                         AppaLog.Warn("Setting dirty: created data.");
                     }
 
-                    data.SetDirty();
-                    SetDirty();
+                    data.MarkAsModified();
+                   this.MarkAsModified();
                 }
 
                 var rdm = GetComponent<RigidbodyDensityManager>();
@@ -264,7 +264,7 @@ namespace Appalachia.Spatial.ConvexDecomposition.Generation
 
                 if (data.settings.dirty)
                 {
-                    data.SetDirty();
+                    data.MarkAsModified();
                 }
 
                 if (_disableDataChanges)

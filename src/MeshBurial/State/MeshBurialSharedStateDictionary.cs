@@ -5,6 +5,7 @@
 using Appalachia.Core.Collections.Interfaces;
 using Appalachia.Core.Scriptables;
 using Appalachia.Spatial.MeshBurial.Collections;
+using Appalachia.Utility.Extensions;
 using Sirenix.OdinInspector;
 
 #endregion
@@ -31,9 +32,9 @@ namespace Appalachia.Spatial.MeshBurial.State
                 if (_state == null)
                 {
                     _state = new MeshBurialSharedStateLookup();
-                    SetDirty();
+                   this.MarkAsModified();
 
-                    _state.SetDirtyAction(SetDirty);
+                    _state.SetMarkModifiedAction(this.MarkAsModified);
                 }
 
                 return _state;
@@ -45,10 +46,10 @@ namespace Appalachia.Spatial.MeshBurial.State
             if (_state == null)
             {
                 _state = new MeshBurialSharedStateLookup();
-                SetDirty();
+               this.MarkAsModified();
             }
 
-            _state.SetDirtyAction(SetDirty);
+            _state.SetMarkModifiedAction(this.MarkAsModified);
         }
     }
 }

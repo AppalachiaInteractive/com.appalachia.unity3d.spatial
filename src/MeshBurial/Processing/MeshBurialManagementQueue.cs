@@ -8,6 +8,7 @@ using Appalachia.Core.Collections.Implementations.Sets;
 using Appalachia.Core.Collections.NonSerialized;
 using Appalachia.Core.Scriptables;
 using Appalachia.Spatial.MeshBurial.Processing.QueueItems;
+using Appalachia.Utility.Extensions;
 using Unity.Profiling;
 
 #endregion
@@ -47,7 +48,7 @@ namespace Appalachia.Spatial.MeshBurial.Processing
 
         public int Count => vegetation.Count + native.Count + array.Count + gameObject.Count; // +
 
-        public override void Initialize()
+        protected override void Initialize()
         {
             using (_PRF_Initialize.Auto())
             {
@@ -84,7 +85,7 @@ namespace Appalachia.Spatial.MeshBurial.Processing
 
                 //if (runtimePrefabRenderingSets == null) { runtimePrefabRenderingSets = new AppaTemporalQueue<MeshBurialRuntimePrefabRenderingSetQueueItem>(); }
 
-                SetDirty();
+               this.MarkAsModified();
             }
         }
 
@@ -111,7 +112,7 @@ namespace Appalachia.Spatial.MeshBurial.Processing
                 //instance.runtimePrefabRenderingSets.ResetCurrent();
                 instance.vegetation.ResetCurrent();
 
-                instance.SetDirty();
+                instance.MarkAsModified();
             }
         }
     }

@@ -6,6 +6,7 @@ using System;
 using System.Diagnostics;
 using Appalachia.Core.Attributes.Editing;
 using Appalachia.Spatial.ConvexDecomposition.API;
+using Appalachia.Utility.Extensions;
 using Sirenix.OdinInspector;
 using Unity.Mathematics;
 using UnityEngine.Serialization;
@@ -67,34 +68,34 @@ namespace Appalachia.Spatial.ConvexDecomposition
         // approximate convex decomposition (default = 0, range = { 0,1 })
         [SmartLabel]
         [HorizontalGroup("A", .5f)]
-        [OnValueChanged(nameof(SetDirty))]
+        [OnValueChanged(nameof(MarkFieldsModified))]
         public ConvexMeshDecompositionMode mode;
 
         // Maximum number of convex hulls to produce (default = 64, range = 1 - 1024)
         [SmartLabel, PropertyRange(Ranges.maxConvexHulls_MIN, Ranges.maxConvexHulls_MAX)]
         [HorizontalGroup("A", .5f)]
-        [OnValueChanged(nameof(SetDirty))]
+        [OnValueChanged(nameof(MarkFieldsModified))]
         public int maxConvexHulls;
-
+        
         // Enable / disable normalizing the mesh before applying the convex
         // decomposition (default = false)
         [SmartLabel(Postfix = true)]
         [HorizontalGroup("B", .5f)]
-        [OnValueChanged(nameof(SetDirty))]
+        [OnValueChanged(nameof(MarkFieldsModified))]
         public bool normalize;
 
         // Maximum number of voxels generated during the voxelization stage
         // (default = 100,000, range = 10,000 - 64,000,000)
         [SmartLabel, PropertyRange(Ranges.resolution_MIN, Ranges.resolution_MAX)]
         [HorizontalGroup("B", .5f)]
-        [OnValueChanged(nameof(SetDirty))]
+        [OnValueChanged(nameof(MarkFieldsModified))]
         public int resolution;
 
         // Controls the granularity of the search for the "best" clipping plane
         // (default = 4, range = 1 - 16)
         [SmartLabel, PropertyRange(Ranges.planeDownsampling_MIN, Ranges.planeDownsampling_MAX)]
         [HorizontalGroup("C", .5f)]
-        [OnValueChanged(nameof(SetDirty))]
+        [OnValueChanged(nameof(MarkFieldsModified))]
         public int planeDownsampling;
 
         // Controls the precision of the convex - hull generation process during
@@ -102,27 +103,27 @@ namespace Appalachia.Spatial.ConvexDecomposition
         [FormerlySerializedAs("convexhullDownsampling")]
         [SmartLabel, PropertyRange(Ranges.convexHullDownsampling_MIN, Ranges.convexHullDownsampling_MAX)]
         [HorizontalGroup("C", .5f)]
-        [OnValueChanged(nameof(SetDirty))]
+        [OnValueChanged(nameof(MarkFieldsModified))]
         public int convexHullDownsampling;
 
         // Maximum allowed concavity (default = 0.0025, range = 0.0 - 1.0)
         [SmartLabel, PropertyRange(Ranges.concavity_MIN, Ranges.concavity_MAX)]
         [HorizontalGroup("D", .33f)]
-        [OnValueChanged(nameof(SetDirty))]
+        [OnValueChanged(nameof(MarkFieldsModified))]
         public double concavity;
 
         // Controls the bias toward clipping along symmetry planes
         // (default = 0.05, range = 0.0 - 1.0)
         [SmartLabel, PropertyRange(Ranges.alpha_MIN, Ranges.alpha_MAX)]
         [HorizontalGroup("D", .33f)]
-        [OnValueChanged(nameof(SetDirty))]
+        [OnValueChanged(nameof(MarkFieldsModified))]
         public double alpha;
 
         // Controls the bias toward clipping along revolution axes
         // (default = 0.05, range = 0.0 - 1.0)
         [SmartLabel, PropertyRange(Ranges.beta_MIN, Ranges.beta_MAX)]
         [HorizontalGroup("D", .33f)]
-        [OnValueChanged(nameof(SetDirty))]
+        [OnValueChanged(nameof(MarkFieldsModified))]
         public double beta;
 
         // Controls the maximum number of triangles per convex hull
@@ -131,7 +132,7 @@ namespace Appalachia.Spatial.ConvexDecomposition
         [FormerlySerializedAs("maxNumVerticesPerCH")]
         [SmartLabel, PropertyRange(Ranges.maximumVerticesPerHull_MIN, Ranges.maximumVerticesPerHull_MAX)]
         [HorizontalGroup("E", .5f)]
-        [OnValueChanged(nameof(SetDirty))]
+        [OnValueChanged(nameof(MarkFieldsModified))]
         public int maximumVerticesPerHull;
 
         // Controls the adaptive sampling of the generated convex hulls
@@ -139,7 +140,7 @@ namespace Appalachia.Spatial.ConvexDecomposition
         [FormerlySerializedAs("minVolumePerCH")]
         [SmartLabel, PropertyRange(Ranges.minimumVolumePerHull_MIN, Ranges.minimumVolumePerHull_MAX)]
         [HorizontalGroup("E", .5f)]
-        [OnValueChanged(nameof(SetDirty))]
+        [OnValueChanged(nameof(MarkFieldsModified))]
         public double minimumVolumePerHull;
 
         // Enable / disable approximation when computing convex hulls
@@ -147,20 +148,20 @@ namespace Appalachia.Spatial.ConvexDecomposition
         [SmartLabel(Postfix = true)]
         [HorizontalGroup("F", .5f)]
         [ReadOnly]
-        [OnValueChanged(nameof(SetDirty))]
+        [OnValueChanged(nameof(MarkFieldsModified))]
         public bool convexHullApproximation;
 
         // Project the output convex hull vertices onto the original source mesh to
         // increase the floating point accuracy of the results (default = true)
         [SmartLabel(Postfix = true)]
         [HorizontalGroup("F", .5f)]
-        [OnValueChanged(nameof(SetDirty))]
+        [OnValueChanged(nameof(MarkFieldsModified))]
         public bool projectHullVertices;
 
         [NonSerialized]
         public bool dirty;
 
-        private void SetDirty()
+        private void MarkFieldsModified()
         {
             dirty = true;
         }
@@ -217,7 +218,7 @@ namespace Appalachia.Spatial.ConvexDecomposition
         [SmartLabel(Text = "OpenCL Acceleration", Postfix=true)]
         [HorizontalGroup("G", .33f)]
         [EnableIf(nameof(_canAccelerate))]
-        [OnValueChanged(nameof(SetDirty))]
+        [OnValueChanged(nameof(MarkFieldsModified))]
         public bool openClAcceleration;
 
         // OpenCL platform id (default = 0, range = 0 - # OCL platforms)
@@ -226,7 +227,7 @@ namespace Appalachia.Spatial.ConvexDecomposition
         [ValueDropdown(nameof(_openCLPlatforms))]
         [EnableIf(nameof(_canAccelerateDetail))]
         [OnValueChanged(nameof(ResetOpenCLDevice))]
-        [OnValueChanged(nameof(SetDirty))]
+        [OnValueChanged(nameof(MarkFieldsModified))]
         public int openClPlatform;
 
         private void ResetOpenCLDevice()
@@ -239,7 +240,7 @@ namespace Appalachia.Spatial.ConvexDecomposition
         [HorizontalGroup("G", .33f)]
         [ValueDropdown(nameof(_openCLDevices))]
         [EnableIf(nameof(_canAccelerateDetail))]
-        [OnValueChanged(nameof(SetDirty))]
+        [OnValueChanged(nameof(MarkFieldsModified))]
         public int openClDevice;
 
         public VHACDSession ToSession()

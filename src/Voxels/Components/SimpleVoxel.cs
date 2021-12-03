@@ -124,7 +124,7 @@ namespace Appalachia.Spatial.Voxels.Components
 
                 if (_gizmoSettings == null)
                 {
-                    _gizmoSettings = VoxelDataGizmoSettingsLookup.instance.GetOrLoadOrCreateNew(
+                    _gizmoSettings = VoxelDataGizmoSettingsCollection.instance.GetOrLoadOrCreateNew(
                         VoxelDataGizmoStyle.Simple,
                         nameof(VoxelDataGizmoStyle.Simple)
                     );

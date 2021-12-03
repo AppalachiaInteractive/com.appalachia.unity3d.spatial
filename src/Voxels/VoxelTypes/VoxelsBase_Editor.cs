@@ -18,9 +18,9 @@ using UnityEngine;
 
 namespace Appalachia.Spatial.Voxels.VoxelTypes
 {
-    public abstract partial class VoxelsBase<T, TRaycastHit> : IDisposable,
-                                                       IEquatable<VoxelsBase<T, TRaycastHit>>
-        where T : VoxelsBase<T, TRaycastHit>
+    public abstract partial class VoxelsBase<TThis, TRaycastHit> : IDisposable,
+                                                       IEquatable<VoxelsBase<TThis, TRaycastHit>>
+        where TThis : VoxelsBase<TThis, TRaycastHit>
         where TRaycastHit : struct, IVoxelRaycastHit
     {
         #region Gizmos

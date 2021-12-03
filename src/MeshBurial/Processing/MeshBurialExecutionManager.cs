@@ -14,6 +14,7 @@ using Appalachia.Jobs.Optimization.Utilities;
 using Appalachia.Jobs.Transfers;
 using Appalachia.Spatial.MeshBurial.Processing.QueueItems;
 using Appalachia.Spatial.MeshBurial.State;
+using Appalachia.Utility.Extensions;
 using Appalachia.Utility.Logging;
 using AwesomeTechnologies.VegetationStudio;
 using AwesomeTechnologies.VegetationSystem;
@@ -450,8 +451,8 @@ namespace Appalachia.Spatial.MeshBurial.Processing
                     {
                         CheckAndLogQueueDepth();
 
-                        MeshBurialAdjustmentCollection.instance.SetDirty();
-                        QUEUES.SetDirty();
+                        MeshBurialAdjustmentCollection.instance.MarkAsModified();
+                        QUEUES.MarkAsModified();
                     }
                 }
             }

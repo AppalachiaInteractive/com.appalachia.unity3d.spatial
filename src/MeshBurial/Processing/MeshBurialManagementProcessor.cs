@@ -9,6 +9,7 @@ using Appalachia.Core.Collections.Implementations.Sets;
 using Appalachia.Core.Collections.NonSerialized;
 using Appalachia.Spatial.MeshBurial.Processing.QueueItems;
 using Appalachia.Spatial.MeshBurial.State;
+using Appalachia.Utility.Extensions;
 using AwesomeTechnologies.VegetationSystem;
 using Unity.Profiling;
 using UnityEngine;
@@ -235,7 +236,7 @@ namespace Appalachia.Spatial.MeshBurial.Processing
         {
             using (_PRF_Initialize.Auto())
             {
-                QUEUES.Initialize();
+                QUEUES.InitializeExternal();
 
                 _vspMeshBurialEnabled = false;
                 UnityEditor.EditorApplication.delayCall += ToggleEnableVSPMeshBurials;
@@ -261,7 +262,7 @@ namespace Appalachia.Spatial.MeshBurial.Processing
             {
                 queue.Enqueue(item);
 
-                QUEUES.SetDirty();
+                QUEUES.MarkAsModified();
             }
         }
     }

@@ -6,6 +6,7 @@ using Appalachia.Core.Assets;
 using Appalachia.Core.Collections.Interfaces;
 using Appalachia.Core.Scriptables;
 using Appalachia.Spatial.MeshBurial.Collections;
+using Appalachia.Utility.Extensions;
 using Sirenix.OdinInspector;
 using Unity.Profiling;
 using UnityEngine;
@@ -47,9 +48,9 @@ namespace Appalachia.Spatial.MeshBurial.State
                 if (_state == null)
                 {
                     _state = new MeshBurialAdjustmentStateLookup();
-                    SetDirty();
+                   this.MarkAsModified();
 
-                    _state.SetDirtyAction(SetDirty);
+                    _state.SetMarkModifiedAction(this.MarkAsModified);
                 }
 
                 return _state;
@@ -72,7 +73,7 @@ namespace Appalachia.Spatial.MeshBurial.State
 
                 _state.Clear();
 
-                SetDirty();
+               this.MarkAsModified();
 
                 AssetDatabaseSaveManager.SaveAssetsNextFrame();
             }
@@ -85,10 +86,10 @@ namespace Appalachia.Spatial.MeshBurial.State
                 if (_state == null)
                 {
                     _state = new MeshBurialAdjustmentStateLookup();
-                    SetDirty();
+                   this.MarkAsModified();
                 }
 
-                _state.SetDirtyAction(SetDirty);
+                _state.SetMarkModifiedAction(this.MarkAsModified);
             }
         }
 
@@ -107,7 +108,7 @@ namespace Appalachia.Spatial.MeshBurial.State
                         adjustment.InitializeLookupStorage(prefab);
 
                         _state.AddOrUpdate(prefab, adjustment);
-                        SetDirty();
+                       this.MarkAsModified();
                     }
 
                     return adjustment;
@@ -118,7 +119,7 @@ namespace Appalachia.Spatial.MeshBurial.State
 
                 _state.AddOrUpdate(prefab, newState);
 
-                SetDirty();
+               this.MarkAsModified();
 
                 return newState;
             }

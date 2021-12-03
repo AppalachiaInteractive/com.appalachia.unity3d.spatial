@@ -12,20 +12,22 @@ using Appalachia.Spatial.Voxels.VoxelTypes;
 namespace Appalachia.Spatial.Voxels.Persistence
 {
     [Serializable]
-    public abstract class VoxelDataStoreLookup<TVoxelData, TRaycastHit, TLookup, TIndex, TDataStore,
-                                               TDataStoreList> : AppalachiaObjectLookupCollection<
-        TLookup, TIndex, string, TDataStore, AppaList_string, TDataStoreList>
-        where TLookup : AppalachiaObjectLookupCollection<TLookup, TIndex, string, TDataStore,
-            AppaList_string, TDataStoreList>
-        where TIndex : AppaLookup<string, TDataStore, AppaList_string, TDataStoreList>, new()
-        where TDataStoreList : AppaList<TDataStore>, new()
-        where TDataStore : VoxelPersistentDataStoreBase<TVoxelData, TDataStore, TRaycastHit>
-        where TVoxelData : PersistentVoxelsBase<TVoxelData, TDataStore, TRaycastHit>
+    public abstract class VoxelDataStoreLookup<TVoxelData, TRaycastHit, TThis, TLookup, TValue,
+                                               TValueList> : AppalachiaObjectLookupCollection<
+        string, TValue, AppaList_string, TValueList, TLookup, TThis>
+        where TThis : AppalachiaObjectLookupCollection<string, TValue,
+            AppaList_string, TValueList, TLookup, TThis>
+        where TLookup : AppaLookup<string, TValue, AppaList_string, TValueList>, new()
+        where TValue : VoxelPersistentDataStoreBase<TVoxelData, TValue, TRaycastHit>
+        where TValueList : AppaList<TValue>, new()
+        where TVoxelData : PersistentVoxelsBase<TVoxelData, TValue, TRaycastHit>
         where TRaycastHit : struct, IVoxelRaycastHit
     {
-        protected override string GetUniqueKeyFromValue(TDataStore value)
+        protected override string GetUniqueKeyFromValue(TValue value)
         {
             return value.identifier;
         }
+
+        public override bool HasDefault => false;
     }
 }

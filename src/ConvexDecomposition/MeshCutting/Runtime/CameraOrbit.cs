@@ -1,14 +1,16 @@
 ﻿#if UNITY_EDITOR
+using Appalachia.Core.Behaviours;
 using UnityEngine;
 
 namespace Appalachia.Spatial.ConvexDecomposition.MeshCutting.Runtime
 {
     /// <summary>
-    /// Adapted from
-    /// https://answers.unity.com/questions/1257281/how-to-rotate-camera-orbit-around-a-game-object-on.html
+    ///     Adapted from
+    ///     https://answers.unity.com/questions/1257281/how-to-rotate-camera-orbit-around-a-game-object-on.html
     /// </summary>
-
-    public class CameraOrbit : MonoBehaviour {
+    public class CameraOrbit : AppalachiaBehaviour
+    {
+        #region Fields and Autoproperties
 
         public Transform target;
         private Vector3 fixedPosition;
@@ -20,14 +22,18 @@ namespace Appalachia.Spatial.ConvexDecomposition.MeshCutting.Runtime
         public float yMaxLimit = 90f;
         public float distanceMin = 2f;
         public float distanceMax = 10f;
-        float rotationYAxis;
-        float rotationXAxis;
- 
+        private float rotationYAxis;
+        private float rotationXAxis;
+
+        #endregion
+
+        #region Event Functions
 
         // Use this for initialization
-        void Start () {
-
-            Vector3 angles = transform.eulerAngles;
+        protected override void Start()
+        {
+            base.Start();
+            var angles = transform.eulerAngles;
             rotationYAxis = angles.y;
             rotationXAxis = angles.x;
 
@@ -39,7 +45,9 @@ namespace Appalachia.Spatial.ConvexDecomposition.MeshCutting.Runtime
 
             // Clone the target's position so that it stays fixed
             if (target)
+            {
                 fixedPosition = target.position;
+            }
         }
 
         // Called after Update
@@ -54,12 +62,16 @@ namespace Appalachia.Spatial.ConvexDecomposition.MeshCutting.Runtime
                     rotationXAxis = ClampAngle(rotationXAxis, yMinLimit, yMaxLimit);
                 }
 
-                Quaternion toRotation = Quaternion.Euler(rotationXAxis, rotationYAxis, 0);
-                Quaternion rotation = toRotation;
+                var toRotation = Quaternion.Euler(rotationXAxis, rotationYAxis, 0);
+                var rotation = toRotation;
 
-                distance = Mathf.Clamp(distance - (Input.GetAxis("Mouse ScrollWheel") * 5), distanceMin, distanceMax);
-                Vector3 negDistance = new Vector3(0.0f, 0.0f, -distance);
-                Vector3 position = (rotation * negDistance) + fixedPosition;
+                distance = Mathf.Clamp(
+                    distance - (Input.GetAxis("Mouse ScrollWheel") * 5),
+                    distanceMin,
+                    distanceMax
+                );
+                var negDistance = new Vector3(0.0f, 0.0f, -distance);
+                var position = (rotation * negDistance) + fixedPosition;
 
                 var transform1 = transform;
                 transform1.rotation = rotation;
@@ -67,16 +79,22 @@ namespace Appalachia.Spatial.ConvexDecomposition.MeshCutting.Runtime
             }
         }
 
+        #endregion
+
         public static float ClampAngle(float angle, float min, float max)
         {
             if (angle < -360F)
+            {
                 angle += 360F;
+            }
+
             if (angle > 360F)
+            {
                 angle -= 360F;
+            }
+
             return Mathf.Clamp(angle, min, max);
         }
-
-
     }
 }
 

@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using Appalachia.CI.Integration.Assets;
 using Appalachia.Core.Collections.Native;
 using Appalachia.Core.Debugging;
 using Appalachia.Core.Preferences;
@@ -699,7 +700,7 @@ namespace Appalachia.Spatial.MeshBurial
                         return;
                     }
 
-                    _gameObject = AssetDatabase.LoadAssetAtPath<GameObject>(path);
+                    _gameObject = AssetDatabaseManager.LoadAssetAtPath<GameObject>(path);
 
                     if (_gameObject == null)
                     {
@@ -716,7 +717,7 @@ namespace Appalachia.Spatial.MeshBurial
             }
         }
 
-        public override void Initialize()
+        protected override void Initialize()
         {
             using (_PRF_Initialize.Auto())
             {
