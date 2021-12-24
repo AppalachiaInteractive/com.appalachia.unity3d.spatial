@@ -5,12 +5,12 @@
 using System;
 using Appalachia.CI.Constants;
 using Appalachia.Core.Collections.Native;
-using Appalachia.Core.Scriptables;
+using Appalachia.Core.Objects.Root;
 using Appalachia.Jobs.MeshData;
 using Appalachia.Spatial.MeshBurial.Collections;
 using Appalachia.Spatial.MeshBurial.Processing;
 using Appalachia.Spatial.SpatialKeys;
-using Appalachia.Utility.Extensions;
+using Appalachia.Utility.Async;
 using Sirenix.OdinInspector;
 using Unity.Collections;
 using Unity.Profiling;
@@ -21,8 +21,10 @@ using UnityEngine;
 namespace Appalachia.Spatial.MeshBurial.State
 {
     [Serializable]
-    public class MeshBurialAdjustmentState  : AppalachiaObject
+    public class MeshBurialAdjustmentState : AppalachiaObject<>
     {
+        
+        
         private const string _PRF_PFX = nameof(MeshBurialAdjustmentState) + ".";
 
         private static readonly ProfilerMarker _PRF_InitializeLookupStorage =
@@ -80,11 +82,11 @@ namespace Appalachia.Spatial.MeshBurial.State
             }
         }
 
-        protected override void OnEnable()
+        protected override async AppaTask WhenEnabled()
         {
             using (_PRF_OnEnable.Auto())
             {
-                base.OnEnable();
+                await base.WhenEnabled();
                 InitializeLookup();
             }
         }
@@ -117,7 +119,7 @@ namespace Appalachia.Spatial.MeshBurial.State
                    this.MarkAsModified();
                 }
 
-                _state.SetMarkModifiedAction(this.MarkAsModified);
+                _state.SetObjectOwnership(this);
 
                 if (_nativeAdjustments.ShouldAllocate())
                 {
@@ -126,7 +128,7 @@ namespace Appalachia.Spatial.MeshBurial.State
                             2048,
                             Allocator.Persistent
                         );
-                    MeshObjectManager.RegisterDisposalDependency(
+                    MeshObjectManager.instance.RegisterDisposalDependency(
                         () => _nativeAdjustments.SafeDispose()
                     );
                 }

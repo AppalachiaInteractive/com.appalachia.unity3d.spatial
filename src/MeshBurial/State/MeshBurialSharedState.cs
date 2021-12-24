@@ -3,6 +3,7 @@
 #region
 
 using System;
+using Appalachia.Core.Attributes;
 using Appalachia.Jobs.MeshData;
 using Sirenix.OdinInspector;
 using UnityEngine;
@@ -12,9 +13,41 @@ using UnityEngine;
 namespace Appalachia.Spatial.MeshBurial.State
 {
     [Serializable]
+    [CallStaticConstructorInEditor]
     public class MeshBurialSharedState
     {
+        // [CallStaticConstructorInEditor] should be added to the class (initsingletonattribute)
+        static MeshBurialSharedState()
+        {
+            MeshBurialOptimizationParameters.InstanceAvailable += i => _meshBurialOptimizationParameters = i;
+            MeshBurialGizmoSettings.InstanceAvailable += i => _meshBurialGizmoSettings = i;
+        }
+
+        public MeshBurialSharedState(GameObject instanceOrPrefab, MeshBurialOptimizationParameters op)
+        {
+            _meshBurialOptimizationParameters = op;
+
+            _obj = instanceOrPrefab;
+            _meshAsset = MeshObjectManager.instance.GetCheapestMesh(_obj);
+        }
+
+        #region Static Fields and Autoproperties
+
         private static int _terrainFrameCountLastRender;
+
+        private static MeshBurialGizmoSettings _meshBurialGizmoSettings;
+
+        [BoxGroup("Optimization")]
+        [InlineProperty]
+        [InlineEditor]
+        [HideLabel]
+        [ShowInInspector]
+        [HideReferenceObjectPicker]
+        private static MeshBurialOptimizationParameters _meshBurialOptimizationParameters;
+
+        #endregion
+
+        #region Fields and Autoproperties
 
         [SerializeField]
         [HideInInspector]
@@ -32,56 +65,18 @@ namespace Appalachia.Spatial.MeshBurial.State
         [HideReferenceObjectPicker]
         private MeshBurialGizmoSettings _gizmos;
 
-        [BoxGroup("Optimization")]
-        [InlineProperty]
-        [InlineEditor]
-        [HideLabel]
-        [ShowInInspector]
-        [HideReferenceObjectPicker]
-        private MeshBurialOptimizationParameters _optimizationParams;
+        #endregion
 
-        public MeshBurialSharedState(
-            GameObject instanceOrPrefab,
-            MeshBurialOptimizationParameters op)
-        {
-            _optimizationParams = op;
+        public MeshBurialGizmoSettings gizmos => _meshBurialGizmoSettings;
 
-            _obj = instanceOrPrefab;
-            _meshAsset = MeshObjectManager.GetCheapestMesh(_obj);
-        }
+        public MeshBurialOptimizationParameters optimizationParams => _meshBurialOptimizationParameters;
 
         /*public MeshObject meshObject
                  {
                      get => _meshObject;
                      private set => _meshObject = value;
                  }*/
-        public MeshObjectWrapper meshObject => MeshObjectManager.GetByMesh(_meshAsset, true);
-
-        public MeshBurialOptimizationParameters optimizationParams
-        {
-            get
-            {
-                if (_optimizationParams == null)
-                {
-                    _optimizationParams = MeshBurialOptimizationParameters.instance;
-                }
-
-                return _optimizationParams;
-            }
-        }
-
-        public MeshBurialGizmoSettings gizmos
-        {
-            get
-            {
-                if (_gizmos == null)
-                {
-                    _gizmos = MeshBurialGizmoSettings.instance;
-                }
-
-                return _gizmos;
-            }
-        }
+        public MeshObjectWrapper meshObject => MeshObjectManager.instance.GetByMesh(_meshAsset, true);
 
         /*public void OnDrawGizmos(Matrix4x4 matrix, TerrainThreadsafeData terrain)
         {

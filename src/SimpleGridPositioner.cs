@@ -4,8 +4,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Appalachia.Core.Behaviours;
+using Appalachia.Core.Objects.Root;
 using Appalachia.Utility.Extensions;
+using Appalachia.Utility.Strings;
 using Sirenix.OdinInspector;
 using Unity.Mathematics;
 using UnityEngine;
@@ -15,7 +16,7 @@ using Random = UnityEngine.Random;
 
 namespace Appalachia.Spatial
 {
-    public class SimpleGridPositioner: AppalachiaBehaviour
+    public sealed class SimpleGridPositioner : AppalachiaBehaviour<SimpleGridPositioner>
     {
         public enum GridObjectTypes
         {
@@ -114,43 +115,6 @@ namespace Appalachia.Spatial
 
         #endregion
 
-        #region Event Functions
-
-        protected override void Awake()
-        {
-            base.Awake();
-            
-            /*
-            if (PrefabUtility.IsPartOfPrefabAsset(this))
-            {
-                for (var i = 0; i < objectsToCenter.Length; i++)
-                {
-                    var objectToCenter = objectsToCenter[i];
-
-                    if (PrefabUtility.IsAnyPrefabInstanceRoot(objectToCenter))
-                    {
-                        objectsToCenter[i] = AssetDatabaseManager.GetPrefabAsset(objectToCenter);
-                    }
-                }
-            }
-            else
-            {
-                for (var i = 0; i < objectsToCenter.Length; i++)
-                {
-                    var objectToCenter = objectsToCenter[i];
-
-                    if (PrefabUtility.IsPartOfPrefabAsset(objectToCenter))
-                    {
-                        objectsToCenter[i] = objectToCenter.InstantiatePrefab();
-                    }
-                }
-                
-                BuildGrid();
-            }
-            */
-        }
-
-        #endregion
 
         [Button]
         [DisableIf(nameof(locked))]
@@ -174,7 +138,7 @@ namespace Appalachia.Spatial
                     {
                         for (var j = 0; j < 5; j++)
                         {
-                            var stringToCheck = string.Format(styles[i], j.ToString());
+                            var stringToCheck = ZString.Format(styles[i], j.ToString());
 
                             if (lowerName.Contains(stringToCheck))
                             {
@@ -199,8 +163,8 @@ namespace Appalachia.Spatial
 
                     for (var i = 0; i < centering.Count; i++)
                     {
-                        var stringToCheck = string.Format(styles[matchingStyle], matchingLod.ToString());
-                        var lod0String = string.Format(styles[matchingStyle],    0);
+                        var stringToCheck = ZString.Format(styles[matchingStyle], matchingLod.ToString());
+                        var lod0String = ZString.Format(styles[matchingStyle],    0);
 
                         var searchTerm = lowerName.Replace(stringToCheck, lod0String).ToLower();
                         if ((centering[i] != null) && (centering[i][0].name.ToLower() == searchTerm))

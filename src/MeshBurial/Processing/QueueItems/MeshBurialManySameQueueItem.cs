@@ -3,6 +3,7 @@
 #region
 
 using System;
+using Appalachia.Core.Attributes;
 using Appalachia.Spatial.MeshBurial.State;
 using Unity.Profiling;
 using UnityEngine;
@@ -12,18 +13,14 @@ using UnityEngine;
 namespace Appalachia.Spatial.MeshBurial.Processing.QueueItems
 {
     [Serializable]
+    [CallStaticConstructorInEditor]
     public abstract class MeshBurialManySameQueueItem : MeshBurialManyQueueItem
     {
-        private const string _PRF_PFX = nameof(MeshBurialManySameQueueItem) + ".";
-
-        private static readonly ProfilerMarker _PRF_OnInitializeInternal =
-            new(_PRF_PFX + nameof(OnInitializeInternal));
-
-        [SerializeField] private GameObject _model;
-        [SerializeField] private int _modelHashCode;
-        [SerializeField] private bool _adoptTerrainNormal;
-        private MeshBurialAdjustmentState _adjustmentState;
-        private MeshBurialSharedState _sharedState;
+        // [CallStaticConstructorInEditor] should be added to the class (initsingletonattribute)
+        static MeshBurialManySameQueueItem()
+        {
+            MeshBurialAdjustmentCollection.InstanceAvailable += i => _meshBurialAdjustmentCollection = i;
+        }
 
         protected MeshBurialManySameQueueItem(
             string name,
@@ -41,25 +38,36 @@ namespace Appalachia.Spatial.MeshBurial.Processing.QueueItems
             _adoptTerrainNormal = adoptTerrainNormal;
         }
 
-        protected override void OnInitializeInternal()
-        {
-            using (_PRF_OnInitializeInternal.Auto())
-            {
-                base.OnInitializeInternal();
+        #region Static Fields and Autoproperties
 
-                _sharedState = MeshBurialSharedStateManager.GetByPrefab(_model);
-                _adjustmentState = MeshBurialAdjustmentCollection.instance.GetByPrefab(_model);
-            }
-        }
+        private static MeshBurialAdjustmentCollection _meshBurialAdjustmentCollection;
 
-        protected override int GetModelHashCodeInternal()
-        {
-            return _modelHashCode;
-        }
+        #endregion
+
+        #region Fields and Autoproperties
+
+        [SerializeField] private bool _adoptTerrainNormal;
+
+        [SerializeField] private GameObject _model;
+        [SerializeField] private int _modelHashCode;
+        private MeshBurialAdjustmentState _adjustmentState;
+        private MeshBurialSharedState _sharedState;
+
+        #endregion
 
         protected override bool GetAdoptTerrainNormalInternal()
         {
             return _adoptTerrainNormal;
+        }
+
+        protected override MeshBurialAdjustmentState GetMeshBurialAdjustmentStateInternal()
+        {
+            if (_adjustmentState == null)
+            {
+                _adjustmentState = _meshBurialAdjustmentCollection.GetByPrefab(_model);
+            }
+
+            return _adjustmentState;
         }
 
         protected override MeshBurialSharedState GetMeshBurialSharedStateInternal()
@@ -72,15 +80,30 @@ namespace Appalachia.Spatial.MeshBurial.Processing.QueueItems
             return _sharedState;
         }
 
-        protected override MeshBurialAdjustmentState GetMeshBurialAdjustmentStateInternal()
+        protected override int GetModelHashCodeInternal()
         {
-            if (_adjustmentState == null)
-            {
-                _adjustmentState = MeshBurialAdjustmentCollection.instance.GetByPrefab(_model);
-            }
-
-            return _adjustmentState;
+            return _modelHashCode;
         }
+
+        protected override void OnInitializeInternal()
+        {
+            using (_PRF_OnInitializeInternal.Auto())
+            {
+                base.OnInitializeInternal();
+
+                _sharedState = MeshBurialSharedStateManager.GetByPrefab(_model);
+                _adjustmentState = _meshBurialAdjustmentCollection.GetByPrefab(_model);
+            }
+        }
+
+        #region Profiling
+
+        private const string _PRF_PFX = nameof(MeshBurialManySameQueueItem) + ".";
+
+        private static readonly ProfilerMarker _PRF_OnInitializeInternal =
+            new(_PRF_PFX + nameof(OnInitializeInternal));
+
+        #endregion
     }
 }
 

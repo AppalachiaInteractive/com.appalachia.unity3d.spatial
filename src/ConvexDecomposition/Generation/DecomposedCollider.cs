@@ -7,15 +7,16 @@ using System.Collections.Generic;
 using System.Linq;
 using Appalachia.Core.Attributes.Editing;
 using Appalachia.Core.Debugging;
-using Appalachia.Core.Scriptables;
+using Appalachia.Core.Objects.Initialization;
 using Appalachia.Editing.Core.Behaviours;
 using Appalachia.Rendering.Prefabs.Rendering;
 using Appalachia.Simulation.Physical.Integration;
 using Appalachia.Spatial.ConvexDecomposition.Data;
+using Appalachia.Utility.Async;
 using Appalachia.Utility.Extensions;
-using Appalachia.Utility.Logging;
 using Sirenix.OdinInspector;
 using Unity.Profiling;
+using UnityEditor;
 using UnityEngine;
 
 #endregion
@@ -24,8 +25,16 @@ namespace Appalachia.Spatial.ConvexDecomposition.Generation
 {
     [ExecuteAlways]
     [DisallowMultipleComponent]
-    public partial class DecomposedCollider : EditorOnlyFrustumCulledBehaviour
+    public partial class DecomposedCollider : EditorOnlyFrustumCulledBehaviour<DecomposedCollider>
     {
+        // [CallStaticConstructorInEditor] should be added to the class (initsingletonattribute)
+        static DecomposedCollider()
+        {
+            PrefabRenderingManager.InstanceAvailable += i => _prefabRenderingManager = i;
+        }
+
+        private static PrefabRenderingManager _prefabRenderingManager;
+        
         #region Fields and Autoproperties
 
         [PropertyOrder(-150)]
@@ -44,8 +53,6 @@ namespace Appalachia.Spatial.ConvexDecomposition.Generation
         [NonSerialized] private bool _isEnabled;
 
         #endregion
-
-        public override EditorOnlyExclusionStyle exclusionStyle => EditorOnlyExclusionStyle.Component;
 
         private bool _disableDataChanges => (data == null) || data.locked;
 
@@ -89,14 +96,14 @@ namespace Appalachia.Spatial.ConvexDecomposition.Generation
 
                 if (data != null)
                 {
-                    if ((colliderTransform.localPosition != (Vector3) data.localPosition) ||
+                    if ((colliderTransform.localPosition != (Vector3)data.localPosition) ||
                         (colliderTransform.localRotation != data.localRotation) ||
-                        (colliderTransform.localScale != (Vector3) data.localScale))
+                        (colliderTransform.localScale != (Vector3)data.localScale))
                     {
                         colliderTransform.localPosition = data.localPosition;
                         colliderTransform.localRotation = data.localRotation;
                         colliderTransform.localScale = data.localScale;
-                       this.MarkAsModified();
+                        MarkAsModified();
                     }
                 }
 
@@ -107,52 +114,42 @@ namespace Appalachia.Spatial.ConvexDecomposition.Generation
         [Button, DisableIf(nameof(_disableDataChanges))]
         public void Refresh()
         {
-            if (_disableDataChanges)
+            using (_PRF_Refresh.Auto())
             {
-                return;
+                if (_disableDataChanges)
+                {
+                    return;
+                }
+
+                data.PushParent(this);
+
+                data.CheckOriginalMesh(gameObject);
+
+                data.InitializeColliders(gameObject);
+
+                data.CheckForMissingAssets();
+
+                if (data.settings.dirty)
+                {
+                    data.MarkAsModified();
+                }
+
+                OnPostDecompose();
             }
-
-            data.PushParent(this);
-
-            data.CheckOriginalMesh(gameObject);
-
-            data.InitializeColliders(gameObject);
-
-            data.CheckForMissingAssets();
-
-            if (data.settings.dirty)
-            {
-                data.MarkAsModified();
-            }
-
-            OnPostDecompose();
         }
 
-        protected override void Internal_Awake()
+        protected override async AppaTask Initialize(Initializer initializer)
         {
-            if (visibilityEnabled)
+            using (_PRF_Initialize.Auto())
             {
-                return;
-            }
+                await base.Initialize(initializer);
 
-            if (UnityEditor.PrefabUtility.IsPartOfPrefabAsset(gameObject))
-            {
-                return;
-            }
-
-            Setup();
-        }
-
-        protected override void Internal_OnEnable()
-        {
-            using (_PRF_OnEnable.Auto())
-            {
                 if (visibilityEnabled)
                 {
                     return;
                 }
 
-                if (UnityEditor.PrefabUtility.IsPartOfPrefabAsset(gameObject))
+                if (PrefabUtility.IsPartOfPrefabAsset(gameObject))
                 {
                     return;
                 }
@@ -161,52 +158,40 @@ namespace Appalachia.Spatial.ConvexDecomposition.Generation
             }
         }
 
-        protected override void Internal_Start()
-        {
-            if (visibilityEnabled)
-            {
-                return;
-            }
-
-            if (UnityEditor.PrefabUtility.IsPartOfPrefabAsset(gameObject))
-            {
-                return;
-            }
-
-            Setup();
-        }
-
         private void OnPostDecompose()
         {
-            if ((colliders == null) || (colliderTransform == null))
+            using (_PRF_OnPostDecompose.Auto())
             {
-                FindColliderRoot();
-            }
-
-            while (colliders.Count > data.elements.Count)
-            {
-                var i = colliders.Count - 1;
-                var c = colliders[i];
-                colliders.RemoveAt(i);
-                c.DestroySafely();
-            }
-
-            while (colliders.Count < data.elements.Count)
-            {
-                colliders.Add(colliderTransform.gameObject.AddComponent<MeshCollider>());
-            }
-
-            for (var i = 0; i < colliders.Count; i++)
-            {
-                if (colliders[i] == null)
+                if ((colliders == null) || (colliderTransform == null))
                 {
-                    colliders[i] = colliderTransform.gameObject.AddComponent<MeshCollider>();
+                    FindColliderRoot();
                 }
-            }
 
-            for (var i = 0; i < colliders.Count; i++)
-            {
-                data.elements[i].Apply(colliders[i]);
+                while (colliders.Count > data.elements.Count)
+                {
+                    var i = colliders.Count - 1;
+                    var c = colliders[i];
+                    colliders.RemoveAt(i);
+                    c.DestroySafely();
+                }
+
+                while (colliders.Count < data.elements.Count)
+                {
+                    colliders.Add(colliderTransform.gameObject.AddComponent<MeshCollider>());
+                }
+
+                for (var i = 0; i < colliders.Count; i++)
+                {
+                    if (colliders[i] == null)
+                    {
+                        colliders[i] = colliderTransform.gameObject.AddComponent<MeshCollider>();
+                    }
+                }
+
+                for (var i = 0; i < colliders.Count; i++)
+                {
+                    data.elements[i].Apply(colliders[i]);
+                }
             }
         }
 
@@ -219,7 +204,7 @@ namespace Appalachia.Spatial.ConvexDecomposition.Generation
                     return;
                 }
 
-                if (PrefabRenderingManager.instance.ActiveNow)
+                if (_prefabRenderingManager.ActiveNow)
                 {
                     return;
                 }
@@ -237,15 +222,15 @@ namespace Appalachia.Spatial.ConvexDecomposition.Generation
                         return;
                     }
 
-                    data = AppalachiaObject.LoadOrCreateNew<DecomposedColliderData>(directory, assetName);
+                    data = DecomposedColliderData.LoadOrCreateNew(directory, assetName);
 
                     if (DecomposedColliderData.dirtyLogging.v)
                     {
-                        AppaLog.Warn("Setting dirty: created data.");
+                        Context.Log.Warn("Setting dirty: created data.");
                     }
 
                     data.MarkAsModified();
-                   this.MarkAsModified();
+                    MarkAsModified();
                 }
 
                 var rdm = GetComponent<RigidbodyDensityManager>();
@@ -285,8 +270,13 @@ namespace Appalachia.Spatial.ConvexDecomposition.Generation
 
         #region Profiling
 
-        private static readonly ProfilerMarker
-            _PRF_OnEnable = new ProfilerMarker(_PRF_PFX + nameof(OnEnable));
+        private static readonly ProfilerMarker _PRF_OnPostDecompose =
+            new ProfilerMarker(_PRF_PFX + nameof(OnPostDecompose));
+
+        private static readonly ProfilerMarker _PRF_Refresh = new ProfilerMarker(_PRF_PFX + nameof(Refresh));
+
+        private static readonly ProfilerMarker _PRF_Initialize =
+            new ProfilerMarker(_PRF_PFX + nameof(OnEnable));
 
         private static readonly ProfilerMarker _PRF_Setup = new ProfilerMarker(_PRF_PFX + nameof(Setup));
 

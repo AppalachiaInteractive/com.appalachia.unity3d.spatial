@@ -1,21 +1,21 @@
 #if UNITY_EDITOR
-
-#region
-
 using System;
 using System.Collections.Generic;
 using Appalachia.Core.Assets;
 using Appalachia.Core.Attributes;
 using Appalachia.Core.Collections;
 using Appalachia.Core.Collections.Native;
+using Appalachia.Core.Objects.Initialization;
+using Appalachia.Core.Preferences;
+using Appalachia.Editing.Core.Behaviours;
 using Appalachia.Jobs.MeshData;
 using Appalachia.Jobs.Optimization.Options;
 using Appalachia.Jobs.Optimization.Utilities;
 using Appalachia.Jobs.Transfers;
 using Appalachia.Spatial.MeshBurial.Processing.QueueItems;
 using Appalachia.Spatial.MeshBurial.State;
-using Appalachia.Utility.Extensions;
-using Appalachia.Utility.Logging;
+using Appalachia.Utility.Async;
+using Appalachia.Utility.Strings;
 using AwesomeTechnologies.VegetationStudio;
 using AwesomeTechnologies.VegetationSystem;
 using Unity.Collections;
@@ -24,172 +24,167 @@ using Unity.Mathematics;
 using Unity.Profiling;
 using UnityEngine;
 
-#endregion
-
 namespace Appalachia.Spatial.MeshBurial.Processing
 {
-    [UnityEditor.InitializeOnLoad]
-    public static partial class MeshBurialExecutionManager
+    [CallStaticConstructorInEditor]
+    public partial class
+        MeshBurialExecutionManager : SingletonEditorOnlyAppalachiaBehaviour<MeshBurialExecutionManager>
     {
-        #region Profiling And Tracing Markers
-
-        private const string _PRF_PFX = nameof(MeshBurialExecutionManager) + ".";
-
-        private static readonly UnityEditor.EditorApplication.CallbackFunction _processFrame =
-            MeshBurialExecutionManager_ProcessFrame;
-
-        private static readonly ProfilerMarker _PRF_MeshBurialExecutionManager =
-            new(_PRF_PFX + nameof(MeshBurialExecutionManager));
-
-        private static readonly ProfilerMarker _PRF_EnsureCompleted = new(_PRF_PFX + nameof(EnsureCompleted));
-
-        private static readonly ProfilerMarker _PRF_MeshBurialExecutionManager_ProcessFrame =
-            new(_PRF_PFX + nameof(MeshBurialExecutionManager_ProcessFrame));
-
-        private static readonly ProfilerMarker
-            _PRF_MeshBurialExecutionManager_ProcessFrame_RecordIterationTime = new(_PRF_PFX +
-                nameof(MeshBurialExecutionManager_ProcessFrame) +
-                ".RecordIterationTime");
-
-        private static readonly ProfilerMarker
-            _PRF_MeshBurialExecutionManager_ProcessFrame_InitializeProcessing = new(_PRF_PFX +
-                nameof(MeshBurialExecutionManager_ProcessFrame) +
-                ".InitializeProcessing");
-
-        private static readonly ProfilerMarker
-            _PRF_MeshBurialExecutionManager_ProcessFrame_IterateQueueingActions = new(_PRF_PFX +
-                nameof(MeshBurialExecutionManager_ProcessFrame) +
-                ".IterateQueueingActions");
-
-        private static readonly ProfilerMarker _PRF_MeshBurialExecutionManager_ProcessFrame_Finally =
-            new(_PRF_PFX + nameof(MeshBurialExecutionManager_ProcessFrame) + ".Finally");
-
-        private static readonly ProfilerMarker _PRF_Initialize = new(_PRF_PFX + nameof(Initialize));
-
-        private static readonly ProfilerMarker _PRF_FinalizeResultData =
-            new(_PRF_PFX + nameof(FinalizeResultData));
-
-        private static readonly ProfilerMarker _PRF_CheckFinalizedResult =
-            new(_PRF_PFX + nameof(CheckFinalizedResult));
-
-        private static readonly ProfilerMarker _PRF_ApplyFinalizedResults =
-            new(_PRF_PFX + nameof(ApplyFinalizedResults));
-
-        private static readonly ProfilerMarker _PRF_ProcessGenericQueue =
-            new(_PRF_PFX + nameof(ProcessGenericQueue));
-
-        private static readonly ProfilerMarker _PRF_ProcessGenericQueue_FinalizeAction =
-            new(_PRF_PFX + nameof(ProcessGenericQueue) + ".FinalizeAction");
-
-        private static readonly ProfilerMarker _PRF_ProcessVegetationQueue =
-            new(_PRF_PFX + nameof(ProcessVegetationQueue));
-
-        private static readonly ProfilerMarker _PRF_ProcessVegetationQueue_ShouldNotProcess =
-            new(_PRF_PFX + nameof(ProcessVegetationQueue_ShouldNotProcess));
-
-        private static readonly ProfilerMarker _PRF_ProcessVegetationQueue_PreAction =
-            new(_PRF_PFX + nameof(ProcessVegetationQueue_PreAction));
-
-        private static readonly ProfilerMarker _PRF_ProcessVegetationQueue_PostAction =
-            new(_PRF_PFX + nameof(ProcessVegetationQueue_PostAction));
-
-        private static readonly ProfilerMarker _PRF_ShouldEscape = new(_PRF_PFX + nameof(ShouldEscape));
-
-        private static readonly ProfilerMarker _PRF_CheckAndLogQueueDepth =
-            new(_PRF_PFX + nameof(CheckAndLogQueueDepth));
-
-        private static readonly ProfilerMarker _PRF_PopulateQueueingActions =
-            new(_PRF_PFX + nameof(PopulateQueueingActions));
-
-        private static readonly ProfilerMarker _PRF_PopulateQueueingActions_VegetationQueue =
-            new(_PRF_PFX + nameof(PopulateQueueingActions) + ".VegetationQueue");
-
-        private static readonly ProfilerMarker _PRF_DisposeNativeCollections =
-            new(_PRF_PFX + nameof(DisposeNativeCollections));
-
-        private static readonly ProfilerMarker _PRF_StatusLog = new(_PRF_PFX + nameof(StatusLog));
-
-        #endregion
-
-        #region Constants and Static Readonly
-
-        #endregion
-
+        // [CallStaticConstructorInEditor] should be added to the class (initsingletonattribute)
         static MeshBurialExecutionManager()
         {
-            using (_PRF_MeshBurialExecutionManager.Auto())
-            {
-                MeshObjectManager.RegisterDisposalDependency(() => EnsureCompleted());
+            MeshBurialManagementQueue.InstanceAvailable += i => _meshBurialManagementQueue = i;
+            MeshBurialAdjustmentCollection.InstanceAvailable += i => _meshBurialAdjustmentCollection = i;
+        }
 
-                if (_BURY.Value)
+        #region Preferences
+
+        [NonSerialized] private PREF<bool> _bury;
+
+        internal PREF<bool> IsBuryingEnabled
+        {
+            get
+            {
+                if (_bury == null)
                 {
-                    _BURY.Value = false;
-                    UnityEditor.EditorApplication.delayCall += ToggleEnableMeshBurials;
+                    _bury = PREFS.REG(PKG.Prefs.Group, "Enabled", true);
+                }
+
+                return _bury;
+            }
+        }
+
+        #endregion
+
+        #region Static Fields and Autoproperties
+
+        private static MeshBurialAdjustmentCollection _meshBurialAdjustmentCollection;
+
+        private static MeshBurialManagementQueue _meshBurialManagementQueue;
+
+        #endregion
+
+        #region Fields and Autoproperties
+
+        public Bounds bounds;
+        private Action finalizeAction;
+        private Action<NativeArray<float4x4>> matrixAssignment;
+        private bool _pending0Log;
+        private bool resultDataFinalized;
+        private DateTime _itemStart;
+        private DateTime _iterationStart;
+        private double _trackingError;
+        private float _degreeAdjustment;
+        private int _appliedAdjustments;
+        private int _lastLogAt;
+        private int _processed;
+
+        private int cvci;
+        private int cvii;
+        private int cvpii;
+
+        private JobHandle pendingHandle;
+        private JobRandoms randoms;
+        private List<Action> _queueActions = new();
+        private MeshBurialAdjustmentState adjustmentState;
+        private MeshBurialInstanceData resultData;
+        private MeshBurialOptions burialOptions;
+        private MeshBurialQueueItem lastItem;
+        private MeshBurialSharedState sharedState;
+        private MeshBurialSummaryData _tracking;
+        private NativeList<float4x4> matrices;
+        private NativeList<JobHandle> dependencyList;
+        private OptimizationOptions optimizationOptions;
+        private RandomSearchOptions randomSearchOptions;
+        private VegetationSystemPro _vegetationSystem;
+
+        #endregion
+
+        #region Event Functions
+
+        private void Update()
+        {
+            using (_PRF_Update.Auto())
+            {
+                _iterationStart = DateTime.Now;
+
+                CheckAndLogQueueDepth();
+
+                if (ShouldEscape())
+                {
+                    return;
+                }
+
+                try
+                {
+                    if (ShouldEscape())
+                    {
+                        return;
+                    }
+
+                    if ((resultData != null) && !resultDataFinalized)
+                    {
+                        FinalizeResultData();
+                    }
+                    else
+                    {
+                        _processed += 1;
+
+                        for (var i = 0; i < _queueActions.Count; i++)
+                        {
+                            _queueActions[i]();
+
+                            if (ShouldEscape())
+                            {
+                                return;
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Context.Log.Error(ex);
+
+                    resultDataFinalized = true;
+
+                    IsBuryingEnabled.Value = false;
+                }
+                finally
+                {
+                    CheckAndLogQueueDepth();
+
+                    _meshBurialAdjustmentCollection.MarkAsModified();
+                    _meshBurialManagementQueue.MarkAsModified();
                 }
             }
         }
 
-        public static Bounds bounds;
-        private static Action finalizeAction;
-        private static Action<NativeArray<float4x4>> matrixAssignment;
-        private static bool _pending0Log;
-        private static bool resultDataFinalized;
-        private static DateTime _itemStart;
-        private static DateTime _iterationStart;
-        private static double _trackingError;
-        private static float _degreeAdjustment;
-        private static int _appliedAdjustments;
-        private static int _lastLogAt;
-        private static int _processed;
+        protected override async AppaTask WhenDisabled()
 
-        private static int cvci;
-        private static int cvii;
-        private static int cvpii;
-
-        private static JobHandle pendingHandle;
-        private static JobRandoms randoms;
-        private static List<Action> _queueActions = new();
-        private static MeshBurialAdjustmentState adjustmentState;
-        private static MeshBurialInstanceData resultData;
-        private static MeshBurialOptions burialOptions;
-        private static MeshBurialQueueItem lastItem;
-        private static MeshBurialSharedState sharedState;
-        private static MeshBurialSummaryData _tracking;
-        private static NativeList<float4x4> matrices;
-        private static NativeList<JobHandle> dependencyList;
-        private static OptimizationOptions optimizationOptions;
-        private static RandomSearchOptions randomSearchOptions;
-        private static VegetationSystemPro _vegetationSystem;
-
-        //private static float4x4[] matrices;
-        //private static int[] terrainHashCodes;
-
-        private static MeshBurialManagementQueue QUEUES => MeshBurialManagementQueue.instance;
-
-        [ExecuteOnDisable]
-        public static void DisposeNativeCollections()
         {
-            using (_PRF_DisposeNativeCollections.Auto())
+            using (_PRF_OnDisable.Auto())
             {
+                await base.WhenDisabled();
+
                 pendingHandle.Complete();
 
-                //if (!manual) AppaLog.Info("Disposing native collections.");
-
-                if (randoms.IsCreated)
-                {
-                    randoms.Dispose();
-                }
-
-                if (dependencyList.IsCreated)
-                {
-                    dependencyList.Dispose();
-                }
-
-                resultData?.Dispose();
+                NativeDisposal();
             }
         }
 
-        public static void EnsureCompleted()
+        protected override async AppaTask WhenDestroyed()
+        {
+            using (_PRF_OnDestroy.Auto())
+            {
+                await base.WhenDestroyed();
+
+                NativeDisposal();
+            }
+        }
+
+        #endregion
+
+        public void EnsureCompleted()
         {
             using (_PRF_EnsureCompleted.Auto())
             {
@@ -197,7 +192,30 @@ namespace Appalachia.Spatial.MeshBurial.Processing
             }
         }
 
-        private static void ApplyFinalizedResults()
+        protected override async AppaTask Initialize(Initializer initializer)
+        {
+            using (_PRF_Initialize.Auto())
+            {
+                await base.Initialize(initializer);
+
+                MeshObjectManager.instance.RegisterDisposalDependency(EnsureCompleted);
+
+                if (IsBuryingEnabled.Value)
+                {
+                    IsBuryingEnabled.Value = false;
+                    UnityEditor.EditorApplication.delayCall += ToggleEnableMeshBurials;
+                }
+
+                if (!randoms.IsCreated)
+                {
+                    randoms = new JobRandoms(Allocator.Persistent);
+                }
+
+                PopulateQueueingActions();
+            }
+        }
+
+        private void ApplyFinalizedResults()
         {
             using (_PRF_ApplyFinalizedResults.Auto())
             {
@@ -215,11 +233,17 @@ namespace Appalachia.Spatial.MeshBurial.Processing
             }
         }
 
-        private static void CheckAndLogQueueDepth()
+        private void CheckAndLogQueueDepth()
         {
             using (_PRF_CheckAndLogQueueDepth.Auto())
             {
-                var queueDepth = QUEUES.Count;
+                if (_meshBurialManagementQueue == null)
+                {
+                    InitializeSynchronous();
+                    return;
+                }
+
+                var queueDepth = _meshBurialManagementQueue.Count;
 
                 if (queueDepth > 0)
                 {
@@ -228,7 +252,9 @@ namespace Appalachia.Spatial.MeshBurial.Processing
                          (_LOG.Value > 0) &&
                          ((Time.frameCount % _LOG.Value) == 0)))
                     {
-                        AppaLog.Info($"Mesh Burial Queue Depth: {queueDepth}  [{Time.frameCount}]");
+                        Context.Log.Info(
+                            ZString.Format("Mesh Burial Queue Depth: {0}  [{1}]", queueDepth, Time.frameCount)
+                        );
                         _lastLogAt = queueDepth;
                     }
 
@@ -240,7 +266,9 @@ namespace Appalachia.Spatial.MeshBurial.Processing
                     {
                         if (_appliedAdjustments > 0)
                         {
-                            AppaLog.Info($"Mesh Burial Queue Depth: 0  [{Time.frameCount}]");
+                            Context.Log.Info(
+                                ZString.Format("Mesh Burial Queue Depth: 0  [{0}]", Time.frameCount)
+                            );
                         }
 
                         StatusLog(
@@ -270,7 +298,7 @@ namespace Appalachia.Spatial.MeshBurial.Processing
             }
         }
 
-        private static void CheckFinalizedResult(out bool requeue)
+        private void CheckFinalizedResult(out bool requeue)
         {
             using (_PRF_CheckFinalizedResult.Auto())
             {
@@ -337,7 +365,7 @@ namespace Appalachia.Spatial.MeshBurial.Processing
             }
         }
 
-        private static void FinalizeResultData()
+        private void FinalizeResultData()
         {
             using (_PRF_FinalizeResultData.Auto())
             {
@@ -352,7 +380,7 @@ namespace Appalachia.Spatial.MeshBurial.Processing
 
                     burialOptions.permissiveness += 1;
                     optimizationOptions.randomSearch.iterations =
-                        (int) (optimizationOptions.randomSearch.iterations * 1.5);
+                        (int)(optimizationOptions.randomSearch.iterations * 1.5);
 
                     pendingHandle = MeshBurialJobManager.ScheduleMeshBurialJobs(
                         resultData,
@@ -374,91 +402,22 @@ namespace Appalachia.Spatial.MeshBurial.Processing
             }
         }
 
-        private static void Initialize()
+        private void NativeDisposal()
         {
-            using (_PRF_Initialize.Auto())
+            using (_PRF_NativeDisposal.Auto())
             {
-                if (!randoms.IsCreated)
+                randoms.Dispose();
+
+                if (dependencyList.IsCreated)
                 {
-                    randoms = new JobRandoms(Allocator.Persistent);
+                    dependencyList.Dispose();
                 }
 
-                PopulateQueueingActions();
+                resultData?.Dispose();
             }
         }
 
-        private static void MeshBurialExecutionManager_ProcessFrame()
-        {
-            using (_PRF_MeshBurialExecutionManager_ProcessFrame.Auto())
-            {
-                using (_PRF_MeshBurialExecutionManager_ProcessFrame_RecordIterationTime.Auto())
-                {
-                    _iterationStart = DateTime.Now;
-                }
-
-                using (_PRF_MeshBurialExecutionManager_ProcessFrame_InitializeProcessing.Auto())
-                {
-                    Initialize();
-
-                    CheckAndLogQueueDepth();
-
-                    if (ShouldEscape())
-                    {
-                        return;
-                    }
-                }
-
-                try
-                {
-                    if (ShouldEscape())
-                    {
-                        return;
-                    }
-
-                    if ((resultData != null) && !resultDataFinalized)
-                    {
-                        FinalizeResultData();
-                    }
-                    else
-                    {
-                        _processed += 1;
-
-                        for (var i = 0; i < _queueActions.Count; i++)
-                        {
-                            using (_PRF_MeshBurialExecutionManager_ProcessFrame_IterateQueueingActions.Auto())
-                            {
-                                _queueActions[i]();
-
-                                if (ShouldEscape())
-                                {
-                                    return;
-                                }
-                            }
-                        }
-                    }
-                }
-                catch (Exception ex)
-                {
-                    AppaLog.Exception(ex);
-
-                    resultDataFinalized = true;
-
-                    _BURY.Value = false;
-                }
-                finally
-                {
-                    using (_PRF_MeshBurialExecutionManager_ProcessFrame_Finally.Auto())
-                    {
-                        CheckAndLogQueueDepth();
-
-                        MeshBurialAdjustmentCollection.instance.MarkAsModified();
-                        QUEUES.MarkAsModified();
-                    }
-                }
-            }
-        }
-
-        private static void PopulateQueueingActions()
+        private void PopulateQueueingActions()
         {
             using (_PRF_PopulateQueueingActions.Auto())
             {
@@ -474,17 +433,17 @@ namespace Appalachia.Spatial.MeshBurial.Processing
 
                 if (_queueActions.Count == 0)
                 {
-                    _queueActions.Add(() => ProcessGenericQueue(QUEUES.array));
-                    _queueActions.Add(() => ProcessGenericQueue(QUEUES.gameObject));
-                    _queueActions.Add(() => ProcessGenericQueue(QUEUES.native));
+                    _queueActions.Add(() => ProcessGenericQueue(_meshBurialManagementQueue.array));
+                    _queueActions.Add(() => ProcessGenericQueue(_meshBurialManagementQueue.gameObject));
+                    _queueActions.Add(() => ProcessGenericQueue(_meshBurialManagementQueue.native));
 
                     //_queueActions.Add(() => ProcessGenericQueue(QUEUES.runtimePrefabRenderingSets));
-                    _queueActions.Add(() => ProcessVegetationQueue(QUEUES.vegetation));
+                    _queueActions.Add(() => ProcessVegetationQueue(_meshBurialManagementQueue.vegetation));
                 }
             }
         }
 
-        private static void ProcessGenericQueue<T>(
+        private void ProcessGenericQueue<T>(
             AppaTemporalQueue<T> queue,
             Func<T, bool> shouldNotProcess = null,
             Action<T> preAction = null,
@@ -599,7 +558,13 @@ namespace Appalachia.Spatial.MeshBurial.Processing
                                     var duration = (DateTime.Now - _itemStart).TotalSeconds;
                                     if (duration > _TIMELOGTIME.Value)
                                     {
-                                        AppaLog.Info($"Items [{item}] took {duration:F2} seconds to process.");
+                                        Context.Log.Info(
+                                            ZString.Format(
+                                                "Items [{0}] took {1:F2} seconds to process.",
+                                                item,
+                                                duration
+                                            )
+                                        );
                                     }
                                 }
 
@@ -610,20 +575,20 @@ namespace Appalachia.Spatial.MeshBurial.Processing
                 }
                 catch (Exception ex)
                 {
-                    AppaLog.Error($"Error while burying meshes: \r\n{ex.Message}");
-                    AppaLog.Exception(ex);
-                    _BURY.Value = false;
+                    Context.Log.Error(ZString.Format("Error while burying meshes: \r\n{0}", ex.Message));
+                    Context.Log.Error(ex);
+                    IsBuryingEnabled.Value = false;
                 }
             }
         }
 
-        private static void ProcessVegetationQueue<T>(AppaTemporalQueue<T> queue)
+        private void ProcessVegetationQueue<T>(AppaTemporalQueue<T> queue)
             where T : MeshBurialQueueItem
         {
             using (_PRF_ProcessVegetationQueue.Auto())
             {
                 ProcessGenericQueue(
-                    QUEUES.vegetation,
+                    _meshBurialManagementQueue.vegetation,
                     ProcessVegetationQueue_ShouldNotProcess,
                     ProcessVegetationQueue_PreAction,
                     ProcessVegetationQueue_PostAction
@@ -631,20 +596,19 @@ namespace Appalachia.Spatial.MeshBurial.Processing
             }
         }
 
-        private static void ProcessVegetationQueue_PostAction(
-            AppaTemporalQueue<MeshBurialVegetationQueueItem> queue)
+        private void ProcessVegetationQueue_PostAction(AppaTemporalQueue<MeshBurialVegetationQueueItem> queue)
         {
             using (_PRF_ProcessVegetationQueue_PostAction.Auto())
             {
                 if (!queue.HasCurrent)
                 {
-                    if (QUEUES.pendingVegetationKeys.ContainsKey(cvci))
+                    if (_meshBurialManagementQueue.pendingVegetationKeys.ContainsKey(cvci))
                     {
-                        if (QUEUES.pendingVegetationKeys[cvci].ContainsKey(cvii))
+                        if (_meshBurialManagementQueue.pendingVegetationKeys[cvci].ContainsKey(cvii))
                         {
-                            if (QUEUES.pendingVegetationKeys[cvci][cvii].Contains(cvpii))
+                            if (_meshBurialManagementQueue.pendingVegetationKeys[cvci][cvii].Contains(cvpii))
                             {
-                                QUEUES.pendingVegetationKeys[cvci][cvii].Remove(cvpii);
+                                _meshBurialManagementQueue.pendingVegetationKeys[cvci][cvii].Remove(cvpii);
                             }
                         }
                     }
@@ -652,7 +616,7 @@ namespace Appalachia.Spatial.MeshBurial.Processing
             }
         }
 
-        private static void ProcessVegetationQueue_PreAction(MeshBurialVegetationQueueItem current)
+        private void ProcessVegetationQueue_PreAction(MeshBurialVegetationQueueItem current)
         {
             using (_PRF_ProcessVegetationQueue_PreAction.Auto())
             {
@@ -662,7 +626,7 @@ namespace Appalachia.Spatial.MeshBurial.Processing
             }
         }
 
-        private static bool ProcessVegetationQueue_ShouldNotProcess(MeshBurialVegetationQueueItem current)
+        private bool ProcessVegetationQueue_ShouldNotProcess(MeshBurialVegetationQueueItem current)
         {
             using (_PRF_ProcessVegetationQueue_ShouldNotProcess.Auto())
             {
@@ -718,17 +682,17 @@ namespace Appalachia.Spatial.MeshBurial.Processing
             }
         }
 
-        private static bool ShouldEscape()
+        private bool ShouldEscape()
         {
             using (_PRF_ShouldEscape.Auto())
             {
                 if ((_ITER.Value > 0) && (_processed > _ITER.Value))
                 {
-                    _BURY.Value = false;
+                    IsBuryingEnabled.Value = false;
                     return true;
                 }
 
-                if (!_BURY.Value)
+                if (!IsBuryingEnabled.Value)
                 {
                     bounds = new Bounds();
                     return true;
@@ -739,7 +703,7 @@ namespace Appalachia.Spatial.MeshBurial.Processing
                     return true;
                 }
 
-                if ((QUEUES.Count == 0) && resultDataFinalized)
+                if ((_meshBurialManagementQueue.Count == 0) && resultDataFinalized)
                 {
                     return true;
                 }
@@ -753,26 +717,26 @@ namespace Appalachia.Spatial.MeshBurial.Processing
             }
         }
 
-        private static void StatusLog(
-            MeshBurialSummaryData summary,
-            int? permissive = null,
-            string name = null)
+        private void StatusLog(MeshBurialSummaryData summary, int? permissive = null, string name = null)
         {
-            StatusLog(
-                summary.total,
-                summary.average,
-                summary.good,
-                summary.bad,
-                summary.discard,
-                summary.zeroIn,
-                summary.zeroOut,
-                permissive,
-                summary.requeue,
-                name
-            );
+            using (_PRF_StatusLog.Auto())
+            {
+                StatusLog(
+                    summary.total,
+                    summary.average,
+                    summary.good,
+                    summary.bad,
+                    summary.discard,
+                    summary.zeroIn,
+                    summary.zeroOut,
+                    permissive,
+                    summary.requeue,
+                    name
+                );
+            }
         }
 
-        private static void StatusLog(
+        private void StatusLog(
             int total,
             double average,
             int good,
@@ -788,33 +752,89 @@ namespace Appalachia.Spatial.MeshBurial.Processing
             {
                 if ((requeue == null) || !requeue.Value)
                 {
-                    AppaLog.Info(
-                        $" [BATCH]  [TOT |{total,4}" +
-                        $"]  [AVG |{average:F3}" +
-                        $"]  [+ |{good,4}" +
-                        $"]  [- |{bad,4}" +
-                        $"]  [x |{discard,4}" +
-                        $"]  [zI |{zeroIn,4}" +
-                        $"]  [zO |{zeroOut,4}"
+                    Context.Log.Info(
+                        ZString.Format(" [BATCH]  [TOT |{0,4}", total) +
+                        ZString.Format("]  [AVG |{0:F3}",       average) +
+                        ZString.Format("]  [+ |{0,4}",          good) +
+                        ZString.Format("]  [- |{0,4}",          bad) +
+                        ZString.Format("]  [x |{0,4}",          discard) +
+                        ZString.Format("]  [zI |{0,4}",         zeroIn) +
+                        ZString.Format("]  [zO |{0,4}",         zeroOut)
                     );
                 }
                 else
                 {
-                    AppaLog.Info(
-                        $" [TOT |{total,4}" +
-                        $"]  [AVG |{average:F3}" +
-                        $"]  [+ |{good,4}" +
-                        $"]  [- |{bad,4}" +
-                        $"]  [x |{discard,4}" +
-                        $"]  [zI |{zeroIn,4}" +
-                        $"]  [zO |{zeroOut,4}" +
-                        $"]  [PER |{permissive}" +
-                        $"]  [REQ |{requeue.Value,5}" +
-                        $"]  [ID |{name}"
+                    Context.Log.Info(
+                        ZString.Format(" [TOT |{0,4}",    total) +
+                        ZString.Format("]  [AVG |{0:F3}", average) +
+                        ZString.Format("]  [+ |{0,4}",    good) +
+                        ZString.Format("]  [- |{0,4}",    bad) +
+                        ZString.Format("]  [x |{0,4}",    discard) +
+                        ZString.Format("]  [zI |{0,4}",   zeroIn) +
+                        ZString.Format("]  [zO |{0,4}",   zeroOut) +
+                        ZString.Format("]  [PER |{0}",    permissive) +
+                        ZString.Format("]  [REQ |{0,5}",  requeue.Value) +
+                        ZString.Format("]  [ID |{0}",     name)
                     );
                 }
             }
         }
+
+        #region Profiling
+
+        private const string _PRF_PFX = nameof(MeshBurialExecutionManager) + ".";
+
+        private readonly ProfilerMarker _PRF_ApplyFinalizedResults =
+            new(_PRF_PFX + nameof(ApplyFinalizedResults));
+
+        private readonly ProfilerMarker _PRF_CheckAndLogQueueDepth =
+            new(_PRF_PFX + nameof(CheckAndLogQueueDepth));
+
+        private readonly ProfilerMarker _PRF_CheckFinalizedResult =
+            new(_PRF_PFX + nameof(CheckFinalizedResult));
+
+        private readonly ProfilerMarker _PRF_EnsureCompleted = new(_PRF_PFX + nameof(EnsureCompleted));
+
+        private readonly ProfilerMarker _PRF_FinalizeResultData = new(_PRF_PFX + nameof(FinalizeResultData));
+
+        private readonly ProfilerMarker _PRF_Initialize = new(_PRF_PFX + nameof(Initialize));
+
+        private static readonly ProfilerMarker _PRF_OnDestroy =
+            new ProfilerMarker(_PRF_PFX + nameof(OnDestroy));
+
+        private static readonly ProfilerMarker _PRF_NativeDisposal =
+            new ProfilerMarker(_PRF_PFX + nameof(NativeDisposal));
+
+        private readonly ProfilerMarker _PRF_OnDisable = new ProfilerMarker(_PRF_PFX + nameof(OnDisable));
+
+        private readonly ProfilerMarker _PRF_PopulateQueueingActions =
+            new(_PRF_PFX + nameof(PopulateQueueingActions));
+
+        private readonly ProfilerMarker _PRF_ProcessGenericQueue =
+            new(_PRF_PFX + nameof(ProcessGenericQueue));
+
+        private readonly ProfilerMarker _PRF_ProcessGenericQueue_FinalizeAction =
+            new(_PRF_PFX + nameof(ProcessGenericQueue) + ".FinalizeAction");
+
+        private readonly ProfilerMarker _PRF_ProcessVegetationQueue =
+            new(_PRF_PFX + nameof(ProcessVegetationQueue));
+
+        private readonly ProfilerMarker _PRF_ProcessVegetationQueue_PostAction =
+            new(_PRF_PFX + nameof(ProcessVegetationQueue_PostAction));
+
+        private readonly ProfilerMarker _PRF_ProcessVegetationQueue_PreAction =
+            new(_PRF_PFX + nameof(ProcessVegetationQueue_PreAction));
+
+        private readonly ProfilerMarker _PRF_ProcessVegetationQueue_ShouldNotProcess =
+            new(_PRF_PFX + nameof(ProcessVegetationQueue_ShouldNotProcess));
+
+        private readonly ProfilerMarker _PRF_ShouldEscape = new(_PRF_PFX + nameof(ShouldEscape));
+
+        private readonly ProfilerMarker _PRF_StatusLog = new(_PRF_PFX + nameof(StatusLog));
+
+        private static readonly ProfilerMarker _PRF_Update = new ProfilerMarker(_PRF_PFX + nameof(Update));
+
+        #endregion
     }
 }
 

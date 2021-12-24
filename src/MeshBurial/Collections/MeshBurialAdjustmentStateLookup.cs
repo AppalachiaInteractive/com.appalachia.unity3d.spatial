@@ -6,6 +6,7 @@ using System;
 using Appalachia.Core.Collections;
 using Appalachia.Core.Collections.Implementations.Lists;
 using Appalachia.Spatial.MeshBurial.State;
+using Appalachia.Utility.Strings;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
@@ -26,7 +27,7 @@ namespace Appalachia.Spatial.MeshBurial.Collections
     {
         protected override string GetDisplayTitle(GameObject key, MeshBurialAdjustmentState value)
         {
-            return $"Prefab: {key.name}";
+            return ZString.Format("Prefab: {0}", key.name);
         }
 
         protected override string GetDisplaySubtitle(

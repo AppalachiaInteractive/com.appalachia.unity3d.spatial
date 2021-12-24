@@ -1,13 +1,16 @@
 ﻿#if UNITY_EDITOR
 using System.Collections.Generic;
 using System.Linq;
-using Appalachia.Core.Behaviours;
+using Appalachia.Core.Objects.Initialization;
+using Appalachia.Core.Objects.Root;
+using Appalachia.Utility.Async;
+using Unity.Profiling;
 using UnityEngine;
 using UnityEngine.UI;
 
 namespace Appalachia.Spatial.ConvexDecomposition.MeshCutting.Runtime
 {
-    public class ObjectManager : AppalachiaBehaviour
+    public sealed class ObjectManager : AppalachiaBehaviour<ObjectManager>
     {
         #region Fields and Autoproperties
 
@@ -18,21 +21,6 @@ namespace Appalachia.Spatial.ConvexDecomposition.MeshCutting.Runtime
         public Transform ObjectContainer;
 
         private CameraOrbit cameraOrbit;
-
-        #endregion
-
-        #region Event Functions
-
-        // Start is called before the first frame update
-        protected override void Start()
-        {
-            base.Start();
-            
-            dropdown.ClearOptions();
-            dropdown.AddOptions(objects.Select(r => r.gameObject.name).ToList());
-
-            cameraOrbit = Camera.main.GetComponent<CameraOrbit>();
-        }
 
         #endregion
 
@@ -54,6 +42,28 @@ namespace Appalachia.Spatial.ConvexDecomposition.MeshCutting.Runtime
             // Load new object in container and set to camera orbit
             cameraOrbit.target = Instantiate(SelectedObject, ObjectContainer).transform;
         }
+
+        protected override async AppaTask Initialize(Initializer initializer)
+        {
+            using (_PRF_Initialize.Auto())
+            {
+                await base.Initialize(initializer);
+
+                dropdown.ClearOptions();
+                dropdown.AddOptions(objects.Select(r => r.gameObject.name).ToList());
+
+                cameraOrbit = FindObjectOfType<CameraOrbit>();
+            }
+        }
+
+        #region Profiling
+
+        private const string _PRF_PFX = nameof(ObjectManager) + ".";
+
+        private static readonly ProfilerMarker _PRF_Initialize =
+            new ProfilerMarker(_PRF_PFX + nameof(Initialize));
+
+        #endregion
     }
 }
 

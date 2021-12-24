@@ -5,6 +5,7 @@
 using System;
 using System.Diagnostics;
 using Appalachia.Jobs.VegetationStudio.Transformations;
+using Appalachia.Utility.Strings;
 using AwesomeTechnologies.VegetationStudio;
 using AwesomeTechnologies.VegetationSystem;
 using Unity.Collections;
@@ -36,7 +37,13 @@ namespace Appalachia.Spatial.MeshBurial.Processing.QueueItems
             GameObject prefab,
             int length,
             bool adoptTerrainNormal = true) : base(
-            $"VSP: {prefab.name} : [Cell {cellIndex}] [Package {packageIndex}] [Item {itemIndex}]",
+            ZString.Format(
+                "VSP: {0} : [Cell {1}] [Package {2}] [Item {3}]",
+                prefab.name,
+                cellIndex,
+                packageIndex,
+                itemIndex
+            ),
             prefab,
             length,
             adoptTerrainNormal

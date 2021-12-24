@@ -1,14 +1,28 @@
 ﻿#if UNITY_EDITOR
 using System.Collections.Generic;
+using Appalachia.CI.Constants;
 using Appalachia.Jobs.MeshData;
-using Appalachia.Utility.Logging;
 using UnityEngine;
 
 namespace Appalachia.Spatial.ConvexDecomposition.MeshCutting.Core
 {
     public static class MeshUtils
     {
+        private static AppaContext _context;
 
+        private static AppaContext Context
+        {
+            get
+            {
+                if (_context == null)
+                {
+                    _context = new AppaContext(typeof(MeshUtils));
+                }
+
+                return _context;
+            }
+        }
+        
         /// <summary>
         /// Find center of polygon by averaging vertices
         /// </summary>
@@ -53,7 +67,7 @@ namespace Appalachia.Spatial.ConvexDecomposition.MeshCutting.Core
                 if ((i + 3) >= pairs.Length)
                 {
                     // Why does this happen?
-                    AppaLog.Info("Huh?");
+                    Context.Log.Info("Huh?");
                     break;
                 }
                 else if (pairs[i + 3] == pairs[faceStart])
@@ -97,7 +111,7 @@ namespace Appalachia.Spatial.ConvexDecomposition.MeshCutting.Core
                 if ((i + 3) >= pairs.Count)
                 {
                     // Why does this happen?
-                    AppaLog.Info("Huh?");
+                    Context.Log.Info("Huh?");
                     break;
                 }
                 else if (pairs[i + 3] == pairs[faceStart])

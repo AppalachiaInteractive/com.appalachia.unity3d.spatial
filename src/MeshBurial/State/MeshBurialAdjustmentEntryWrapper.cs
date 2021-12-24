@@ -4,6 +4,8 @@
 
 using System;
 using System.Diagnostics;
+using Appalachia.Core.Objects.Root;
+using Appalachia.Utility.Strings;
 using Sirenix.OdinInspector;
 
 #endregion
@@ -11,7 +13,7 @@ using Sirenix.OdinInspector;
 namespace Appalachia.Spatial.MeshBurial.State
 {
     [Serializable]
-    public class MeshBurialAdjustmentEntryWrapper
+    public class MeshBurialAdjustmentEntryWrapper : AppalachiaSimpleBase
     {
         [InlineProperty]
         [HideLabel]
@@ -20,7 +22,7 @@ namespace Appalachia.Spatial.MeshBurial.State
 
         [DebuggerStepThrough] public override string ToString()
         {
-            return $"Error {entry.error}: {entry.adjustment}";
+            return ZString.Format("Error {0}: {1}", entry.error, entry.adjustment);
         }
     }
 }

@@ -2,10 +2,7 @@
 
 #region
 
-using Appalachia.CI.Constants;
 using Appalachia.CI.Integration.Assets;
-using Appalachia.Spatial.MeshBurial.State;
-using Appalachia.Utility.Extensions;
 using AwesomeTechnologies.VegetationSystem;
 using UnityEngine;
 
@@ -88,17 +85,17 @@ namespace Appalachia.Spatial.MeshBurial.Processing
 
             //RefreshPrefabRenderingSets();
 
-            if (!MeshBurialExecutionManager._BURY.v)
+            if (!MeshBurialExecutionManager.instance.IsBuryingEnabled.v)
             {
-                MeshBurialExecutionManager.EnableMeshBurials();
+                MeshBurialExecutionManager.instance.EnableMeshBurials();
             }
         }
 
         [UnityEditor.MenuItem(PKG.Menu.Appalachia.Manage.Base + "Execute Full Reset", priority = PKG.Menu.Appalachia.Manage.Priority + 6)]
         public static void Reset()
         {
-            MeshBurialExecutionManager.EnsureCompleted();
-            MeshBurialAdjustmentCollection.instance.Reset();
+            MeshBurialExecutionManager.instance.EnsureCompleted();
+            _meshBurialAdjustmentCollection.Reset();
         }
 
         [UnityEditor.MenuItem(PKG.Menu.Appalachia.Manage.Base + "Reset and Refresh", priority = PKG.Menu.Appalachia.Manage.Priority + 8)]
@@ -106,21 +103,21 @@ namespace Appalachia.Spatial.MeshBurial.Processing
         {
             Reset();
             _vegetationSystem.ClearCache();
-            MeshBurialExecutionManager.EnableMeshBurials(true);
+            MeshBurialExecutionManager.instance.EnableMeshBurials(true);
             Refresh();
         }
 
         [UnityEditor.MenuItem(PKG.Menu.Appalachia.Manage.Base + "Force Save", priority = PKG.Menu.Appalachia.Manage.Priority + 10)]
         public static void ForceSave()
         {
-            var collection = MeshBurialAdjustmentCollection.instance;
+            var collection = _meshBurialAdjustmentCollection;
 
             for (var i = 0; i < collection.State.Count; i++)
             {
                 collection.State.at[i].MarkAsModified();
             }
 
-            MeshBurialAdjustmentCollection.instance.MarkAsModified();
+            _meshBurialAdjustmentCollection.MarkAsModified();
             AssetDatabaseManager.SaveAssets();
         }
     }

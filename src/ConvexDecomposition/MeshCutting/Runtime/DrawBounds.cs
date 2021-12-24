@@ -1,10 +1,10 @@
 ﻿#if UNITY_EDITOR
-using Appalachia.Core.Behaviours;
+using Appalachia.Core.Objects.Root;
 using UnityEngine;
 
 namespace Appalachia.Spatial.ConvexDecomposition.MeshCutting.Runtime
 {
-    public class DrawBounds : AppalachiaBehaviour
+    public sealed class DrawBounds : AppalachiaBehaviour<DrawBounds>
     {
         #region Fields and Autoproperties
 

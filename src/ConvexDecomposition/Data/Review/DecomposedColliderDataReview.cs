@@ -2,12 +2,14 @@
 using System;
 using Appalachia.CI.Integration.Assets;
 using Appalachia.Core.Attributes;
+using Appalachia.Core.Objects.Root;
 using Appalachia.Core.Preferences.Globals;
-using Appalachia.Core.Scriptables;
 using Appalachia.Editing.Core;
 using Appalachia.Spatial.ConvexDecomposition.Generation;
+using Appalachia.Utility.Async;
+using Appalachia.Utility.Execution;
 using Appalachia.Utility.Extensions;
-using Appalachia.Utility.Logging;
+using Appalachia.Utility.Strings;
 using Sirenix.OdinInspector;
 using Unity.Profiling;
 using UnityEngine;
@@ -15,8 +17,13 @@ using UnityEngine;
 namespace Appalachia.Spatial.ConvexDecomposition.Data.Review
 {
     [Serializable]
+    [CallStaticConstructorInEditor]
     public class DecomposedColliderDataReview : SingletonAppalachiaObject<DecomposedColliderDataReview>
     {
+        static DecomposedColliderDataReview()
+        {
+        }
+
         #region Fields and Autoproperties
 
         [SerializeField]
@@ -127,11 +134,11 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data.Review
             var eligible = index.CountKeys_NoAlloc(k => k.state == DataReviewState.Suggested);
 
             using (var progress = new EditorOnlyProgressBar(
-                "Updating to external model...",
-                eligible,
-                true,
-                1
-            ))
+                       "Updating to external model...",
+                       eligible,
+                       true,
+                       1
+                   ))
             {
                 for (var i = 0; i < index.Count; i++)
                 {
@@ -345,21 +352,16 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data.Review
             }
         }
 
-        protected override void WhenEnabled()
+        protected override async AppaTask WhenEnabled()
         {
             using (_PRF_WhenEnabled.Auto())
             {
-                RebuildList();
-            }
-        }
+                await base.WhenEnabled();
 
-        [ExecuteOnEnable]
-        private static void ExecuteOnEnable()
-        {
-            using (_PRF_ExecuteOnEnable.Auto())
-            {
-                // ReSharper disable once ReturnValueOfPureMethodIsNotUsed
-                instance.ToString();
+                if (!AppalachiaApplication.IsPlayingOrWillPlay)
+                {
+                    RebuildList();
+                }
             }
         }
 
@@ -407,6 +409,7 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data.Review
                     index = new DecomposedColliderDataReviewItemIndex(dataList.Count);
                 }
 
+                index.SetObjectOwnership(this);
                 index.Clear();
 
                 for (var i = 0; i < dataList.Count; i++)
@@ -415,7 +418,7 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data.Review
 
                     if (data.originalMesh == null)
                     {
-                        AppaLog.Warn($"No mesh for {data.name}", data);
+                        Context.Log.Warn(ZString.Format("No mesh for {0}", data.name), data);
                         continue;
                     }
 
@@ -479,9 +482,6 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data.Review
         #region Profiling
 
         private const string _PRF_PFX = nameof(DecomposedColliderDataReview) + ".";
-
-        private static readonly ProfilerMarker _PRF_ExecuteOnEnable =
-            new ProfilerMarker(_PRF_PFX + nameof(Initialize));
 
         private static readonly ProfilerMarker _PRF_RebuildList =
             new ProfilerMarker(_PRF_PFX + nameof(RebuildList));

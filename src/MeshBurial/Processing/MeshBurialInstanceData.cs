@@ -3,7 +3,6 @@
 #region
 
 using System;
-using Appalachia.Core.Behaviours;
 using Appalachia.Core.Collections.Extensions;
 using Appalachia.Core.Collections.Native;
 using Appalachia.Jobs.Optimization.Metadata;
@@ -20,7 +19,7 @@ using Unity.Profiling;
 namespace Appalachia.Spatial.MeshBurial.Processing
 {
     [Serializable]
-    public class MeshBurialInstanceData : AppalachiaBase
+    public class MeshBurialInstanceData
     {
         private const string _PRF_PFX = nameof(MeshBurialInstanceData) + ".";
 
@@ -166,7 +165,7 @@ namespace Appalachia.Spatial.MeshBurial.Processing
                 lookupError.EnsureCapacityAndLength(inst);
                 terrainHashCodes.EnsureCapacityAndLength(inst);
 
-                terrainLookup = TerrainMetadataManager.GetNativeMetadata();
+                terrainLookup = TerrainMetadataManager.instance.GetNativeMetadata();
 
                 if (terrainLookup_Values.ShouldAllocate())
                 {
@@ -174,7 +173,7 @@ namespace Appalachia.Spatial.MeshBurial.Processing
                     terrainLookup_Values = terrainLookup.GetValueArray(alloc);
                 }
 
-                terrainHeights = TerrainMetadataManager.GetNativeHeights();
+                terrainHeights = TerrainMetadataManager.instance.GetNativeHeights();
             }
         }
     }

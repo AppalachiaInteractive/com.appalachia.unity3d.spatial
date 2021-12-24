@@ -10,29 +10,25 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 161e6a270f964e8399d62997c767d92a, type: 3}
-  m_Name: TerrainThreadsafeDataDictionary_20200807-014649907
+  m_Name: MainTerrainMetadataDictionary
   m_EditorClassIdentifier: 
   _initializationData:
     _tags: []
     _resetToken: 
-  _cachedName: TerrainThreadsafeDataDictionary_20200807-014649907
-  _niceName: Terrain Threadsafe Data Dictionary_20200807-014649907
+  _cachedName: 
+  _niceName: 
   _defaultValue: {fileID: 0}
   _items:
     initializerCount: 64
     _object: {fileID: 11400000}
     keys:
       _capacityIncreaseMultiplier: 2
-      _values: cc930000c2ae0000f0ae0000e2ae0000bc1e0200
+      _values: bc1e0200
       noTracking: 0
-      _count: 5
+      _count: 1
     values:
       _capacityIncreaseMultiplier: 2
       _values:
       - {fileID: 11400000, guid: 7ebdfc37b882ff74a974239794282c66, type: 2}
-      - {fileID: 11400000, guid: 7ebdfc37b882ff74a974239794282c66, type: 2}
-      - {fileID: 11400000, guid: 7ebdfc37b882ff74a974239794282c66, type: 2}
-      - {fileID: 11400000, guid: 7ebdfc37b882ff74a974239794282c66, type: 2}
-      - {fileID: 11400000, guid: 7ebdfc37b882ff74a974239794282c66, type: 2}
       noTracking: 0
-      _count: 5
+      _count: 1

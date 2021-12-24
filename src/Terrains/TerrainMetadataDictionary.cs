@@ -1,56 +1,37 @@
 #region
 
-using Appalachia.Core.Collections.Interfaces;
-using Appalachia.Core.Scriptables;
+using Appalachia.Core.Collections.Implementations.Lists;
+using Appalachia.Core.Objects.Initialization;
+using Appalachia.Core.Objects.Scriptables;
 using Appalachia.Spatial.Terrains.Collections;
-using Appalachia.Utility.Extensions;
-using Sirenix.OdinInspector;
-using UnityEngine;
+using Appalachia.Utility.Async;
 
 #endregion
 
 namespace Appalachia.Spatial.Terrains
 {
-    public class
-        TerrainMetadataDictionary : SingletonAppalachiaObject<TerrainMetadataDictionary>
+    public sealed class TerrainMetadataDictionary : AppalachiaObjectLookupCollection<int, TerrainMetadata,
+        intList, TerrainMetadataList, TerrainMetadataLookup, TerrainMetadataDictionary>
     {
-        [SerializeField]
-        [ListDrawerSettings(
-            Expanded = true,
-            DraggableItems = false,
-            HideAddButton = true,
-            HideRemoveButton = true,
-            NumberOfItemsPerPage = 1
-        )]
-        private TerrainMetadataLookup _state;
+        public override bool HasDefault => false;
 
-        public IAppaLookup<int, TerrainMetadata, AppaList_TerrainMetadata> Lookup
+        protected override int GetUniqueKeyFromValue(TerrainMetadata value)
         {
-            get
-            {
-                if (_state == null)
-                {
-                    _state = new TerrainMetadataLookup();
-#if UNITY_EDITOR
-                   this.MarkAsModified();
-                    _state.SetMarkModifiedAction(this.MarkAsModified);
-#endif
-                }
+            return value.Data.GetHashCode();
+        }
 
-                return _state;
+        protected override async AppaTask Initialize(Initializer initializer)
+        {
+            using (_PRF_Initialize.Auto())
+            {
+                await base.Initialize(initializer);
             }
         }
 
-        protected override void WhenEnabled()
-        {
-            if (_state == null)
-            {
-                _state = new TerrainMetadataLookup();
-#if UNITY_EDITOR
-               this.MarkAsModified();
-                _state.SetMarkModifiedAction(this.MarkAsModified);
-#endif
-            }
-        }
+        #region Profiling
+
+        private const string _PRF_PFX = nameof(TerrainMetadataDictionary) + ".";
+
+        #endregion
     }
 }

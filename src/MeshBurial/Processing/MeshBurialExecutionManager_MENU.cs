@@ -12,61 +12,62 @@ using Unity.Mathematics;
 
 namespace Appalachia.Spatial.MeshBurial.Processing
 {
-    public static partial class MeshBurialExecutionManager
+    public partial class MeshBurialExecutionManager
     {
         #region PKG.Menu.Appalachia.Enable
-
-        [NonSerialized] public static readonly PREF<bool> _BURY = PREFS.REG(PKG.Prefs.Group, "Enabled", true);
 
         [UnityEditor.MenuItem(PKG.Menu.Appalachia.Tools.Enable.Base, true)]
         private static bool ToggleEnableMeshBurialsValidate()
         {
-            if (!_BURY.IsAwake)
+            if (!instance.IsBuryingEnabled.IsAwake)
             {
                 return false;
             }
 
-            UnityEditor.Menu.SetChecked(PKG.Menu.Appalachia.Tools.Enable.Base, _BURY.Value);
+            UnityEditor.Menu.SetChecked(
+                PKG.Menu.Appalachia.Tools.Enable.Base,
+                instance.IsBuryingEnabled.Value
+            );
             return true;
         }
 
         [UnityEditor.MenuItem(PKG.Menu.Appalachia.Tools.Enable.Base, priority = PKG.Priority + 1)]
         public static void ToggleEnableMeshBurials()
         {
-            EnableMeshBurials();
+            instance.EnableMeshBurials();
         }
 
         public static void InitializeEnableMeshBurials()
         {
-            if (!_BURY.IsAwake)
+            if (!instance.IsBuryingEnabled.IsAwake)
             {
                 UnityEditor.EditorApplication.delayCall += InitializeEnableMeshBurials;
                 return;
             }
 
-            if (_BURY.v)
+            if (instance.IsBuryingEnabled.v)
             {
-                EnableMeshBurials(true);
+                instance.EnableMeshBurials(true);
             }
         }
 
-        public static void EnableMeshBurials(bool force = false)
+        public void EnableMeshBurials(bool force = false)
         {
-            if (!_BURY.IsAwake)
+            if (!IsBuryingEnabled.IsAwake)
             {
                 return;
             }
 
-            _BURY.Value = force || !_BURY.Value;
+            IsBuryingEnabled.Value = force || !IsBuryingEnabled.Value;
 
-            if (_BURY.Value)
+            if (IsBuryingEnabled.Value)
             {
                 _processed = 0;
-                UnityEditor.EditorApplication.update += _processFrame;
+                enabled = true;
             }
             else
             {
-                UnityEditor.EditorApplication.update -= _processFrame;
+                enabled = false;
 
                 pendingHandle.Complete();
 

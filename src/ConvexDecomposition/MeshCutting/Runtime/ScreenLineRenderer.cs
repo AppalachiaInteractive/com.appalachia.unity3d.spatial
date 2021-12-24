@@ -1,10 +1,11 @@
 ﻿#if UNITY_EDITOR
-using Appalachia.Core.Behaviours;
+using Appalachia.Core.Objects.Root;
+using Appalachia.Utility.Async;
 using UnityEngine;
 
 namespace Appalachia.Spatial.ConvexDecomposition.MeshCutting.Runtime
 {
-    public class ScreenLineRenderer : AppalachiaBehaviour
+    public sealed class ScreenLineRenderer : AppalachiaBehaviour<ScreenLineRenderer>
     {
         // Line Drawn event handler
         public delegate void LineDrawnHandler(Vector3 begin, Vector3 end, Vector3 depth);
@@ -65,15 +66,16 @@ namespace Appalachia.Spatial.ConvexDecomposition.MeshCutting.Runtime
             }
         }
 
-        protected override void OnEnable()
+        protected override async AppaTask WhenEnabled()
         {
-            base.OnEnable();
+            await base.WhenEnabled();
             Camera.onPostRender += PostRenderDrawLine;
         }
 
-        protected override void OnDisable()
+        protected override async AppaTask WhenDisabled()
+
         {
-            base.OnDisable();
+            await base.WhenDisabled();
             Camera.onPostRender -= PostRenderDrawLine;
         }
 

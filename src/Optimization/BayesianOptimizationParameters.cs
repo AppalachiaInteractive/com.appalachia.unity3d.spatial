@@ -1,6 +1,7 @@
 #region
 
 using System;
+using Appalachia.Core.Objects.Root;
 using Sirenix.OdinInspector;
 
 #endregion
@@ -8,7 +9,7 @@ using Sirenix.OdinInspector;
 namespace Appalachia.Spatial.Optimization
 {
     [Serializable]
-    public class BayesianOptimizationParameters
+    public class BayesianOptimizationParameters : AppalachiaSimpleBase
     {
         [PropertyRange(1, 500)] public int iterations = 30;
 

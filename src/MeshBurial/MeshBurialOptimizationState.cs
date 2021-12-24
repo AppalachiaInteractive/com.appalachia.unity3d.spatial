@@ -2,6 +2,7 @@
 #region
 
 using System;
+using Appalachia.Core.Objects.Root;
 using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -11,7 +12,7 @@ using UnityEngine.Serialization;
 namespace Appalachia.Spatial.MeshBurial
 {
     [Serializable]
-    public class MeshBurialOptimizationState
+    public class MeshBurialOptimizationState : AppalachiaSimpleBase
     {
         [TitleGroup("Reference")]
         public double initialError;

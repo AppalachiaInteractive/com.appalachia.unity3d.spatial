@@ -1,10 +1,11 @@
 #if UNITY_EDITOR
 using System.Collections.Generic;
+using Appalachia.Core.Objects.Root;
 using UnityEngine;
 
 namespace Appalachia.Spatial.ConvexDecomposition.MeshCutting.Core
 {
-    public class MeshCutter
+    public class MeshCutter : AppalachiaSimpleBase
     {
 
         public TempMesh PositiveMesh { get; private set; }

@@ -9,8 +9,8 @@ using UnityEngine;
 
 namespace Appalachia.Spatial.Voxels.Gizmos
 {
-    public class VoxelDataGizmoSettingsLookup : AppaLookup<VoxelDataGizmoStyle,
-        VoxelDataGizmoSettings, AppaList_VoxelDataGizmoStyle, AppaList_VoxelDataGizmoSettings>
+    public class VoxelDataGizmoSettingsLookup : AppaLookup<VoxelDataGizmoStyle, VoxelDataGizmoSettings,
+        VoxelDataGizmoStyleList, VoxelDataGizmoSettingsList>
     {
         protected override string GetDisplayTitle(
             VoxelDataGizmoStyle key,

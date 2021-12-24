@@ -6,7 +6,7 @@ using System;
 using System.Diagnostics;
 using Appalachia.Core.Attributes.Editing;
 using Appalachia.Spatial.ConvexDecomposition.API;
-using Appalachia.Utility.Extensions;
+using Appalachia.Utility.Strings;
 using Sirenix.OdinInspector;
 using Unity.Mathematics;
 using UnityEngine.Serialization;
@@ -414,22 +414,22 @@ namespace Appalachia.Spatial.ConvexDecomposition
 
         [DebuggerStepThrough] public override string ToString()
         {
-            return $"{nameof(mode)}: {mode}, " +
-                   $"{nameof(maxConvexHulls)}: {maxConvexHulls}, " +
-                   $"{nameof(normalize)}: {normalize}, " +
-                   $"{nameof(resolution)}: {resolution}, " +
-                   $"{nameof(planeDownsampling)}: {planeDownsampling}, " +
-                   $"{nameof(convexHullDownsampling)}: {convexHullDownsampling}, " +
-                   $"{nameof(concavity)}: {concavity:F4}, " +
-                   $"{nameof(alpha)}: {alpha:F4}, " +
-                   $"{nameof(beta)}: {beta:F4}, " +
-                   $"{nameof(maximumVerticesPerHull)}: {maximumVerticesPerHull}, " +
-                   $"{nameof(minimumVolumePerHull)}: {minimumVolumePerHull:F4}, " +
-                   $"{nameof(convexHullApproximation)}: {convexHullApproximation}, " +
-                   $"{nameof(projectHullVertices)}: {projectHullVertices}, " +
-                   $"{nameof(openClAcceleration)}: {openClAcceleration}, " +
-                   $"{nameof(openClPlatform)}: {openClPlatform}, " +
-                   $"{nameof(openClDevice)}: {openClDevice}";
+            return ZString.Format("{0}: {1}, ",    nameof(mode),                    mode) +
+                   ZString.Format("{0}: {1}, ",    nameof(maxConvexHulls),          maxConvexHulls) +
+                   ZString.Format("{0}: {1}, ",    nameof(normalize),               normalize) +
+                   ZString.Format("{0}: {1}, ",    nameof(resolution),              resolution) +
+                   ZString.Format("{0}: {1}, ",    nameof(planeDownsampling),       planeDownsampling) +
+                   ZString.Format("{0}: {1}, ",    nameof(convexHullDownsampling),  convexHullDownsampling) +
+                   ZString.Format("{0}: {1:F4}, ", nameof(concavity),               concavity) +
+                   ZString.Format("{0}: {1:F4}, ", nameof(alpha),                   alpha) +
+                   ZString.Format("{0}: {1:F4}, ", nameof(beta),                    beta) +
+                   ZString.Format("{0}: {1}, ",    nameof(maximumVerticesPerHull),  maximumVerticesPerHull) +
+                   ZString.Format("{0}: {1:F4}, ", nameof(minimumVolumePerHull),    minimumVolumePerHull) +
+                   ZString.Format("{0}: {1}, ",    nameof(convexHullApproximation), convexHullApproximation) +
+                   ZString.Format("{0}: {1}, ",    nameof(projectHullVertices),     projectHullVertices) +
+                   ZString.Format("{0}: {1}, ",    nameof(openClAcceleration),      openClAcceleration) +
+                   ZString.Format("{0}: {1}, ",    nameof(openClPlatform),          openClPlatform) +
+                   ZString.Format("{0}: {1}",      nameof(openClDevice),            openClDevice);
         }
 
 #endregion

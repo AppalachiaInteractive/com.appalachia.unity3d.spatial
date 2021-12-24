@@ -1,6 +1,7 @@
 #region
 
 using System;
+using Appalachia.Core.Objects.Root;
 using UnityEngine;
 
 #endregion
@@ -8,7 +9,7 @@ using UnityEngine;
 namespace Appalachia.Spatial
 {
     [Serializable]
-    public class TransformAnalysis
+    public class TransformAnalysis : AppalachiaSimpleBase
     {
         public Vector3 minLocal;
         public Vector3 maxLocal;

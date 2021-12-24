@@ -10,11 +10,15 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f5f19be6cd193e84a98225184f27d12b, type: 3}
-  m_Name: MeshBurialOptimizationParameters_20200712-081034971
+  m_Name: MeshBurialOptimizationParameters
   m_EditorClassIdentifier: 
-  _niceName: 
+  _initializationData:
+    _nonSerializedTags: []
+    _tags: []
+    _resetToken: 
   _cachedName: 
+  _niceName: 
   optimizerType: 3
-  xzDegreeAdjustment: 15
+  xzDegreeAdjustment: 30
   xzDegreeAdjustmentMinimal: 8
   overrideIterations: 0

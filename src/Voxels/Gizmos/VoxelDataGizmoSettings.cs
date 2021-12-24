@@ -4,7 +4,7 @@
 
 using System;
 using Appalachia.Core.Attributes.Editing;
-using Appalachia.Core.Scriptables;
+using Appalachia.Core.Objects.Root;
 using Appalachia.Utility.Constants;
 using Sirenix.OdinInspector;
 using Unity.Mathematics;
@@ -15,8 +15,10 @@ using UnityEngine;
 namespace Appalachia.Spatial.Voxels.Gizmos
 {
     [Serializable]
-    public class VoxelDataGizmoSettings  : AppalachiaObject
+    public class VoxelDataGizmoSettings : AppalachiaObject<VoxelDataGizmoSettings>
     {
+        #region Fields and Autoproperties
+
         public VoxelDataGizmoStyle style;
 
         [FoldoutGroup("Bounds")]
@@ -213,6 +215,10 @@ namespace Appalachia.Spatial.Voxels.Gizmos
         [SmartLabel]
         [PropertyRange(0f, 1f)]
         public float rayHitGizmoSize;
+
+        #endregion
+
+        
     }
 }
 

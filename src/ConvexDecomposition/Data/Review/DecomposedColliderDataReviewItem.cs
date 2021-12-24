@@ -5,9 +5,11 @@
 using System;
 using System.Diagnostics;
 using Appalachia.Core.Attributes.Editing;
+using Appalachia.Core.Objects.Root;
 using Appalachia.Core.Preferences.Globals;
 using Appalachia.Spatial.ConvexDecomposition.Generation;
 using Appalachia.Utility.Colors;
+using Appalachia.Utility.Strings;
 using Sirenix.OdinInspector;
 using Unity.Profiling;
 using UnityEngine;
@@ -17,12 +19,12 @@ using UnityEngine;
 namespace Appalachia.Spatial.ConvexDecomposition.Data.Review
 {
     [Serializable, HideReferenceObjectPicker]
-    public class DecomposedColliderDataReviewItem
+    public class DecomposedColliderDataReviewItem : AppalachiaSimpleBase
     {
         [HideInInspector] public DecomposedCollider dc;
 
-        [SmartTitle(_TITLE,  _SUBTITLE,  false, true, titleColor: nameof(_titleColor))]
-        [SmartTitle(_TITLE2, _SUBTITLE2, false, true, titleColor: nameof(reviewColor))]
+        [SmartTitle(_TITLE,  _SUBTITLE,  _TITLE,  _SUBTITLE,  false, true, titleColor: nameof(_titleColor))]
+        [SmartTitle(_TITLE2, _SUBTITLE2, _TITLE2, _SUBTITLE2, false, true, titleColor: nameof(reviewColor))]
         [PropertyOrder(0)]
         [SerializeField]
         [SmartLabel]
@@ -194,7 +196,15 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data.Review
             {
                 if (_toString == null)
                 {
-                    _toString = $"{nameof(elements)}: {elements}, {nameof(vertices)}: {vertices}, {nameof(triangles)}: {triangles}";
+                    _toString = ZString.Format(
+                        "{0}: {1}, {2}: {3}, {4}: {5}",
+                        nameof(elements),
+                        elements,
+                        nameof(vertices),
+                        vertices,
+                        nameof(triangles),
+                        triangles
+                    );
                 }
 
                 return _toString;
@@ -254,8 +264,8 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data.Review
                             ? "External"
                             : "Basic";
 
-        private string _title2 => $"{elements} Meshes";
-        private string _subtitle2 => $"{vertexInfoString} | {triangleInfoString}";
+        private string _title2 => ZString.Format("{0} Meshes",   elements);
+        private string _subtitle2 => ZString.Format("{0} | {1}", vertexInfoString, triangleInfoString);
 
         private const string _TABS = "Tabs";
         private const string _REVIEW = "Review";
@@ -305,7 +315,7 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data.Review
             {
                 if (_vertexInfoString == null)
                 {
-                    _vertexInfoString = $"Vertices: {vertices.GetString}";
+                    _vertexInfoString = ZString.Format("Vertices: {0}", vertices.GetString);
                 }
 
                 return _vertexInfoString;
@@ -321,7 +331,7 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data.Review
             {
                 if (_triangleInfoString == null)
                 {
-                    _triangleInfoString = $"Triangles: {triangles.GetString}";
+                    _triangleInfoString = ZString.Format("Triangles: {0}", triangles.GetString);
                 }
 
                 return _triangleInfoString;

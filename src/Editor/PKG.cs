@@ -33,13 +33,13 @@ namespace Appalachia.Spatial
         public const string NeutralResourcesLanguage = "en";
         public const string AssemblyVersion = "0.2.0.0";
         public const string AssemblyFileVersion = "0.2.0.0";
-        public const int Priority = -278000;
+        public const int Priority = -273000;
         public const string Name = "Spatial";
         public const string Prefix = Root + Name + "/";
         public const string Root = "Appalachia/";
         public const string Version = "0.2.0";
         public const int VersionInt = 2000;
-        public const string BuildDate = "2021-11-19T00:01:28.9749555Z";
+        public const string BuildDate = "2021-12-21T00:29:23.7646182Z";
         
         public static partial class Prefs
         {

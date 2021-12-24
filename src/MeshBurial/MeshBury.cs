@@ -5,10 +5,11 @@
 using System;
 using System.Collections.Generic;
 using Appalachia.CI.Integration.Assets;
+using Appalachia.Core.Attributes;
 using Appalachia.Core.Collections.Native;
 using Appalachia.Core.Debugging;
+using Appalachia.Core.Objects.Initialization;
 using Appalachia.Core.Preferences;
-using Appalachia.Editing.Core.Behaviours;
 using Appalachia.Editing.Debugging.Handle;
 using Appalachia.Jobs.MeshData;
 using Appalachia.Jobs.Optimization.Options;
@@ -17,9 +18,11 @@ using Appalachia.Spatial.MeshBurial.Processing;
 using Appalachia.Spatial.MeshBurial.State;
 using Appalachia.Spatial.Terrains;
 using Appalachia.Spatial.Terrains.Utilities;
+using Appalachia.Utility.Async;
 using Appalachia.Utility.Colors;
 using Appalachia.Utility.Constants;
 using Appalachia.Utility.Extensions;
+using Appalachia.Utility.Strings;
 using Sirenix.OdinInspector;
 using Unity.Collections;
 using Unity.Jobs;
@@ -32,8 +35,9 @@ using UnityEngine;
 
 namespace Appalachia.Spatial.MeshBurial
 {
+    [CallStaticConstructorInEditor]
     [ExecuteAlways]
-    public class MeshBury : EditorOnlyBehaviour
+    public class MeshBury : EditorOnlyAppalachiaBehaviour
     {
         #region Constants and Static Readonly
 
@@ -42,6 +46,12 @@ namespace Appalachia.Spatial.MeshBurial
         private const string GR_ = GR + "/";
 
         #endregion
+
+        // [CallStaticConstructorInEditor] should be added to the class (initsingletonattribute)
+        static MeshBury()
+        {
+            MeshBurialAdjustmentCollection.InstanceAvailable += i => _meshBurialAdjustmentCollection = i;
+        }
 
         #region Preferences
 
@@ -176,6 +186,12 @@ namespace Appalachia.Spatial.MeshBurial
 
         #endregion
 
+        #region Static Fields and Autoproperties
+
+        private static MeshBurialAdjustmentCollection _meshBurialAdjustmentCollection;
+
+        #endregion
+
         #region Fields and Autoproperties
 
         [BoxGroup("Execution"), PropertyRange(1, 5000)]
@@ -221,7 +237,7 @@ namespace Appalachia.Spatial.MeshBurial
 
         [NonSerialized] private int[] _terrainHashCodes = new int[1];
         [NonSerialized] private MeshBurialInstanceTracking _recent;
-        [NonSerialized] private bool _started;
+        [NonSerialized] private bool _hasCachedUpdateValues;
         [NonSerialized] private float _degree;
 
         [NonSerialized] private List<Vector3> _borderList;
@@ -235,19 +251,17 @@ namespace Appalachia.Spatial.MeshBurial
 
         //private Queue<float4x4> _last;
 
-        public override EditorOnlyExclusionStyle exclusionStyle => EditorOnlyExclusionStyle.Component;
-
         private bool _canReinitialize => _gameObject != null;
 
         #region Event Functions
 
-        private void Update()
+        protected void Update()
         {
             using (_PRF_Update.Auto())
             {
                 try
                 {
-                    if (_started)
+                    if (_hasCachedUpdateValues)
                     {
                         return;
                     }
@@ -257,9 +271,7 @@ namespace Appalachia.Spatial.MeshBurial
                         return;
                     }
 
-                    Initialize();
-
-                    _started = true;
+                    _hasCachedUpdateValues = true;
 
                     var degreeAdjustment = _burialOptions.permissiveness *
                                            (_burialOptions.minimalRotation
@@ -295,7 +307,7 @@ namespace Appalachia.Spatial.MeshBurial
             {
                 try
                 {
-                    if (!_started || !enabled)
+                    if (!_hasCachedUpdateValues || !enabled)
                     {
                         return;
                     }
@@ -315,7 +327,7 @@ namespace Appalachia.Spatial.MeshBurial
                         return;
                     }
 
-                    _started = false;
+                    _hasCachedUpdateValues = false;
 
                     error = _recent.proposed.error;
                     var matrix = _recent.proposed.matrix;
@@ -340,19 +352,20 @@ namespace Appalachia.Spatial.MeshBurial
                 catch (Exception ex)
                 {
                     Debug.LogError(ex);
-                    _started = false;
+                    _hasCachedUpdateValues = false;
                     enabled = false;
                 }
             }
         }
 
-        protected override void OnDisable()
+        protected override async AppaTask WhenDisabled()
+
         {
             using (_PRF_OnDisable.Auto())
             {
-                base.OnDisable();
+                await base.WhenDisabled();
 
-                _started = false;
+                _hasCachedUpdateValues = false;
 
                 _pendingHandle.Complete();
 
@@ -385,8 +398,8 @@ namespace Appalachia.Spatial.MeshBurial
                 }
 
                 var t = transform;
-                var m = (float4x4) t.localToWorldMatrix;
-                var pos = (float3) t.position;
+                var m = (float4x4)t.localToWorldMatrix;
+                var pos = (float3)t.position;
                 var dist = gizmoDistance.v;
                 var size = gizmoRadius.v;
 
@@ -552,9 +565,9 @@ namespace Appalachia.Spatial.MeshBurial
 
                 {
                     var ah = adjustmentHandle.v;
-                    var u = (float3) t.up;
-                    var r = (float3) t.right;
-                    var f = (float3) t.forward;
+                    var u = (float3)t.up;
+                    var r = (float3)t.right;
+                    var f = (float3)t.forward;
                     var endu = pos + (dist * u);
                     var endf = pos + (dist * f);
                     var endr = pos + (dist * r);
@@ -567,9 +580,9 @@ namespace Appalachia.Spatial.MeshBurial
                     var wh = worldHandle.v;
                     var Dist = worldDistanceScale.v * dist;
                     var Size = worldHandleScale.v * size;
-                    var U = (float3) Vector3.up;
-                    var R = (float3) Vector3.right;
-                    var F = (float3) Vector3.forward;
+                    var U = (float3)Vector3.up;
+                    var R = (float3)Vector3.right;
+                    var F = (float3)Vector3.forward;
                     var endU = pos + (Dist * U);
                     var endF = pos + (Dist * F);
                     var endR = pos + (Dist * R);
@@ -584,15 +597,15 @@ namespace Appalachia.Spatial.MeshBurial
                     SmartHandles.DrawHandleLine(pos, endR, wh, U, R, Size, wRC);
                 }
 
-                var terrainData = TerrainMetadataManager.GetTerrain(_terrainHashCodes[0]);
+                var terrainData = TerrainMetadataManager.instance.GetTerrain(_terrainHashCodes[0]);
                 var terrainNormal = terrainData.GetTerrainNormal(pos);
 
                 {
                     var rh = terrainHandle.v;
                     var T = terrainNormal;
                     var tRot = Quaternion.LookRotation(T, Vector3.up);
-                    var Tf = (float3) tRot.Forward();
-                    var Tu = (float3) tRot.Up();
+                    var Tf = (float3)tRot.Forward();
+                    var Tu = (float3)tRot.Up();
                     var endT = pos + (dist * T);
                     SmartHandles.DrawHandleLine(pos, endT, rh, Tu, Tf, size, terrainColor.v);
                 }
@@ -601,8 +614,8 @@ namespace Appalachia.Spatial.MeshBurial
                     var h = meshBorderHandle.v;
                     var vec = m.MultiplyVector(_meshObject.data.BorderNormal);
                     var rot = Quaternion.LookRotation(vec, Vector3.up);
-                    var f = (float3) rot.Forward();
-                    var up = (float3) rot.Up();
+                    var f = (float3)rot.Forward();
+                    var up = (float3)rot.Up();
                     var end = pos + (dist * vec);
                     SmartHandles.DrawHandleLine(pos, end, h, up, f, size, meshBorderColor.v);
                 }
@@ -611,8 +624,8 @@ namespace Appalachia.Spatial.MeshBurial
                     var h = meshFaceHandle.v;
                     var vec = m.MultiplyVector(_meshObject.data.AverageFaceNormal);
                     var rot = Quaternion.LookRotation(vec, Vector3.up);
-                    var f = (float3) rot.Forward();
-                    var up = (float3) rot.Up();
+                    var f = (float3)rot.Forward();
+                    var up = (float3)rot.Up();
                     var end = pos + (dist * vec);
                     SmartHandles.DrawHandleLine(pos, end, h, up, f, size, faceNormalColor.v);
                 }
@@ -675,25 +688,18 @@ namespace Appalachia.Spatial.MeshBurial
             {
                 _meshObject.data.Dispose();
 
-                _meshObject = MeshObjectManager.GetCheapestMeshWrapper(_gameObject, true);
+                _meshObject = MeshObjectManager.instance.GetCheapestMeshWrapper(_gameObject, true);
             }
         }
 
-        protected override void Internal_Awake()
+        protected override async AppaTask Initialize(Initializer initializer)
         {
-            using (_PRF_Internal_Awake.Auto())
+            using (_PRF_Initialize.Auto())
             {
-                TerrainMetadataManager.Initialize();
-            }
-        }
+                await base.Initialize(initializer);
 
-        protected override void Internal_OnEnable()
-        {
-            using (_PRF_Internal_OnEnable.Auto())
-            {
                 if (_gameObject == null)
                 {
-#if UNITY_EDITOR
                     var path = PrefabUtility.GetPrefabAssetPathOfNearestInstanceRoot(gameObject);
                     if (string.IsNullOrWhiteSpace(path))
                     {
@@ -707,28 +713,14 @@ namespace Appalachia.Spatial.MeshBurial
                         enabled = false;
                         return;
                     }
-#else
-                enabled = false;
-                return;
-#endif
                 }
 
-                Initialize();
-            }
-        }
-
-        protected override void Initialize()
-        {
-            using (_PRF_Initialize.Auto())
-            {
-                base.Initialize();
-                
                 var t = transform;
                 var p = t.parent;
 
                 if (p == null)
                 {
-                    var newParent = new GameObject($"PARENT_{name}");
+                    var newParent = new GameObject(ZString.Format("PARENT_{0}", (object)name));
                     p = newParent.transform;
                     p.SetMatrix4x4ToTransform(t.localToWorldMatrix);
 
@@ -748,7 +740,7 @@ namespace Appalachia.Spatial.MeshBurial
 
                 if ((_meshObject == null) || !_meshObject.data.isCreated)
                 {
-                    _meshObject = MeshObjectManager.GetCheapestMeshWrapper(gameObject, true);
+                    _meshObject = MeshObjectManager.instance.GetCheapestMeshWrapper(gameObject, true);
                 }
 
                 if (_instanceData == null)
@@ -772,7 +764,7 @@ namespace Appalachia.Spatial.MeshBurial
 
                 if (_adjustment == null)
                 {
-                    _adjustment = MeshBurialAdjustmentCollection.instance.GetByPrefab(_gameObject);
+                    _adjustment = _meshBurialAdjustmentCollection.GetByPrefab(_gameObject);
                 }
 
                 if (_randoms.ShouldAllocate())
@@ -796,13 +788,16 @@ namespace Appalachia.Spatial.MeshBurial
 
                 _matrices[0] = p.localToWorldMatrix;
 
-                _terrainHashCodes[0] = TerrainMetadataManager.GetTerrainHashCodeAt(p.position);
+                _terrainHashCodes[0] = TerrainMetadataManager.instance.GetTerrainHashCodeAt(p.position);
             }
         }
 
         #region Profiling
 
         private const string _PRF_PFX = nameof(MeshBury) + ".";
+
+        private static readonly ProfilerMarker _PRF_Initialize =
+            new ProfilerMarker(_PRF_PFX + nameof(Initialize));
 
         private static readonly ProfilerMarker _PRF_Update = new ProfilerMarker(_PRF_PFX + nameof(Update));
 
@@ -814,15 +809,6 @@ namespace Appalachia.Spatial.MeshBurial
 
         private static readonly ProfilerMarker _PRF_OnDrawGizmosSelected =
             new ProfilerMarker(_PRF_PFX + nameof(OnDrawGizmosSelected));
-
-        private static readonly ProfilerMarker _PRF_Internal_Awake =
-            new ProfilerMarker(_PRF_PFX + nameof(Internal_Awake));
-
-        private static readonly ProfilerMarker _PRF_Internal_OnEnable =
-            new ProfilerMarker(_PRF_PFX + nameof(Internal_OnEnable));
-
-        private static readonly ProfilerMarker _PRF_Initialize =
-            new ProfilerMarker(_PRF_PFX + nameof(Initialize));
 
         private static readonly ProfilerMarker _PRF_ReinitializeMesh =
             new ProfilerMarker(_PRF_PFX + nameof(ReinitializeMesh));

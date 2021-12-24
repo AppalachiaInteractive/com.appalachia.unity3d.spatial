@@ -3,6 +3,7 @@
 #region
 
 using System;
+using Appalachia.Core.Objects.Root;
 using Appalachia.Spatial.Terrains;
 using Sirenix.OdinInspector;
 using UnityEngine;
@@ -13,7 +14,7 @@ using UnityEngine.Serialization;
 namespace Appalachia.Spatial.MeshBurial.State
 {
     [Serializable]
-    public class MeshBurialState
+    public class MeshBurialState : AppalachiaSimpleBase
     {
         [FormerlySerializedAs("_optimizationState")]
         [SerializeField]
@@ -49,12 +50,7 @@ namespace Appalachia.Spatial.MeshBurial.State
 
             optimized = new MeshBurialOptimizationState();
 
-            if (!TerrainMetadataManager.Initialized)
-            {
-                TerrainMetadataManager.Initialize();
-            }
-
-            Terrain = TerrainMetadataManager.GetTerrain(terrainHashCode);
+            Terrain = TerrainMetadataManager.instance.GetTerrain(terrainHashCode);
         }
 
         public MeshBurialOptimizationState optimized

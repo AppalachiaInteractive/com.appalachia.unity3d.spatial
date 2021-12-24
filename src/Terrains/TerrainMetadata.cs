@@ -2,10 +2,12 @@
 
 using System;
 using Appalachia.Core.Collections.Native;
-using Appalachia.Core.Scriptables;
+using Appalachia.Core.Objects.Initialization;
+using Appalachia.Core.Objects.Scriptables;
 using Appalachia.Spatial.Terrains.Utilities;
+using Appalachia.Utility.Async;
 using Appalachia.Utility.Extensions;
-using Appalachia.Utility.Logging;
+using Appalachia.Utility.Strings;
 using Unity.Collections;
 using Unity.Profiling;
 using UnityEngine;
@@ -15,7 +17,7 @@ using UnityEngine;
 namespace Appalachia.Spatial.Terrains
 {
     [Serializable]
-    public class TerrainMetadata : AutonamedIdentifiableAppalachiaObject
+    public class TerrainMetadata : AutonamedIdentifiableAppalachiaObject<TerrainMetadata>
     {
         #region Fields and Autoproperties
 
@@ -48,6 +50,8 @@ namespace Appalachia.Spatial.Terrains
             }
         }
 
+        public TerrainData Data => _terrainData;
+
         public TerrainJobData JobData
         {
             get
@@ -60,37 +64,6 @@ namespace Appalachia.Spatial.Terrains
         public Vector3 scale => jobData.scale;
 
         public Vector3 terrainPosition => jobData.terrainPosition;
-
-        #region Event Functions
-
-        protected override void OnEnable()
-        {
-            using (_PRF_OnEnable.Auto())
-            {
-                base.OnEnable();
-
-                if (_terrainData == null)
-                {
-                    return;
-                }
-
-                var terrains = Terrain.activeTerrains;
-
-                if ((terrains == null) || (terrains.Length == 0))
-                {
-                    return;
-                }
-
-                if (_terrain == null)
-                {
-                    _terrain = terrains.First_NoAlloc(t => t.terrainData == _terrainData);
-                }
-
-                Initialize(_terrain, _allocator == Allocator.Invalid ? Allocator.Persistent : _allocator);
-            }
-        }
-
-        #endregion
 
         public void CheckHeights()
         {
@@ -159,9 +132,58 @@ namespace Appalachia.Spatial.Terrains
             return _terrain;
         }
 
-        public void Initialize(Terrain terrain, Allocator allocator)
+        public void InitializeFoley(string[] names)
         {
-            using (_PRF_Initialize.Auto())
+            using (_PRF_InitializeFoley.Auto())
+            {
+                if ((names == null) || (_terrainData == null))
+                {
+                    Context.Log.Warn("Failed to initialize foley map");
+                    return;
+                }
+
+                alphamapTextureFoleyIndex = new int[_alphamapTextureCount];
+
+                for (int i = 0, n = _alphamapTextureCount; i < n; ++i)
+                {
+                    var texture = _terrainData.terrainLayers[i].diffuseTexture;
+
+                    var found = false;
+
+                    for (int j = 0, m = names.Length; j < m; ++j)
+                    {
+                        if (string.IsNullOrEmpty(names[j]))
+                        {
+                            continue;
+                        }
+
+                        if (texture.name.IndexOf(names[j], StringComparison.OrdinalIgnoreCase) < 0)
+                        {
+                            continue;
+                        }
+
+                        // Context.Log.Info("map: " + names[j] + " -- " + texture.name);
+                        alphamapTextureFoleyIndex[i] = j;
+                        found = true;
+                        break;
+                    }
+
+                    if (!found)
+                    {
+                        Context.Log.Warn(
+                            ZString.Format(
+                                "Failed to bind footstep foley to terrain texture '{0}'",
+                                texture.name
+                            )
+                        );
+                    }
+                }
+            }
+        }
+
+        public void InitializeTerrain(Terrain terrain, Allocator allocator)
+        {
+            using (_PRF_InitializeTerrain.Auto())
             {
                 _terrain = terrain;
                 _allocator = allocator;
@@ -191,47 +213,33 @@ namespace Appalachia.Spatial.Terrains
             }
         }
 
-        public void InitializeFoley(string[] names)
+        protected override async AppaTask Initialize(Initializer initializer)
         {
-            using (_PRF_InitializeFoley.Auto())
+            using (_PRF_Initialize.Auto())
             {
-                if ((names == null) || (_terrainData == null))
+                await base.Initialize(initializer);
+
+                if (_terrainData == null)
                 {
-                    AppaLog.Warn("Failed to initialize foley map");
                     return;
                 }
 
-                alphamapTextureFoleyIndex = new int[_alphamapTextureCount];
+                var terrains = Terrain.activeTerrains;
 
-                for (int i = 0, n = _alphamapTextureCount; i < n; ++i)
+                if ((terrains == null) || (terrains.Length == 0))
                 {
-                    var texture = _terrainData.terrainLayers[i].diffuseTexture;
-
-                    var found = false;
-
-                    for (int j = 0, m = names.Length; j < m; ++j)
-                    {
-                        if (string.IsNullOrEmpty(names[j]))
-                        {
-                            continue;
-                        }
-
-                        if (texture.name.IndexOf(names[j], StringComparison.OrdinalIgnoreCase) < 0)
-                        {
-                            continue;
-                        }
-
-                        // AppaLog.Info("map: " + names[j] + " -- " + texture.name);
-                        alphamapTextureFoleyIndex[i] = j;
-                        found = true;
-                        break;
-                    }
-
-                    if (!found)
-                    {
-                        AppaLog.Warn($"Failed to bind footstep foley to terrain texture '{texture.name}'");
-                    }
+                    return;
                 }
+
+                if (_terrain == null)
+                {
+                    _terrain = terrains.First_NoAlloc(t => t.terrainData == _terrainData);
+                }
+
+                InitializeTerrain(
+                    _terrain,
+                    _allocator == Allocator.Invalid ? Allocator.Persistent : _allocator
+                );
             }
         }
 
@@ -239,11 +247,14 @@ namespace Appalachia.Spatial.Terrains
 
         private const string _PRF_PFX = nameof(TerrainMetadata) + ".";
 
+        private static readonly ProfilerMarker _PRF_InitializeTerrain =
+            new ProfilerMarker(_PRF_PFX + nameof(InitializeTerrain));
+
+        private static readonly ProfilerMarker _PRF_Initialize =
+            new ProfilerMarker(_PRF_PFX + nameof(InitializeTerrain));
+
         private static readonly ProfilerMarker _PRF_OnEnable = new(_PRF_PFX + nameof(OnEnable));
-        private static readonly ProfilerMarker _PRF_Initialize = new(_PRF_PFX + nameof(Initialize));
-
         private static readonly ProfilerMarker _PRF_InitializeFoley = new(_PRF_PFX + nameof(InitializeFoley));
-
         private static readonly ProfilerMarker _PRF_CheckHeights = new(_PRF_PFX + nameof(CheckHeights));
 
         private static readonly ProfilerMarker _PRF_GetSplatIndexAtPosition =

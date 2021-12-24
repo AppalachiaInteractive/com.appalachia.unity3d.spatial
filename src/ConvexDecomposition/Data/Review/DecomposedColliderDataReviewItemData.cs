@@ -2,7 +2,9 @@
 using System;
 using System.Diagnostics;
 using Appalachia.Core.Attributes.Editing;
+using Appalachia.Core.Objects.Root;
 using Appalachia.Core.Preferences.Globals;
+using Appalachia.Utility.Strings;
 using Sirenix.OdinInspector;
 using Unity.Mathematics;
 using Unity.Profiling;
@@ -11,7 +13,7 @@ using UnityEngine;
 namespace Appalachia.Spatial.ConvexDecomposition.Data.Review
 {
     [Serializable]
-    public class DecomposedColliderDataReviewItemData
+    public class DecomposedColliderDataReviewItemData : AppalachiaSimpleBase
     {
         private const string _PRF_PFX = nameof(DecomposedColliderDataReviewItemData) + ".";
         private static readonly ProfilerMarker _PRF_ratio = new ProfilerMarker(_PRF_PFX + nameof(ratio));
@@ -63,7 +65,7 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data.Review
             {
                 if (_toString == null)
                 {
-                    _toString = string.Format(_format, ratio * 100f);
+                    _toString = ZString.Format(_format, ratio * 100f);
                 }
 
                 return _toString;

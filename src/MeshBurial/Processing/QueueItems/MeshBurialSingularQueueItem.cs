@@ -3,6 +3,7 @@
 #region
 
 using System;
+using Appalachia.Core.Attributes;
 using Appalachia.Spatial.MeshBurial.State;
 using Unity.Mathematics;
 using UnityEngine;
@@ -12,17 +13,14 @@ using UnityEngine;
 namespace Appalachia.Spatial.MeshBurial.Processing.QueueItems
 {
     [Serializable]
+    [CallStaticConstructorInEditor]
     public abstract class MeshBurialSingularQueueItem : MeshBurialQueueItem
     {
-        private MeshBurialAdjustmentState _adjustmentState;
-
-        private bool _adoptTerrainNormal;
-        private int _hashCode;
-
-        //private int[] _terrainHashCode;
-        private float4x4[] _matrices;
-        protected GameObject _model;
-        private MeshBurialSharedState _sharedState;
+        // [CallStaticConstructorInEditor] should be added to the class (initsingletonattribute)
+        static MeshBurialSingularQueueItem()
+        {
+            MeshBurialAdjustmentCollection.InstanceAvailable += i => _meshBurialAdjustmentCollection = i;
+        }
 
         protected MeshBurialSingularQueueItem(
             string name,
@@ -32,25 +30,41 @@ namespace Appalachia.Spatial.MeshBurial.Processing.QueueItems
         {
             _model = model;
             _hashCode = _model.GetHashCode();
-            _adjustmentState = MeshBurialAdjustmentCollection.instance.GetByPrefab(_model);
+            _adjustmentState = _meshBurialAdjustmentCollection.GetByPrefab(_model);
             _sharedState = MeshBurialSharedStateManager.Get(_model);
             _adoptTerrainNormal = adoptTerrainNormal;
             _matrices = new float4x4[0];
             _matrices[0] = matrix;
         }
 
-        protected override void OnInitializeInternal()
-        {
-        }
+        #region Static Fields and Autoproperties
 
-        protected override int GetModelHashCodeInternal()
-        {
-            return _hashCode;
-        }
+        private static MeshBurialAdjustmentCollection _meshBurialAdjustmentCollection;
+
+        #endregion
+
+        #region Fields and Autoproperties
+
+        protected GameObject _model;
+
+        private bool _adoptTerrainNormal;
+
+        //private int[] _terrainHashCode;
+        private float4x4[] _matrices;
+        private int _hashCode;
+        private MeshBurialAdjustmentState _adjustmentState;
+        private MeshBurialSharedState _sharedState;
+
+        #endregion
 
         protected override bool GetAdoptTerrainNormalInternal()
         {
             return _adoptTerrainNormal;
+        }
+
+        protected override MeshBurialAdjustmentState GetMeshBurialAdjustmentStateInternal()
+        {
+            return _adjustmentState;
         }
 
         protected override MeshBurialSharedState GetMeshBurialSharedStateInternal()
@@ -58,9 +72,13 @@ namespace Appalachia.Spatial.MeshBurial.Processing.QueueItems
             return _sharedState;
         }
 
-        protected override MeshBurialAdjustmentState GetMeshBurialAdjustmentStateInternal()
+        protected override int GetModelHashCodeInternal()
         {
-            return _adjustmentState;
+            return _hashCode;
+        }
+
+        protected override void OnInitializeInternal()
+        {
         }
     }
 }

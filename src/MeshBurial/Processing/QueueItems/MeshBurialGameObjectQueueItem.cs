@@ -4,8 +4,8 @@
 
 using System;
 using System.Diagnostics;
-using Appalachia.Core.Extensions;
 using Appalachia.Utility.Extensions;
+using Appalachia.Utility.Strings;
 using Unity.Collections;
 using Unity.Mathematics;
 using UnityEngine;
@@ -19,7 +19,7 @@ namespace Appalachia.Spatial.MeshBurial.Processing.QueueItems
     {
         public MeshBurialGameObjectQueueItem(GameObject model, bool adoptTerrainNormal = true) :
             base(
-                $"GameObject: {model.name}",
+                ZString.Format("GameObject: {0}", model.name),
                 model,
                 model.transform.localToWorldMatrix,
                 adoptTerrainNormal

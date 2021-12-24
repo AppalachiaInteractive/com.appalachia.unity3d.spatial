@@ -10,10 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 2b74641683824373899a5385778e9bb2, type: 3}
-  m_Name: VoxelDataGizmoSettingsLookup_20201009-034123834
+  m_Name: VoxelDataGizmoSettingsLookup
   m_EditorClassIdentifier: 
   _initializationData:
-    _nonSerializedTags: []
     _tags: []
     _resetToken: 
   _cachedName: 

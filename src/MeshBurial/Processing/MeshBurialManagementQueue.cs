@@ -2,33 +2,22 @@
 
 #region
 
-using Appalachia.CI.Constants;
 using Appalachia.Core.Collections;
 using Appalachia.Core.Collections.Implementations.Sets;
 using Appalachia.Core.Collections.NonSerialized;
-using Appalachia.Core.Scriptables;
+using Appalachia.Core.Objects.Initialization;
+using Appalachia.Core.Objects.Root;
 using Appalachia.Spatial.MeshBurial.Processing.QueueItems;
-using Appalachia.Utility.Extensions;
+using Appalachia.Utility.Async;
 using Unity.Profiling;
 
 #endregion
 
 namespace Appalachia.Spatial.MeshBurial.Processing
 {
-    public class
-        MeshBurialManagementQueue : SingletonAppalachiaObject<MeshBurialManagementQueue>
+    public class MeshBurialManagementQueue : SingletonAppalachiaObject<MeshBurialManagementQueue>
     {
-        private const string _PRF_PFX = nameof(MeshBurialManagementQueue) + ".";
-
-
-        //prefabSpawnPointStates.Count +
-        //runtimePrefabRenderingElements.Count +
-        //runtimePrefabRenderingSets.Count;
-
-        private static readonly ProfilerMarker _PRF_Initialize = new(_PRF_PFX + nameof(Initialize));
-
-        private static readonly ProfilerMarker _PRF_ClearQueues =
-            new(_PRF_PFX + nameof(ClearQueues));
+        #region Fields and Autoproperties
 
         public AppaTemporalQueue<MeshBurialArrayQueueItem> array;
 
@@ -40,6 +29,8 @@ namespace Appalachia.Spatial.MeshBurial.Processing
 
         public NonSerializedAppaLookup2<int, int, AppaSet_int> pendingVegetationKeys;
 
+        #endregion
+
         //public AppaTemporalQueue<PrefabSpawnPointStateQueueItem> prefabSpawnPointStates;
 
         //public AppaTemporalQueue<MeshBurialRuntimePrefabRenderingElementQueueItem> runtimePrefabRenderingElements;
@@ -48,12 +39,15 @@ namespace Appalachia.Spatial.MeshBurial.Processing
 
         public int Count => vegetation.Count + native.Count + array.Count + gameObject.Count; // +
 
-        protected override void Initialize()
+        private static readonly ProfilerMarker _PRF_Initialize =
+            new ProfilerMarker(_PRF_PFX + nameof(Initialize));
+
+        protected override async AppaTask Initialize(Initializer initializer)
         {
             using (_PRF_Initialize.Auto())
             {
-                base.Initialize();
-                
+                await base.Initialize(initializer);
+
                 if (pendingVegetationKeys == null)
                 {
                     pendingVegetationKeys = new NonSerializedAppaLookup2<int, int, AppaSet_int>();
@@ -85,11 +79,16 @@ namespace Appalachia.Spatial.MeshBurial.Processing
 
                 //if (runtimePrefabRenderingSets == null) { runtimePrefabRenderingSets = new AppaTemporalQueue<MeshBurialRuntimePrefabRenderingSetQueueItem>(); }
 
-               this.MarkAsModified();
+                MarkAsModified();
             }
         }
 
-        [UnityEditor.MenuItem(PKG.Menu.Appalachia.Tools.Base + "Clear Queues", priority = PKG.Menu.Appalachia.Tools.Priority)]
+        #region Menu Items
+
+        [UnityEditor.MenuItem(
+            PKG.Menu.Appalachia.Tools.Base + "Clear Queues",
+            priority = PKG.Menu.Appalachia.Tools.Priority
+        )]
         public static void ClearQueues()
         {
             using (_PRF_ClearQueues.Auto())
@@ -115,6 +114,20 @@ namespace Appalachia.Spatial.MeshBurial.Processing
                 instance.MarkAsModified();
             }
         }
+
+        #endregion
+
+        #region Profiling
+
+        private const string _PRF_PFX = nameof(MeshBurialManagementQueue) + ".";
+
+        private static readonly ProfilerMarker _PRF_ClearQueues = new(_PRF_PFX + nameof(ClearQueues));
+
+        //prefabSpawnPointStates.Count +
+        //runtimePrefabRenderingElements.Count +
+        //runtimePrefabRenderingSets.Count;
+
+        #endregion
     }
 }
 

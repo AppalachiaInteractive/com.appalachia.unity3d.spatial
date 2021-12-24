@@ -8,24 +8,24 @@ using Appalachia.Core.Collections;
 namespace Appalachia.Spatial.Terrains.Collections
 {
     [Serializable]
-    public sealed class AppaList_TerrainMetadata : AppaList<TerrainMetadata>
+    public sealed class TerrainMetadataList : AppaList<TerrainMetadata>
     {
-        public AppaList_TerrainMetadata()
+        public TerrainMetadataList()
         {
         }
 
-        public AppaList_TerrainMetadata(
+        public TerrainMetadataList(
             int capacity,
             float capacityIncreaseMultiplier = 2,
             bool noTracking = false) : base(capacity, capacityIncreaseMultiplier, noTracking)
         {
         }
 
-        public AppaList_TerrainMetadata(AppaList<TerrainMetadata> list) : base(list)
+        public TerrainMetadataList(AppaList<TerrainMetadata> list) : base(list)
         {
         }
 
-        public AppaList_TerrainMetadata(TerrainMetadata[] values) : base(values)
+        public TerrainMetadataList(TerrainMetadata[] values) : base(values)
         {
         }
     }

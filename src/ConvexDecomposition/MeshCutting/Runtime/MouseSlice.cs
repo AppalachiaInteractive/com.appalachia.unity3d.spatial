@@ -1,12 +1,15 @@
 #if UNITY_EDITOR
 using System.Collections.Generic;
-using Appalachia.Core.Behaviours;
+using Appalachia.Core.Objects.Initialization;
+using Appalachia.Core.Objects.Root;
 using Appalachia.Spatial.ConvexDecomposition.MeshCutting.Core;
+using Appalachia.Utility.Async;
+using Unity.Profiling;
 using UnityEngine;
 
 namespace Appalachia.Spatial.ConvexDecomposition.MeshCutting.Runtime
 {
-    public class MouseSlice : AppalachiaBehaviour
+    public sealed class MouseSlice : AppalachiaBehaviour<MouseSlice>
     {
         #region Fields and Autoproperties
 
@@ -28,30 +31,28 @@ namespace Appalachia.Spatial.ConvexDecomposition.MeshCutting.Runtime
 
         #endregion
 
-        #region Event Functions
-
-        // Use this for initialization
-        protected override void Start()
+        protected override async AppaTask Initialize(Initializer initializer)
         {
-            base.Start();
+            using (_PRF_Initialize.Auto())
+            {
+                await base.Initialize(initializer);
 
-            // Initialize a somewhat big array so that it doesn't resize
-            meshCutter = new MeshCutter(256);
+                meshCutter = new MeshCutter(256);
+            }
         }
 
-        protected override void OnEnable()
-        {
-            base.OnEnable();
-            lineRenderer.OnLineDrawn += OnLineDrawn;
-        }
+        protected override async AppaTask WhenDisabled()
 
-        protected override void OnDisable()
         {
-            base.OnDisable();
+            await base.WhenDisabled();
             lineRenderer.OnLineDrawn -= OnLineDrawn;
         }
 
-        #endregion
+        protected override async AppaTask WhenEnabled()
+        {
+            await base.WhenEnabled();
+            lineRenderer.OnLineDrawn += OnLineDrawn;
+        }
 
         #region Utility Functions
 
@@ -226,6 +227,15 @@ namespace Appalachia.Spatial.ConvexDecomposition.MeshCutting.Runtime
                 SeparateMeshes(positive, negative, normal);
             }
         }
+
+        #region Profiling
+
+        private const string _PRF_PFX = nameof(MouseSlice) + ".";
+
+        private static readonly ProfilerMarker _PRF_Initialize =
+            new ProfilerMarker(_PRF_PFX + nameof(Initialize));
+
+        #endregion
     }
 }
 

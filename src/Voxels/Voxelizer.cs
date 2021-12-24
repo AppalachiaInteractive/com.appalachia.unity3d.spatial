@@ -1,418 +1,38 @@
-#region
-
 using System;
 using System.Collections.Generic;
+using Appalachia.CI.Constants;
 using Appalachia.Core.Collections.Native;
 using Appalachia.Core.Collections.Native.Pointers;
-using Appalachia.Core.Extensions;
 using Appalachia.Jobs.Burstable;
 using Appalachia.Spatial.Voxels.Casting;
 using Appalachia.Spatial.Voxels.VoxelTypes;
 using Appalachia.Utility.Constants;
 using Appalachia.Utility.Extensions;
-using Appalachia.Utility.Logging;
+using Appalachia.Utility.Strings;
 using Unity.Collections;
 using Unity.Mathematics;
 using Unity.Profiling;
 using UnityEngine;
 
-#endregion
-
 namespace Appalachia.Spatial.Voxels
 {
     public static class Voxelizer
     {
-#region Profiling
+        [NonSerialized] private static AppaContext _context;
 
-        private const string _PRF_PFX = nameof(Voxelizer) + ".";
-
-        private static readonly ProfilerMarker _PRF_VoxelizeSingleInternal =
-            new(_PRF_PFX + nameof(VoxelizeSingleInternal));
-
-        private static readonly ProfilerMarker _PRF_VoxelizeSingle =
-            new(_PRF_PFX + nameof(VoxelizeSingle));
-
-        private static readonly ProfilerMarker _PRF_VoxelizeInternal =
-            new(_PRF_PFX + nameof(VoxelizeInternal));
-
-        private static readonly ProfilerMarker _PRF_Voxelize = new(_PRF_PFX + nameof(Voxelize));
-
-        private static readonly ProfilerMarker _PRF_CheckArguments =
-            new(_PRF_PFX + nameof(CheckArguments));
-
-        private static readonly ProfilerMarker _PRF_PopulateVoxels =
-            new(_PRF_PFX + nameof(PopulateVoxels));
-
-        private static readonly ProfilerMarker _PRF_SetFaceData =
-            new(_PRF_PFX + nameof(SetFaceData));
-
-        private static readonly ProfilerMarker _PRF_CheckFaceHit =
-            new(_PRF_PFX + nameof(CheckFaceHit));
-
-        private static readonly ProfilerMarker _PRF_SyncTransforms =
-            new(_PRF_PFX + nameof(SyncTransforms));
-
-        private static readonly ProfilerMarker _PRF_PointIsInsideCollider =
-            new(_PRF_PFX + nameof(PointIsInsideCollider));
-
-        private static readonly ProfilerMarker _PRF_VoxelBounds =
-            new(_PRF_PFX + nameof(VoxelBounds));
-
-        private static readonly ProfilerMarker _PRF_RoundFloat = new(_PRF_PFX + nameof(RoundFloat));
-
-#endregion
-
-#region Voxelize Public
-
-        public static T VoxelizeSingle<T, TRaycastHit>(
-            T voxelData,
-            Transform transform,
-            Bounds voxelBounds,
-            float3 samplePoint,
-            Allocator allocator = Allocator.Persistent)
-            where T : VoxelsBase<T, TRaycastHit>
-            where TRaycastHit : struct, IVoxelRaycastHit
+        private static AppaContext Context
         {
-            using (_PRF_VoxelizeSingle.Auto())
+            get
             {
-                return VoxelizeSingleInternal<T, TRaycastHit>(
-                    voxelData,
-                    transform,
-                    voxelBounds,
-                    samplePoint,
-                    allocator
-                );
-            }
-        }
-
-        public static T Voxelize<T, TRaycastHit>(
-            T voxelData,
-            Transform transform,
-            Collider[] colliders,
-            float3 resolution,
-            Allocator allocator = Allocator.Persistent)
-            where T : VoxelsBase<T, TRaycastHit>
-            where TRaycastHit : struct, IVoxelRaycastHit
-        {
-            using (_PRF_Voxelize.Auto())
-            {
-                return Voxelize<T, TRaycastHit>(
-                    voxelData,
-                    transform,
-                    VoxelPopulationStyle.Colliders,
-                    colliders,
-                    null,
-                    resolution,
-                    allocator
-                );
-            }
-        }
-
-        public static T Voxelize<T, TRaycastHit>(
-            T voxelData,
-            Transform transform,
-            MeshRenderer[] renderers,
-            float3 resolution,
-            Allocator allocator = Allocator.Persistent)
-            where T : VoxelsBase<T, TRaycastHit>
-            where TRaycastHit : struct, IVoxelRaycastHit
-        {
-            using (_PRF_Voxelize.Auto())
-            {
-                return Voxelize<T, TRaycastHit>(
-                    voxelData,
-                    transform,
-                    VoxelPopulationStyle.Meshes,
-                    null,
-                    renderers,
-                    resolution,
-                    allocator
-                );
-            }
-        }
-
-        public static T Voxelize<T, TRaycastHit>(
-            T voxelData,
-            Transform transform,
-            VoxelPopulationStyle style,
-            Collider[] colliders,
-            MeshRenderer[] renderers,
-            float3 resolution,
-            Allocator allocator = Allocator.Persistent)
-            where T : VoxelsBase<T, TRaycastHit>
-            where TRaycastHit : struct, IVoxelRaycastHit
-        {
-            using (_PRF_Voxelize.Auto())
-            {
-                return VoxelizeInternal<T, TRaycastHit>(
-                    voxelData,
-                    transform,
-                    style,
-                    colliders,
-                    renderers,
-                    resolution,
-                    allocator
-                );
-            }
-        }
-
-        public static T VoxelizeSingle<T, TRaycastHit>(
-            Transform transform,
-            Bounds voxelBounds,
-            float3 samplePoint,
-            Allocator allocator = Allocator.Persistent)
-            where T : VoxelsBase<T, TRaycastHit>, new()
-            where TRaycastHit : struct, IVoxelRaycastHit
-        {
-            using (_PRF_VoxelizeSingle.Auto())
-            {
-                var voxelData = new T();
-
-                return VoxelizeSingleInternal<T, TRaycastHit>(
-                    voxelData,
-                    transform,
-                    voxelBounds,
-                    samplePoint,
-                    allocator
-                );
-            }
-        }
-
-        public static T Voxelize<T, TRaycastHit>(
-            Transform transform,
-            Collider[] colliders,
-            float3 resolution,
-            Allocator allocator = Allocator.Persistent)
-            where T : VoxelsBase<T, TRaycastHit>, new()
-            where TRaycastHit : struct, IVoxelRaycastHit
-        {
-            using (_PRF_Voxelize.Auto())
-            {
-                return Voxelize<T, TRaycastHit>(
-                    transform,
-                    VoxelPopulationStyle.Colliders,
-                    colliders,
-                    null,
-                    resolution,
-                    allocator
-                );
-            }
-        }
-
-        public static T Voxelize<T, TRaycastHit>(
-            Transform transform,
-            MeshRenderer[] renderers,
-            float3 resolution,
-            Allocator allocator = Allocator.Persistent)
-            where T : VoxelsBase<T, TRaycastHit>, new()
-            where TRaycastHit : struct, IVoxelRaycastHit
-        {
-            using (_PRF_Voxelize.Auto())
-            {
-                return Voxelize<T, TRaycastHit>(
-                    transform,
-                    VoxelPopulationStyle.Meshes,
-                    null,
-                    renderers,
-                    resolution,
-                    allocator
-                );
-            }
-        }
-
-        public static T Voxelize<T, TRaycastHit>(
-            Transform transform,
-            VoxelPopulationStyle style,
-            Collider[] colliders,
-            MeshRenderer[] renderers,
-            float3 resolution,
-            Allocator allocator = Allocator.Persistent)
-            where T : VoxelsBase<T, TRaycastHit>, new()
-            where TRaycastHit : struct, IVoxelRaycastHit
-        {
-            using (_PRF_Voxelize.Auto())
-            {
-                var voxelData = new T();
-                return VoxelizeInternal<T, TRaycastHit>(
-                    voxelData,
-                    transform,
-                    style,
-                    colliders,
-                    renderers,
-                    resolution,
-                    allocator
-                );
-            }
-        }
-
-#endregion
-
-#region Voxelize Internals
-
-        private static T VoxelizeSingleInternal<T, TRaycastHit>(
-            T voxelData,
-            Transform transform,
-            Bounds voxelBounds,
-            float3 samplePoint,
-            Allocator allocator = Allocator.Persistent)
-            where T : VoxelsBase<T, TRaycastHit>
-            where TRaycastHit : struct, IVoxelRaycastHit
-        {
-            using (_PRF_VoxelizeSingleInternal.Auto())
-            {
-                voxelData.resolution = float3.zero;
-                voxelData.faceCount = 1;
-                voxelData.samplePoints = new NativeArray3D<VoxelSamplePoint>(1, 1, 1, allocator);
-                voxelData.voxels = new NativeArray<Voxel>(1, allocator);
-                voxelData.voxelsActive = new NativeBitArray(1, allocator);
-                voxelData.voxelsActiveCount = new NativeIntPtr(allocator, 1);
-                voxelData.style = VoxelPopulationStyle.SinglePoint;
-
-                voxelData.Initialize(transform);
-                voxelData.UpdateBounds(voxelBounds, voxelBounds);
-                voxelData.Synchronize();
-
-                var time = (samplePoint - (float3) voxelBounds.min) /
-                           (voxelBounds.max - voxelBounds.min);
-
-                var voxelSamplePoint = new VoxelSamplePoint
+                if (_context == null)
                 {
-                    populated = true, position = samplePoint, time = time
-                };
-
-                voxelData.samplePoints[0] = voxelSamplePoint;
-
-                var voxel = new Voxel
-                {
-                    position = samplePoint, faceData = VoxelFaceData.FullyExposed()
-                };
-
-                voxelData.voxels[0] = voxel;
-
-                if (voxelData.IsPersistent)
-                {
-                    voxelData.InitializeDataStore();
+                    _context = new AppaContext(typeof(Voxelizer));
                 }
 
-                return voxelData;
+                return _context;
             }
         }
-
-        private static T VoxelizeInternal<T, TRaycastHit>(
-            T voxelData,
-            Transform transform,
-            VoxelPopulationStyle style,
-            Collider[] colliders,
-            MeshRenderer[] renderers,
-            float3 resolution,
-            Allocator allocator = Allocator.Persistent)
-            where T : VoxelsBase<T, TRaycastHit>
-            where TRaycastHit : struct, IVoxelRaycastHit
-        {
-            using (_PRF_VoxelizeInternal.Auto())
-            {
-                var t = transform;
-                var rotation = t.rotation;
-                var position = t.position;
-                var localScale = t.localScale;
-
-                CheckArguments(resolution, style, colliders, renderers);
-
-                try
-                {
-                    t.SetPositionAndRotation(float3.zero, Quaternion.identity);
-                    t.localScale = float3c.one;
-
-                    SyncTransforms(4);
-
-                    var rawBounds = style == VoxelPopulationStyle.Colliders
-                        ? VoxelBounds(colliders)
-                        : VoxelBounds(renderers);
-
-                    var voxelBounds = rawBounds;
-
-                    voxelBounds.size = RoundFloat(voxelBounds.size, resolution);
-
-                    voxelData.resolution = resolution;
-                    voxelData.style = style;
-                    voxelData.renderers = renderers;
-                    voxelData.colliders = colliders;
-
-                    voxelData.Initialize(t);
-                    voxelData.UpdateBounds(rawBounds, voxelBounds);
-                    voxelData.Synchronize();
-
-                    PopulateSamplePoints<T, TRaycastHit>(voxelData, allocator);
-
-                    if (style == VoxelPopulationStyle.Colliders)
-                    {
-                        PopulateVoxels<T, TRaycastHit>(voxelData, colliders, allocator);
-                    }
-                    else
-                    {
-                        PopulateVoxels<T, TRaycastHit>(voxelData, renderers, allocator);
-                    }
-
-                    SetFaceData<T, TRaycastHit>(voxelData);
-
-                    t.SetPositionAndRotation(position, rotation);
-                    t.localScale = localScale;
-
-                    if (voxelData.IsPersistent)
-                    {
-                        voxelData.InitializeDataStore();
-                    }
-
-                    return voxelData;
-                }
-                catch (Exception ex)
-                {
-                    t.SetPositionAndRotation(position, rotation);
-                    t.localScale = localScale;
-
-                    SyncTransforms(4);
-                    AppaLog.Exception(ex);
-                    throw;
-                }
-            }
-        }
-
-#endregion
-
-#region Helpers
-
-        private static void CheckArguments(
-            float3 resolution,
-            VoxelPopulationStyle style,
-            Collider[] colliders,
-            MeshRenderer[] renderers)
-        {
-            using (_PRF_CheckArguments.Auto())
-            {
-                if ((resolution.x <= 0f) || (resolution.y <= 0f) || (resolution.z <= 0f))
-                {
-                    throw new NotSupportedException(
-                        $"Voxel resolution must be positive!  Provided: {resolution}"
-                    );
-                }
-
-                if ((style == VoxelPopulationStyle.Meshes) &&
-                    ((renderers == null) || (renderers.Length == 0)))
-                {
-                    throw new NotSupportedException("Must provide renderers!");
-                }
-
-                if ((style == VoxelPopulationStyle.Colliders) &&
-                    ((colliders == null) || (colliders.Length == 0)))
-                {
-                    throw new NotSupportedException("Must provide colliders!");
-                }
-            }
-        }
-
-        private static readonly ProfilerMarker _PRF_PopulateSamplePoints =
-            new(_PRF_PFX + nameof(PopulateSamplePoints));
-
+        
         public static void PopulateSamplePoints<T, TRaycastHit>(
             T voxelData,
             Allocator allocator = Allocator.Persistent)
@@ -426,9 +46,9 @@ namespace Appalachia.Spatial.Voxels
                 var boundsExtents = voxelData.voxelBounds.extents;
                 var boundsMin = voxelData.voxelBounds.min;
 
-                var x = (int) math.round(boundsSize.x / voxelData.resolution.x);
-                var y = (int) math.round(boundsSize.y / voxelData.resolution.y);
-                var z = (int) math.round(boundsSize.z / voxelData.resolution.z);
+                var x = (int)math.round(boundsSize.x / voxelData.resolution.x);
+                var y = (int)math.round(boundsSize.y / voxelData.resolution.y);
+                var z = (int)math.round(boundsSize.z / voxelData.resolution.z);
 
                 if (voxelData.samplePoints.IsCreated)
                 {
@@ -438,7 +58,7 @@ namespace Appalachia.Spatial.Voxels
                 if ((x == 0) || (y == 0) || (z == 0) || (x < 0) || (y < 0) || (z < 0))
                 {
                     throw new NotSupportedException(
-                        $"Voxels not possible, bounds: [{voxelData.voxelBounds}]"
+                        ZString.Format("Voxels not possible, bounds: [{0}]", voxelData.voxelBounds)
                     );
                 }
 
@@ -506,9 +126,7 @@ namespace Appalachia.Spatial.Voxels
                         {
                             var samplePoint = voxelData.samplePoints[indexX, indexY, indexZ];
 
-                            for (var colliderIndex = 0;
-                                colliderIndex < colliders.Length;
-                                colliderIndex++)
+                            for (var colliderIndex = 0; colliderIndex < colliders.Length; colliderIndex++)
                             {
                                 var testingCollider = colliders[colliderIndex];
 
@@ -625,8 +243,7 @@ namespace Appalachia.Spatial.Voxels
 
                                     if (!populatedSamplePointIndices.Contains(xyz))
                                     {
-                                        var samplePoint =
-                                            voxelData.samplePoints[indexX, indexY, indexZ];
+                                        var samplePoint = voxelData.samplePoints[indexX, indexY, indexZ];
 
                                         samplePointBounds.center = samplePoint.position;
                                         samplePointBounds.size = voxelData.resolution;
@@ -657,14 +274,8 @@ namespace Appalachia.Spatial.Voxels
                     voxelData.voxelsActiveCount.SafeDispose();
                 }
 
-                voxelData.voxels = new NativeArray<Voxel>(
-                    populatedSamplePointIndices.Count,
-                    allocator
-                );
-                voxelData.voxelsActive = new NativeBitArray(
-                    populatedSamplePointIndices.Count,
-                    allocator
-                );
+                voxelData.voxels = new NativeArray<Voxel>(populatedSamplePointIndices.Count, allocator);
+                voxelData.voxelsActive = new NativeBitArray(populatedSamplePointIndices.Count, allocator);
                 voxelData.voxelsActiveCount = new NativeIntPtr(Allocator.Persistent, 1);
                 voxelData.InitializeElements(populatedSamplePointIndices.Count);
 
@@ -717,9 +328,7 @@ namespace Appalachia.Spatial.Voxels
 
                             var samplePoint = voxelData.samplePoints[indexX, indexY, indexZ];
 
-                            for (var colliderIndex = 0;
-                                colliderIndex < colliders.Length;
-                                colliderIndex++)
+                            for (var colliderIndex = 0; colliderIndex < colliders.Length; colliderIndex++)
                             {
                                 var testingCollider = colliders[colliderIndex];
 
@@ -775,14 +384,12 @@ namespace Appalachia.Spatial.Voxels
 
                                     if (!populatedSamplePointIndices.Contains(xyz))
                                     {
-                                        var samplePoint =
-                                            voxelData.samplePoints[indexX, indexY, indexZ];
+                                        var samplePoint = voxelData.samplePoints[indexX, indexY, indexZ];
 
                                         if (Intersects(tri, samplePointBounds))
                                         {
                                             samplePoint.populated = true;
-                                            voxelData.samplePoints[indexX, indexY, indexZ] =
-                                                samplePoint;
+                                            voxelData.samplePoints[indexX, indexY, indexZ] = samplePoint;
                                             populatedSamplePointIndices.Add(xyz);
                                         }
                                     }
@@ -807,18 +414,9 @@ namespace Appalachia.Spatial.Voxels
                     voxelData.voxelsActiveCount.SafeDispose();
                 }
 
-                voxelData.voxels = new NativeArray<Voxel>(
-                    populatedSamplePointIndices.Count,
-                    allocator
-                );
-                voxelData.voxelsActive = new NativeBitArray(
-                    populatedSamplePointIndices.Count,
-                    allocator
-                );
-                voxelData.voxelsActiveCount = new NativeIntPtr(
-                    allocator,
-                    populatedSamplePointIndices.Count
-                );
+                voxelData.voxels = new NativeArray<Voxel>(populatedSamplePointIndices.Count, allocator);
+                voxelData.voxelsActive = new NativeBitArray(populatedSamplePointIndices.Count, allocator);
+                voxelData.voxelsActiveCount = new NativeIntPtr(allocator, populatedSamplePointIndices.Count);
                 voxelData.InitializeElements(populatedSamplePointIndices.Count);
 
                 var populationIndex = 0;
@@ -930,6 +528,216 @@ namespace Appalachia.Spatial.Voxels
             }
         }
 
+        public static T Voxelize<T, TRaycastHit>(
+            T voxelData,
+            Transform transform,
+            Collider[] colliders,
+            float3 resolution,
+            Allocator allocator = Allocator.Persistent)
+            where T : VoxelsBase<T, TRaycastHit>
+            where TRaycastHit : struct, IVoxelRaycastHit
+        {
+            using (_PRF_Voxelize.Auto())
+            {
+                return Voxelize<T, TRaycastHit>(
+                    voxelData,
+                    transform,
+                    VoxelPopulationStyle.Colliders,
+                    colliders,
+                    null,
+                    resolution,
+                    allocator
+                );
+            }
+        }
+
+        public static T Voxelize<T, TRaycastHit>(
+            T voxelData,
+            Transform transform,
+            MeshRenderer[] renderers,
+            float3 resolution,
+            Allocator allocator = Allocator.Persistent)
+            where T : VoxelsBase<T, TRaycastHit>
+            where TRaycastHit : struct, IVoxelRaycastHit
+        {
+            using (_PRF_Voxelize.Auto())
+            {
+                return Voxelize<T, TRaycastHit>(
+                    voxelData,
+                    transform,
+                    VoxelPopulationStyle.Meshes,
+                    null,
+                    renderers,
+                    resolution,
+                    allocator
+                );
+            }
+        }
+
+        public static T Voxelize<T, TRaycastHit>(
+            T voxelData,
+            Transform transform,
+            VoxelPopulationStyle style,
+            Collider[] colliders,
+            MeshRenderer[] renderers,
+            float3 resolution,
+            Allocator allocator = Allocator.Persistent)
+            where T : VoxelsBase<T, TRaycastHit>
+            where TRaycastHit : struct, IVoxelRaycastHit
+        {
+            using (_PRF_Voxelize.Auto())
+            {
+                return VoxelizeInternal<T, TRaycastHit>(
+                    voxelData,
+                    transform,
+                    style,
+                    colliders,
+                    renderers,
+                    resolution,
+                    allocator
+                );
+            }
+        }
+
+        public static T Voxelize<T, TRaycastHit>(
+            Transform transform,
+            Collider[] colliders,
+            float3 resolution,
+            Allocator allocator = Allocator.Persistent)
+            where T : VoxelsBase<T, TRaycastHit>, new()
+            where TRaycastHit : struct, IVoxelRaycastHit
+        {
+            using (_PRF_Voxelize.Auto())
+            {
+                return Voxelize<T, TRaycastHit>(
+                    transform,
+                    VoxelPopulationStyle.Colliders,
+                    colliders,
+                    null,
+                    resolution,
+                    allocator
+                );
+            }
+        }
+
+        public static T Voxelize<T, TRaycastHit>(
+            Transform transform,
+            MeshRenderer[] renderers,
+            float3 resolution,
+            Allocator allocator = Allocator.Persistent)
+            where T : VoxelsBase<T, TRaycastHit>, new()
+            where TRaycastHit : struct, IVoxelRaycastHit
+        {
+            using (_PRF_Voxelize.Auto())
+            {
+                return Voxelize<T, TRaycastHit>(
+                    transform,
+                    VoxelPopulationStyle.Meshes,
+                    null,
+                    renderers,
+                    resolution,
+                    allocator
+                );
+            }
+        }
+
+        public static T Voxelize<T, TRaycastHit>(
+            Transform transform,
+            VoxelPopulationStyle style,
+            Collider[] colliders,
+            MeshRenderer[] renderers,
+            float3 resolution,
+            Allocator allocator = Allocator.Persistent)
+            where T : VoxelsBase<T, TRaycastHit>, new()
+            where TRaycastHit : struct, IVoxelRaycastHit
+        {
+            using (_PRF_Voxelize.Auto())
+            {
+                var voxelData = new T();
+                return VoxelizeInternal<T, TRaycastHit>(
+                    voxelData,
+                    transform,
+                    style,
+                    colliders,
+                    renderers,
+                    resolution,
+                    allocator
+                );
+            }
+        }
+
+        public static T VoxelizeSingle<T, TRaycastHit>(
+            T voxelData,
+            Transform transform,
+            Bounds voxelBounds,
+            float3 samplePoint,
+            Allocator allocator = Allocator.Persistent)
+            where T : VoxelsBase<T, TRaycastHit>
+            where TRaycastHit : struct, IVoxelRaycastHit
+        {
+            using (_PRF_VoxelizeSingle.Auto())
+            {
+                return VoxelizeSingleInternal<T, TRaycastHit>(
+                    voxelData,
+                    transform,
+                    voxelBounds,
+                    samplePoint,
+                    allocator
+                );
+            }
+        }
+
+        public static T VoxelizeSingle<T, TRaycastHit>(
+            Transform transform,
+            Bounds voxelBounds,
+            float3 samplePoint,
+            Allocator allocator = Allocator.Persistent)
+            where T : VoxelsBase<T, TRaycastHit>, new()
+            where TRaycastHit : struct, IVoxelRaycastHit
+        {
+            using (_PRF_VoxelizeSingle.Auto())
+            {
+                var voxelData = new T();
+
+                return VoxelizeSingleInternal<T, TRaycastHit>(
+                    voxelData,
+                    transform,
+                    voxelBounds,
+                    samplePoint,
+                    allocator
+                );
+            }
+        }
+
+        private static void CheckArguments(
+            float3 resolution,
+            VoxelPopulationStyle style,
+            Collider[] colliders,
+            MeshRenderer[] renderers)
+        {
+            using (_PRF_CheckArguments.Auto())
+            {
+                if ((resolution.x <= 0f) || (resolution.y <= 0f) || (resolution.z <= 0f))
+                {
+                    throw new NotSupportedException(
+                        ZString.Format("Voxel resolution must be positive!  Provided: {0}", resolution)
+                    );
+                }
+
+                if ((style == VoxelPopulationStyle.Meshes) &&
+                    ((renderers == null) || (renderers.Length == 0)))
+                {
+                    throw new NotSupportedException("Must provide renderers!");
+                }
+
+                if ((style == VoxelPopulationStyle.Colliders) &&
+                    ((colliders == null) || (colliders.Length == 0)))
+                {
+                    throw new NotSupportedException("Must provide colliders!");
+                }
+            }
+        }
+
         private static void CheckFaceHit<T, TRaycastHit>(
             T voxelData,
             int x,
@@ -959,87 +767,6 @@ namespace Appalachia.Spatial.Voxels
                 }
             }
         }
-
-        private static void SyncTransforms(int count)
-        {
-            using (_PRF_SyncTransforms.Auto())
-            {
-                for (var i = 0; i < count; i++)
-                {
-                    Physics.SyncTransforms();
-                }
-            }
-        }
-
-        private static bool PointIsInsideCollider(Collider c, float3 p)
-        {
-            using (_PRF_PointIsInsideCollider.Auto())
-            {
-                var ct = c.transform;
-                var cp = Physics.ClosestPoint(p, c, ct.position, ct.rotation);
-                return math.distance(cp, p) < 0.01f;
-            }
-        }
-
-        private static BoundsBurst VoxelBounds(IReadOnlyList<Collider> colliders)
-        {
-            using (_PRF_VoxelBounds.Auto())
-            {
-                var bounds = new BoundsBurst();
-
-                for (var index = 0; index < colliders.Count; index++)
-                {
-                    var nextCollider = colliders[index];
-
-                    if (index == 0)
-                    {
-                        bounds.center = nextCollider.bounds.center;
-                    }
-
-                    bounds.Encapsulate(nextCollider.bounds);
-                }
-
-                return bounds;
-            }
-        }
-
-        private static BoundsBurst VoxelBounds(IReadOnlyList<MeshRenderer> renderers)
-        {
-            using (_PRF_VoxelBounds.Auto())
-            {
-                var bounds = new BoundsBurst();
-
-                for (var index = 0; index < renderers.Count; index++)
-                {
-                    var nextRenderer = renderers[index];
-
-                    if (index == 0)
-                    {
-                        bounds.center = nextRenderer.bounds.center;
-                    }
-
-                    bounds.Encapsulate(nextRenderer.bounds);
-                }
-
-                return bounds;
-            }
-        }
-
-        private static float3 RoundFloat(float3 vec, float3 rounding)
-        {
-            using (_PRF_RoundFloat.Auto())
-            {
-                return new float3(
-                    math.ceil(vec.x / rounding.x) * rounding.x,
-                    math.ceil(vec.y / rounding.y) * rounding.y,
-                    math.ceil(vec.z / rounding.z) * rounding.z
-                );
-            }
-        }
-
-#endregion
-
-#region Mesh Voxelization Options
 
         private static bool Intersects(Triangle tri, BoundsBurst aabb)
         {
@@ -1159,20 +886,17 @@ namespace Appalachia.Spatial.Voxels
                 return false;
             }
 
-            if ((mathex.max(v0.x, v1.x, v2.x) < -extents.x) ||
-                (mathex.min(v0.x, v1.x, v2.x) > extents.x))
+            if ((mathex.max(v0.x, v1.x, v2.x) < -extents.x) || (mathex.min(v0.x, v1.x, v2.x) > extents.x))
             {
                 return false;
             }
 
-            if ((mathex.max(v0.y, v1.y, v2.y) < -extents.y) ||
-                (mathex.min(v0.y, v1.y, v2.y) > extents.y))
+            if ((mathex.max(v0.y, v1.y, v2.y) < -extents.y) || (mathex.min(v0.y, v1.y, v2.y) > extents.y))
             {
                 return false;
             }
 
-            if ((mathex.max(v0.z, v1.z, v2.z) < -extents.z) ||
-                (mathex.min(v0.z, v1.z, v2.z) > extents.z))
+            if ((mathex.max(v0.z, v1.z, v2.z) < -extents.z) || (mathex.min(v0.z, v1.z, v2.z) > extents.z))
             {
                 return false;
             }
@@ -1195,14 +919,211 @@ namespace Appalachia.Spatial.Voxels
             return math.abs(s) <= r;
         }
 
+        private static bool PointIsInsideCollider(Collider c, float3 p)
+        {
+            using (_PRF_PointIsInsideCollider.Auto())
+            {
+                var ct = c.transform;
+                var cp = Physics.ClosestPoint(p, c, ct.position, ct.rotation);
+                return math.distance(cp, p) < 0.01f;
+            }
+        }
+
+        private static float3 RoundFloat(float3 vec, float3 rounding)
+        {
+            using (_PRF_RoundFloat.Auto())
+            {
+                return new float3(
+                    math.ceil(vec.x / rounding.x) * rounding.x,
+                    math.ceil(vec.y / rounding.y) * rounding.y,
+                    math.ceil(vec.z / rounding.z) * rounding.z
+                );
+            }
+        }
+
+        private static void SyncTransforms(int count)
+        {
+            using (_PRF_SyncTransforms.Auto())
+            {
+                for (var i = 0; i < count; i++)
+                {
+                    Physics.SyncTransforms();
+                }
+            }
+        }
+
+        private static BoundsBurst VoxelBounds(IReadOnlyList<Collider> colliders)
+        {
+            using (_PRF_VoxelBounds.Auto())
+            {
+                var bounds = new BoundsBurst();
+
+                for (var index = 0; index < colliders.Count; index++)
+                {
+                    var nextCollider = colliders[index];
+
+                    if (index == 0)
+                    {
+                        bounds.center = nextCollider.bounds.center;
+                    }
+
+                    bounds.Encapsulate(nextCollider.bounds);
+                }
+
+                return bounds;
+            }
+        }
+
+        private static BoundsBurst VoxelBounds(IReadOnlyList<MeshRenderer> renderers)
+        {
+            using (_PRF_VoxelBounds.Auto())
+            {
+                var bounds = new BoundsBurst();
+
+                for (var index = 0; index < renderers.Count; index++)
+                {
+                    var nextRenderer = renderers[index];
+
+                    if (index == 0)
+                    {
+                        bounds.center = nextRenderer.bounds.center;
+                    }
+
+                    bounds.Encapsulate(nextRenderer.bounds);
+                }
+
+                return bounds;
+            }
+        }
+
+        private static T VoxelizeInternal<T, TRaycastHit>(
+            T voxelData,
+            Transform transform,
+            VoxelPopulationStyle style,
+            Collider[] colliders,
+            MeshRenderer[] renderers,
+            float3 resolution,
+            Allocator allocator = Allocator.Persistent)
+            where T : VoxelsBase<T, TRaycastHit>
+            where TRaycastHit : struct, IVoxelRaycastHit
+        {
+            using (_PRF_VoxelizeInternal.Auto())
+            {
+                var t = transform;
+                var rotation = t.rotation;
+                var position = t.position;
+                var localScale = t.localScale;
+
+                CheckArguments(resolution, style, colliders, renderers);
+
+                try
+                {
+                    t.SetPositionAndRotation(float3.zero, Quaternion.identity);
+                    t.localScale = float3c.one;
+
+                    SyncTransforms(4);
+
+                    var rawBounds = style == VoxelPopulationStyle.Colliders
+                        ? VoxelBounds(colliders)
+                        : VoxelBounds(renderers);
+
+                    var voxelBounds = rawBounds;
+
+                    voxelBounds.size = RoundFloat(voxelBounds.size, resolution);
+
+                    voxelData.resolution = resolution;
+                    voxelData.style = style;
+                    voxelData.renderers = renderers;
+                    voxelData.colliders = colliders;
+
+                    voxelData.Initialize(t);
+                    voxelData.UpdateBounds(rawBounds, voxelBounds);
+                    voxelData.Synchronize();
+
+                    PopulateSamplePoints<T, TRaycastHit>(voxelData, allocator);
+
+                    if (style == VoxelPopulationStyle.Colliders)
+                    {
+                        PopulateVoxels<T, TRaycastHit>(voxelData, colliders, allocator);
+                    }
+                    else
+                    {
+                        PopulateVoxels<T, TRaycastHit>(voxelData, renderers, allocator);
+                    }
+
+                    SetFaceData<T, TRaycastHit>(voxelData);
+
+                    t.SetPositionAndRotation(position, rotation);
+                    t.localScale = localScale;
+
+                    if (voxelData.IsPersistent)
+                    {
+                        voxelData.InitializeDataStore();
+                    }
+
+                    return voxelData;
+                }
+                catch (Exception ex)
+                {
+                    t.SetPositionAndRotation(position, rotation);
+                    t.localScale = localScale;
+
+                    SyncTransforms(4);
+                    Context.Log.Error(ex);
+                    throw;
+                }
+            }
+        }
+
+        private static T VoxelizeSingleInternal<T, TRaycastHit>(
+            T voxelData,
+            Transform transform,
+            Bounds voxelBounds,
+            float3 samplePoint,
+            Allocator allocator = Allocator.Persistent)
+            where T : VoxelsBase<T, TRaycastHit>
+            where TRaycastHit : struct, IVoxelRaycastHit
+        {
+            using (_PRF_VoxelizeSingleInternal.Auto())
+            {
+                voxelData.resolution = float3.zero;
+                voxelData.faceCount = 1;
+                voxelData.samplePoints = new NativeArray3D<VoxelSamplePoint>(1, 1, 1, allocator);
+                voxelData.voxels = new NativeArray<Voxel>(1, allocator);
+                voxelData.voxelsActive = new NativeBitArray(1, allocator);
+                voxelData.voxelsActiveCount = new NativeIntPtr(allocator, 1);
+                voxelData.style = VoxelPopulationStyle.SinglePoint;
+
+                voxelData.Initialize(transform);
+                voxelData.UpdateBounds(voxelBounds, voxelBounds);
+                voxelData.Synchronize();
+
+                var time = (samplePoint - (float3)voxelBounds.min) / (voxelBounds.max - voxelBounds.min);
+
+                var voxelSamplePoint = new VoxelSamplePoint
+                {
+                    populated = true, position = samplePoint, time = time
+                };
+
+                voxelData.samplePoints[0] = voxelSamplePoint;
+
+                var voxel = new Voxel { position = samplePoint, faceData = VoxelFaceData.FullyExposed() };
+
+                voxelData.voxels[0] = voxel;
+
+                if (voxelData.IsPersistent)
+                {
+                    voxelData.InitializeDataStore();
+                }
+
+                return voxelData;
+            }
+        }
+
+        #region Nested type: Triangle
+
         private struct Triangle
         {
-            public readonly float3 a;
-            public readonly float3 b;
-            public readonly float3 c;
-            public readonly BoundsBurst bounds;
-            public bool frontFacing;
-
             public Triangle(float3 a, float3 b, float3 c, float3 dir)
             {
                 this.a = a;
@@ -1218,12 +1139,15 @@ namespace Appalachia.Spatial.Voxels
                 bounds.SetMinMax(min, max);
             }
 
-            public float2 GetUV(float3 p, float2 uva, float2 uvb, float2 uvc)
-            {
-                float u, v, w;
-                Barycentric(p, out u, out v, out w);
-                return (uva * u) + (uvb * v) + (uvc * w);
-            }
+            #region Fields and Autoproperties
+
+            public readonly BoundsBurst bounds;
+            public readonly float3 a;
+            public readonly float3 b;
+            public readonly float3 c;
+            public bool frontFacing;
+
+            #endregion
 
             // https://gamedev.stackexchange.com/questions/23743/whats-the-most-efficient-way-to-find-barycentric-coordinates
             public void Barycentric(float3 p, out float u, out float v, out float w)
@@ -1239,7 +1163,48 @@ namespace Appalachia.Spatial.Voxels
                 w = ((d00 * d21) - (d01 * d20)) * denom;
                 u = 1.0f - v - w;
             }
+
+            public float2 GetUV(float3 p, float2 uva, float2 uvb, float2 uvc)
+            {
+                float u, v, w;
+                Barycentric(p, out u, out v, out w);
+                return (uva * u) + (uvb * v) + (uvc * w);
+            }
         }
+
+        #endregion
+
+        #region Profiling
+
+        private const string _PRF_PFX = nameof(Voxelizer) + ".";
+
+        private static readonly ProfilerMarker _PRF_VoxelizeSingleInternal =
+            new(_PRF_PFX + nameof(VoxelizeSingleInternal));
+
+        private static readonly ProfilerMarker _PRF_VoxelizeSingle = new(_PRF_PFX + nameof(VoxelizeSingle));
+
+        private static readonly ProfilerMarker _PRF_VoxelizeInternal =
+            new(_PRF_PFX + nameof(VoxelizeInternal));
+
+        private static readonly ProfilerMarker _PRF_Voxelize = new(_PRF_PFX + nameof(Voxelize));
+        private static readonly ProfilerMarker _PRF_CheckArguments = new(_PRF_PFX + nameof(CheckArguments));
+
+        private static readonly ProfilerMarker _PRF_PopulateVoxels = new(_PRF_PFX + nameof(PopulateVoxels));
+        private static readonly ProfilerMarker _PRF_SetFaceData = new(_PRF_PFX + nameof(SetFaceData));
+        private static readonly ProfilerMarker _PRF_CheckFaceHit = new(_PRF_PFX + nameof(CheckFaceHit));
+
+        private static readonly ProfilerMarker _PRF_SyncTransforms = new(_PRF_PFX + nameof(SyncTransforms));
+
+        private static readonly ProfilerMarker _PRF_PointIsInsideCollider =
+            new(_PRF_PFX + nameof(PointIsInsideCollider));
+
+        private static readonly ProfilerMarker _PRF_VoxelBounds = new(_PRF_PFX + nameof(VoxelBounds));
+        private static readonly ProfilerMarker _PRF_RoundFloat = new(_PRF_PFX + nameof(RoundFloat));
+
+        private static readonly ProfilerMarker _PRF_PopulateSamplePoints =
+            new(_PRF_PFX + nameof(PopulateSamplePoints));
+
+        #endregion
 
         /*
         private static Mesh BuildMesh(Voxel_t[] voxels, float unit, bool useUV = false)
@@ -1382,7 +1347,5 @@ namespace Appalachia.Spatial.Voxels
         }
 
         */
-
-#endregion
     }
 }

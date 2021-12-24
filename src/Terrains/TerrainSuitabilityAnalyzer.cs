@@ -1,8 +1,9 @@
 using System;
-using Appalachia.Core.Behaviours;
 using Appalachia.Core.Debugging;
+using Appalachia.Core.Objects.Root;
 using Appalachia.Editing.Debugging.Handle;
 using Appalachia.Utility.Extensions;
+using Appalachia.Utility.Strings;
 using AwesomeTechnologies.VegetationSystem;
 using Sirenix.OdinInspector;
 using Unity.Mathematics;
@@ -11,7 +12,7 @@ using UnityEngine.Serialization;
 
 namespace Appalachia.Spatial.Terrains
 {
-    public class TerrainSuitabilityAnalyzer : AppalachiaBehaviour
+    public sealed class TerrainSuitabilityAnalyzer : AppalachiaBehaviour<TerrainSuitabilityAnalyzer>
     {
         private static readonly string[] _directions =
         {
@@ -171,7 +172,7 @@ namespace Appalachia.Spatial.Terrains
                         : math.lerp(left, up,   AspectReferenceDirectionTime);
 
         public string AspectReferenceDirectionXZ_Label =>
-            $"{GetDirectionalString(AspectReferenceDirection)}";
+            ZString.Format("{0}", GetDirectionalString(AspectReferenceDirection));
 
         public static GUIStyle Label
         {
@@ -314,7 +315,11 @@ namespace Appalachia.Spatial.Terrains
                         _ => sampleHeight - rootHeight
                     };
 
-                    UnityEditor.Handles.Label(samplePosition_WS, $"{sampleValue:F3}", Label);
+                    UnityEditor.Handles.Label(
+                        samplePosition_WS,
+                        ZString.Format("{0:F3}", sampleValue),
+                        Label
+                    );
 
                     sampleSum += sampleValue;
                     sampleCount += 1;
@@ -639,7 +644,7 @@ namespace Appalachia.Spatial.Terrains
                 }
             }
 
-            UnityEditor.Handles.Label(offset + lblOffset, $"{testValue:F3}", MiniLabel);
+            UnityEditor.Handles.Label(offset + lblOffset, ZString.Format("{0:F3}", testValue), MiniLabel);
         }
 #endif
     }

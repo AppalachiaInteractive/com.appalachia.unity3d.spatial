@@ -2,6 +2,7 @@
 
 using System;
 using System.Diagnostics;
+using Appalachia.Utility.Strings;
 using Unity.Burst;
 using Unity.Mathematics;
 using UnityEngine;
@@ -99,7 +100,7 @@ namespace Appalachia.Spatial.SpatialKeys
         [DebuggerStepThrough] public override string ToString()
         {
             const string float3format = "{0:F2}, {1:F2}, {2:F2}";
-            return string.Format(float3format, _descaledX, _descaledY, _descaledZ);
+            return ZString.Format(float3format, _descaledX, _descaledY, _descaledZ);
         }
     }
 }

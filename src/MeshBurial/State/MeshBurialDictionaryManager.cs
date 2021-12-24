@@ -3,33 +3,33 @@
 #region
 
 using System.Collections.Generic;
-using Appalachia.Core.Attributes.Editing;
+using Appalachia.Core.Attributes;
 
 #endregion
 
 namespace Appalachia.Spatial.MeshBurial.State
 {
-    [EditorOnlyInitializeOnLoad]
+    [CallStaticConstructorInEditor]
     public static class MeshBurialDictionaryManager
     {
-        private static MeshBurialOptimizationParameters _optimizationParameters;
+        // [CallStaticConstructorInEditor] should be added to the class (initsingletonattribute)
+        static MeshBurialDictionaryManager()
+        {
+            MeshBurialOptimizationParameters.InstanceAvailable += i => _meshBurialOptimizationParameters = i;
+        }
+
+        #region Static Fields and Autoproperties
 
         public static MeshBurialDictionary gameObjects = new();
 
         private static Dictionary<string, MeshBurialDictionary> _extras = new();
 
-        public static MeshBurialOptimizationParameters optimizationParameters
-        {
-            get
-            {
-                if (_optimizationParameters == null)
-                {
-                    _optimizationParameters = MeshBurialOptimizationParameters.instance;
-                }
+        private static MeshBurialOptimizationParameters _meshBurialOptimizationParameters;
 
-                return _optimizationParameters;
-            }
-        }
+        #endregion
+
+        public static MeshBurialOptimizationParameters optimizationParameters =>
+            _meshBurialOptimizationParameters;
 
         public static MeshBurialDictionary GetNamed(string name)
         {

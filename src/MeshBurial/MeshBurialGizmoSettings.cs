@@ -3,7 +3,7 @@
 #region
 
 using System;
-using Appalachia.Core.Scriptables;
+using Appalachia.Core.Objects.Root;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
@@ -15,6 +15,8 @@ namespace Appalachia.Spatial.MeshBurial
     public class
         MeshBurialGizmoSettings : SingletonAppalachiaObject<MeshBurialGizmoSettings>
     {
+        
+        
         public bool drawAllTriangles;
         public bool drawBorders = true;
         public bool drawTerrainIntersection = true;

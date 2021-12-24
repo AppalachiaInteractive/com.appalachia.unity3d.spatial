@@ -3,8 +3,9 @@
 using System;
 using System.Diagnostics;
 using Appalachia.CI.Constants;
-using Appalachia.Core.Extensions;
+using Appalachia.Utility.Constants;
 using Appalachia.Utility.Extensions;
+using Appalachia.Utility.Strings;
 using Unity.Burst;
 using Unity.Mathematics;
 using UnityEngine;
@@ -111,10 +112,13 @@ namespace Appalachia.Spatial.SpatialKeys
 
         public void OnBeforeSerialize()
         {
+            using var scope = APPASERIALIZE.OnBeforeSerialize();
         }
 
         public void OnAfterDeserialize()
         {
+            using var scope = APPASERIALIZE.OnAfterDeserialize();
+            
             if ((_groupingScale == 0) && !original.Equals(default))
             {
                 _groupingScale = CONSTANTS.MatrixKeyGrouping;
@@ -135,6 +139,7 @@ namespace Appalachia.Spatial.SpatialKeys
                 _m32 = GetRounded(original.c2.w, _groupingScale);
                 _m33 = GetRounded(original.c3.w, _groupingScale);
             }
+            
         }
 
         private static int GetRounded(float value, int scale)
@@ -235,17 +240,17 @@ namespace Appalachia.Spatial.SpatialKeys
             const string float3format = "{0:F2}, {1:F2}, {2:F2}";
             const string float4format = float3format + ", {3:F2}";
 
-            var t = string.Format(float3format, translation.x, translation.y, translation.z);
-            var r = string.Format(
+            var t = ZString.Format(float3format, translation.x, translation.y, translation.z);
+            var r = ZString.Format(
                 float4format,
                 rotation.value.x,
                 rotation.value.y,
                 rotation.value.z,
                 rotation.value.w
             );
-            var s = string.Format(float3format, scale.x, scale.y, scale.z);
+            var s = ZString.Format(float3format, scale.x, scale.y, scale.z);
 
-            return $"T:[{t}] R:[{r}] S:[{s}]";
+            return ZString.Format("T:[{0}] R:[{1}] S:[{2}]", t, r, s);
         }
     }
 }

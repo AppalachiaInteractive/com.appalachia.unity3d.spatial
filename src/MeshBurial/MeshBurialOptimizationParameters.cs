@@ -3,7 +3,7 @@
 #region
 
 using System;
-using Appalachia.Core.Scriptables;
+using Appalachia.Core.Objects.Root;
 using SharpLearning.Optimization;
 using Sirenix.OdinInspector;
 
@@ -16,6 +16,8 @@ namespace Appalachia.Spatial.MeshBurial
         MeshBurialOptimizationParameters : SingletonAppalachiaObject<
             MeshBurialOptimizationParameters>
     {
+        
+        
         public OptimizerType optimizerType = OptimizerType.RandomSearch;
 
         /*[TitleGroup("Ranges")]

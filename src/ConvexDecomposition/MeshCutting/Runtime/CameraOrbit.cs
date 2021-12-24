@@ -1,5 +1,8 @@
 ﻿#if UNITY_EDITOR
-using Appalachia.Core.Behaviours;
+using Appalachia.Core.Objects.Initialization;
+using Appalachia.Core.Objects.Root;
+using Appalachia.Utility.Async;
+using Unity.Profiling;
 using UnityEngine;
 
 namespace Appalachia.Spatial.ConvexDecomposition.MeshCutting.Runtime
@@ -8,7 +11,7 @@ namespace Appalachia.Spatial.ConvexDecomposition.MeshCutting.Runtime
     ///     Adapted from
     ///     https://answers.unity.com/questions/1257281/how-to-rotate-camera-orbit-around-a-game-object-on.html
     /// </summary>
-    public class CameraOrbit : AppalachiaBehaviour
+    public sealed class CameraOrbit : AppalachiaBehaviour<CameraOrbit>
     {
         #region Fields and Autoproperties
 
@@ -25,30 +28,11 @@ namespace Appalachia.Spatial.ConvexDecomposition.MeshCutting.Runtime
         private float rotationYAxis;
         private float rotationXAxis;
 
+        private Rigidbody _rigidbody;
+
         #endregion
 
         #region Event Functions
-
-        // Use this for initialization
-        protected override void Start()
-        {
-            base.Start();
-            var angles = transform.eulerAngles;
-            rotationYAxis = angles.y;
-            rotationXAxis = angles.x;
-
-            // Make the rigid body not change rotation
-            if (GetComponent<Rigidbody>())
-            {
-                GetComponent<Rigidbody>().freezeRotation = true;
-            }
-
-            // Clone the target's position so that it stays fixed
-            if (target)
-            {
-                fixedPosition = target.position;
-            }
-        }
 
         // Called after Update
         private void LateUpdate()
@@ -95,6 +79,37 @@ namespace Appalachia.Spatial.ConvexDecomposition.MeshCutting.Runtime
 
             return Mathf.Clamp(angle, min, max);
         }
+
+        protected override async AppaTask Initialize(Initializer initializer)
+        {
+            using (_PRF_Initialize.Auto())
+            {
+                await base.Initialize(initializer);
+
+                var angles = transform.eulerAngles;
+                rotationYAxis = angles.y;
+                rotationXAxis = angles.x;
+
+                _rigidbody = await initializer.Get<Rigidbody>(this, nameof(Rigidbody));
+
+                _rigidbody.freezeRotation = true;
+
+                // Clone the target's position so that it stays fixed
+                if (target)
+                {
+                    fixedPosition = target.position;
+                }
+            }
+        }
+
+        #region Profiling
+
+        private const string _PRF_PFX = nameof(CameraOrbit) + ".";
+
+        private static readonly ProfilerMarker _PRF_Initialize =
+            new ProfilerMarker(_PRF_PFX + nameof(Initialize));
+
+        #endregion
     }
 }
 

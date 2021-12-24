@@ -3,9 +3,8 @@
 #region
 
 using Appalachia.Core.Collections.Interfaces;
-using Appalachia.Core.Scriptables;
+using Appalachia.Core.Objects.Root;
 using Appalachia.Spatial.MeshBurial.Collections;
-using Appalachia.Utility.Extensions;
 using Sirenix.OdinInspector;
 
 #endregion
@@ -16,6 +15,9 @@ namespace Appalachia.Spatial.MeshBurial.State
         MeshBurialSharedStateDictionary : SingletonAppalachiaObject<
             MeshBurialSharedStateDictionary>
     {
+        
+        
+        
         [ListDrawerSettings(
             Expanded = true,
             DraggableItems = false,
@@ -34,7 +36,7 @@ namespace Appalachia.Spatial.MeshBurial.State
                     _state = new MeshBurialSharedStateLookup();
                    this.MarkAsModified();
 
-                    _state.SetMarkModifiedAction(this.MarkAsModified);
+                   _state.SetObjectOwnership(this);
                 }
 
                 return _state;
@@ -49,7 +51,7 @@ namespace Appalachia.Spatial.MeshBurial.State
                this.MarkAsModified();
             }
 
-            _state.SetMarkModifiedAction(this.MarkAsModified);
+            _state.SetObjectOwnership(this);
         }
     }
 }

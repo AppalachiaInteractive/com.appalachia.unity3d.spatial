@@ -1,10 +1,11 @@
 ﻿#if UNITY_EDITOR
 using System.Collections.Generic;
+using Appalachia.Core.Objects.Root;
 using UnityEngine;
 
 namespace Appalachia.Spatial.ConvexDecomposition.MeshCutting.Core
 {
-    public class TempMesh
+    public class TempMesh : AppalachiaSimpleBase
     {
         public List<Vector3> vertices;
         public List<Vector3> normals;

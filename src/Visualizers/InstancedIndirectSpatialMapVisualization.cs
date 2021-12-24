@@ -1,5 +1,6 @@
 #if UNITY_EDITOR
 using Appalachia.Editing.Visualizers;
+using Appalachia.Utility.Async;
 using Sirenix.OdinInspector;
 using Unity.Collections;
 using Unity.Mathematics;
@@ -24,8 +25,10 @@ namespace Appalachia.Spatial.Visualizers
             return new Bounds(center, size);
         }
 
-        protected override void WhenDisabled()
+        protected override async AppaTask WhenDisabled()
         {
+            await base.WhenDisabled();
+            
             texture = null;
         }
 

@@ -1,3 +1,4 @@
+#if UNITY_EDITOR
 
 #region
 
@@ -14,3 +15,5 @@ namespace Appalachia.Spatial.MeshBurial.Processing
         public double error;
     }
 }
+
+#endif

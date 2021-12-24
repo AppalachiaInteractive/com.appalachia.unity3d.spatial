@@ -4,13 +4,11 @@
 
 using Appalachia.Core.Assets;
 using Appalachia.Core.Collections.Interfaces;
-using Appalachia.Core.Scriptables;
+using Appalachia.Core.Objects.Root;
 using Appalachia.Spatial.MeshBurial.Collections;
-using Appalachia.Utility.Extensions;
 using Sirenix.OdinInspector;
 using Unity.Profiling;
 using UnityEngine;
-
 
 #endregion
 
@@ -20,6 +18,8 @@ namespace Appalachia.Spatial.MeshBurial.State
         MeshBurialAdjustmentCollection : SingletonAppalachiaObject<
             MeshBurialAdjustmentCollection>
     {
+        
+        
         private const string _PRF_PFX = nameof(MeshBurialAdjustmentCollection) + ".";
 
         private static readonly ProfilerMarker _PRF_WhenEnabled =
@@ -50,7 +50,7 @@ namespace Appalachia.Spatial.MeshBurial.State
                     _state = new MeshBurialAdjustmentStateLookup();
                    this.MarkAsModified();
 
-                    _state.SetMarkModifiedAction(this.MarkAsModified);
+                   _state.SetObjectOwnership(this);
                 }
 
                 return _state;
@@ -89,7 +89,7 @@ namespace Appalachia.Spatial.MeshBurial.State
                    this.MarkAsModified();
                 }
 
-                _state.SetMarkModifiedAction(this.MarkAsModified);
+                _state.SetObjectOwnership(this);
             }
         }
 
@@ -104,7 +104,7 @@ namespace Appalachia.Spatial.MeshBurial.State
                     if (adjustment == null)
                     {
                         //adjustment = new MeshBurialAdjustmentState() {prefab = prefab, assetGUID = assetGUID};
-                        adjustment = AppalachiaObject.LoadOrCreateNew<MeshBurialAdjustmentState>(prefab.name);
+                        adjustment = MeshBurialAdjustmentState.LoadOrCreateNew(prefab.name);
                         adjustment.InitializeLookupStorage(prefab);
 
                         _state.AddOrUpdate(prefab, adjustment);
@@ -114,7 +114,7 @@ namespace Appalachia.Spatial.MeshBurial.State
                     return adjustment;
                 }
 
-                var newState = AppalachiaObject.LoadOrCreateNew<MeshBurialAdjustmentState>(prefab.name);
+                var newState = MeshBurialAdjustmentState.LoadOrCreateNew(prefab.name);
                 newState.InitializeLookupStorage(prefab);
 
                 _state.AddOrUpdate(prefab, newState);

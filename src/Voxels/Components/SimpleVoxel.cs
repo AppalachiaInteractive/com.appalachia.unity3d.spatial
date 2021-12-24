@@ -2,9 +2,11 @@
 
 using System;
 using Appalachia.Core.Attributes.Editing;
-using Appalachia.Core.Behaviours;
 using Appalachia.Core.Filtering;
+using Appalachia.Core.Objects.Initialization;
+using Appalachia.Core.Objects.Root;
 using Appalachia.Spatial.Voxels.Gizmos;
+using Appalachia.Utility.Async;
 using Sirenix.OdinInspector;
 using Unity.Mathematics;
 using Unity.Profiling;
@@ -15,7 +17,7 @@ using UnityEngine;
 namespace Appalachia.Spatial.Voxels.Components
 {
     [Serializable]
-    public class SimpleVoxel : AppalachiaBehaviour
+    public sealed class SimpleVoxel : AppalachiaBehaviour<SimpleVoxel>
     {
         #region Fields and Autoproperties
 
@@ -47,13 +49,6 @@ namespace Appalachia.Spatial.Voxels.Components
 
         private Collider[] _colliders;
 
-#if UNITY_EDITOR
-        [NonSerialized]
-        [ShowInInspector]
-        [InlineEditor]
-        private VoxelDataGizmoSettings _gizmoSettings;
-#endif
-
         private MeshRenderer[] _renderers;
         private VoxelTypes.Voxels _voxels;
 
@@ -82,37 +77,29 @@ namespace Appalachia.Spatial.Voxels.Components
 
         #region Event Functions
 
-        protected override void OnEnable()
-        {
-            using (_PRF_OnEnable.Auto())
-            {
-                base.OnEnable();
-                RefreshChildCollections();
-            }
-        }
+        protected override async AppaTask WhenDisabled()
 
-        protected override void OnDisable()
         {
             using (_PRF_OnDisable.Auto())
             {
-                base.OnDisable();
+                await base.WhenDisabled();
 
                 _voxels?.Dispose();
             }
         }
 
-        protected override void OnDestroy()
+        protected override async AppaTask WhenDestroyed()
         {
             using (_PRF_OnDestroy.Auto())
             {
-                base.OnDestroy();
+                await base.WhenDestroyed();
 
                 _voxels?.Dispose();
             }
         }
 
 #if UNITY_EDITOR
-        private static readonly ProfilerMarker _PRF_OnDrawGizmosSelected = new ProfilerMarker(_PRF_PFX + nameof(OnDrawGizmosSelected));
+
         private void OnDrawGizmosSelected()
         {
             using (_PRF_OnDrawGizmosSelected.Auto())
@@ -124,10 +111,7 @@ namespace Appalachia.Spatial.Voxels.Components
 
                 if (_gizmoSettings == null)
                 {
-                    _gizmoSettings = VoxelDataGizmoSettingsCollection.instance.GetOrLoadOrCreateNew(
-                        VoxelDataGizmoStyle.Simple,
-                        nameof(VoxelDataGizmoStyle.Simple)
-                    );
+                    return;
                 }
 
                 _voxels.DrawGizmos(_gizmoSettings);
@@ -154,6 +138,24 @@ namespace Appalachia.Spatial.Voxels.Components
             }
         }
 
+        protected override async AppaTask Initialize(Initializer initializer)
+        {
+            using (_PRF_Initialize.Auto())
+            {
+                await base.Initialize(initializer);
+
+                RefreshChildCollections();
+
+                MainVoxelDataGizmoSettingsCollection.InstanceAvailable += i =>
+                {
+                    _gizmoSettings = i.Lookup.GetOrLoadOrCreateNew(
+                        VoxelDataGizmoStyle.Simple,
+                        nameof(VoxelDataGizmoStyle.Simple)
+                    );
+                };
+            }
+        }
+
         [ButtonGroup]
         private void RefreshChildCollections()
         {
@@ -171,6 +173,12 @@ namespace Appalachia.Spatial.Voxels.Components
 
         private const string _PRF_PFX = nameof(SimpleVoxel) + ".";
 
+        private static readonly ProfilerMarker _PRF_Initialize =
+            new ProfilerMarker(_PRF_PFX + nameof(Initialize));
+
+        private static readonly ProfilerMarker _PRF_OnDrawGizmosSelected =
+            new ProfilerMarker(_PRF_PFX + nameof(OnDrawGizmosSelected));
+
         private static readonly ProfilerMarker _PRF_Process = new ProfilerMarker(_PRF_PFX + nameof(Process));
 
         private static readonly ProfilerMarker _PRF_RefreshChildCollections =
@@ -186,5 +194,13 @@ namespace Appalachia.Spatial.Voxels.Components
             new ProfilerMarker(_PRF_PFX + nameof(OnDestroy));
 
         #endregion
+
+#if UNITY_EDITOR
+        [NonSerialized]
+        [ShowInInspector]
+        [InlineEditor]
+        private VoxelDataGizmoSettings _gizmoSettings;
+
+#endif
     }
 }

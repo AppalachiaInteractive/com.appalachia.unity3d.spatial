@@ -9,7 +9,6 @@ using Appalachia.Core.Collections.Implementations.Sets;
 using Appalachia.Core.Collections.NonSerialized;
 using Appalachia.Spatial.MeshBurial.Processing.QueueItems;
 using Appalachia.Spatial.MeshBurial.State;
-using Appalachia.Utility.Extensions;
 using AwesomeTechnologies.VegetationSystem;
 using Unity.Profiling;
 using UnityEngine;
@@ -19,12 +18,21 @@ using Object = UnityEngine.Object;
 
 namespace Appalachia.Spatial.MeshBurial.Processing
 {
-    [AlwaysInitializeOnLoad]
+    [CallStaticConstructorInEditor]
     public static partial class MeshBurialManagementProcessor
     {
-        #region Profiling And Tracing Markers
+        // [CallStaticConstructorInEditor] should be added to the class (initsingletonattribute)
+        static MeshBurialManagementProcessor()
+        {
+            MeshBurialManagementQueue.InstanceAvailable += i => _meshBurialManagementQueue = i;
+            MeshBurialAdjustmentCollection.InstanceAvailable += i => _meshBurialAdjustmentCollection = i;
+        }
 
-        private const string _PRF_PFX = nameof(MeshBurialManagementProcessor) + ".";
+        #region Static Fields and Autoproperties
+
+        private static MeshBurialAdjustmentCollection _meshBurialAdjustmentCollection;
+
+        private static MeshBurialManagementQueue _meshBurialManagementQueue;
 
         /*private static readonly ProfilerMarker _PRF_RefreshPrefabRenderingSets = new ProfilerMarker(_PRF_PFX + nameof(RefreshPrefabRenderingSets));
         public static void RefreshPrefabRenderingSets()
@@ -43,54 +51,10 @@ namespace Appalachia.Spatial.MeshBurial.Processing
         }*/
 
         private static VegetationSystemPro _vegetationSystem;
-        private static readonly ProfilerMarker _PRF_Reset = new(_PRF_PFX + nameof(Reset));
-
-        private static readonly ProfilerMarker _PRF_InitializeVSP = new(_PRF_PFX + nameof(InitializeVSP));
-
-        private static readonly ProfilerMarker _PRF_Initialize = new(_PRF_PFX + nameof(Initialize));
-
-        private static readonly ProfilerMarker _PRF_RequeueAllCells = new(_PRF_PFX + nameof(RequeueAllCells));
-
-        private static readonly ProfilerMarker _PRF_EnqueueCell = new(_PRF_PFX + nameof(EnqueueCell));
-
-        private static readonly ProfilerMarker _PRF_ShouldAdoptTerrainNormal =
-            new(_PRF_PFX + nameof(ShouldAdoptTerrainNormal));
-
-        private static readonly ProfilerMarker _PRF_PrepareAndEnqueue =
-            new(_PRF_PFX + nameof(PrepareAndEnqueue));
-
-        /*
-        private static readonly ProfilerMarker _PRF_EnqueuePrefabRenderingSet = new ProfilerMarker(_PRF_PFX + nameof(EnqueuePrefabRenderingSet));
-        public static void EnqueuePrefabRenderingSet(PrefabRenderingSet renderingSet)
-        {
-            using (_PRF_EnqueuePrefabRenderingSet.Auto())
-            {
-                renderingSet.SyncExternalParameters(PrefabRenderingManager.instance.prefabSource);
-
-                if (renderingSet.instanceManager.nextState != RuntimeStateCode.Enabled)
-                {
-                    return;
-                }
-
-                var physical = renderingSet.modelOptions.burialOptions;
-
-                if (!physical.buryMesh)
-                {
-                    return;
-                }
-
-                renderingSet.instanceManager.transferOriginalToCurrent = false;
-
-                var queueItem = new MeshBurialRuntimePrefabRenderingSetQueueItem(renderingSet);
-
-                PrepareAndEnqueue(queueItem, QUEUES.runtimePrefabRenderingSets);
-            }
-        }
-        */
 
         #endregion
 
-        private static MeshBurialManagementQueue QUEUES => MeshBurialManagementQueue.instance;
+        private static MeshBurialManagementQueue QUEUES => _meshBurialManagementQueue;
 
         public static void EnqueueCell(VegetationCell cell, int packageIndex = -1, int itemIndex = -1)
         {
@@ -122,7 +86,7 @@ namespace Appalachia.Spatial.MeshBurial.Processing
 
                 if (!keys[cell.Index].ContainsKey(packageIndex))
                 {
-                    keys[cell.Index].Add(packageIndex, new AppaSet_int {NoTracking = true});
+                    keys[cell.Index].Add(packageIndex, new AppaSet_int { NoTracking = true });
                 }
 
                 if (!keys[cell.Index][packageIndex].Contains(itemIndex))
@@ -208,7 +172,7 @@ namespace Appalachia.Spatial.MeshBurial.Processing
         {
             using (_PRF_Reset.Auto())
             {
-                var lookup = MeshBurialAdjustmentCollection.instance.GetByPrefab(go);
+                var lookup = _meshBurialAdjustmentCollection.GetByPrefab(go);
 
                 if (lookup == null)
                 {
@@ -265,6 +229,52 @@ namespace Appalachia.Spatial.MeshBurial.Processing
                 QUEUES.MarkAsModified();
             }
         }
+
+        #region Profiling
+
+        private const string _PRF_PFX = nameof(MeshBurialManagementProcessor) + ".";
+        private static readonly ProfilerMarker _PRF_Reset = new(_PRF_PFX + nameof(Reset));
+        private static readonly ProfilerMarker _PRF_InitializeVSP = new(_PRF_PFX + nameof(InitializeVSP));
+        private static readonly ProfilerMarker _PRF_Initialize = new(_PRF_PFX + nameof(Initialize));
+        private static readonly ProfilerMarker _PRF_RequeueAllCells = new(_PRF_PFX + nameof(RequeueAllCells));
+        private static readonly ProfilerMarker _PRF_EnqueueCell = new(_PRF_PFX + nameof(EnqueueCell));
+
+        private static readonly ProfilerMarker _PRF_ShouldAdoptTerrainNormal =
+            new(_PRF_PFX + nameof(ShouldAdoptTerrainNormal));
+
+        private static readonly ProfilerMarker _PRF_PrepareAndEnqueue =
+            new(_PRF_PFX + nameof(PrepareAndEnqueue));
+
+        #endregion
+
+        /*
+        private static readonly ProfilerMarker _PRF_EnqueuePrefabRenderingSet = new ProfilerMarker(_PRF_PFX + nameof(EnqueuePrefabRenderingSet));
+        public static void EnqueuePrefabRenderingSet(PrefabRenderingSet renderingSet)
+        {
+            using (_PRF_EnqueuePrefabRenderingSet.Auto())
+            {
+                renderingSet.SyncExternalParameters(PrefabRenderingManager.instance.prefabSource);
+
+                if (renderingSet.instanceManager.nextState != RuntimeStateCode.Enabled)
+                {
+                    return;
+                }
+
+                var physical = renderingSet.modelOptions.burialOptions;
+
+                if (!physical.buryMesh)
+                {
+                    return;
+                }
+
+                renderingSet.instanceManager.transferOriginalToCurrent = false;
+
+                var queueItem = new MeshBurialRuntimePrefabRenderingSetQueueItem(renderingSet);
+
+                PrepareAndEnqueue(queueItem, QUEUES.runtimePrefabRenderingSets);
+            }
+        }
+        */
     }
 }
 

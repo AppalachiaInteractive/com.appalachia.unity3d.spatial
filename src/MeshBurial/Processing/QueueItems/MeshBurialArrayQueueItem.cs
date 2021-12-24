@@ -4,6 +4,7 @@
 
 using System;
 using System.Diagnostics;
+using Appalachia.Utility.Strings;
 using Unity.Collections;
 using Unity.Collections.NotBurstCompatible;
 using Unity.Mathematics;
@@ -31,7 +32,7 @@ namespace Appalachia.Spatial.MeshBurial.Processing.QueueItems
             GameObject model,
             float4x4[] matrices,
             bool adoptTerrainNormal = true) : base(
-            $"Array: {model.name}",
+            ZString.Format("Array: {0}", model.name),
             model,
             matrices.Length,
             adoptTerrainNormal

@@ -3,12 +3,13 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
+using Appalachia.Core.Objects.Root;
 using Unity.Profiling;
 using UnityEngine;
 
 namespace Appalachia.Spatial.ConvexDecomposition.API
 {
-    public class VHCDAPI
+    public class VHCDAPI : AppalachiaSimpleBase
     {
         private const string _PRF_PFX = nameof(VHCDAPI) + ".";
         

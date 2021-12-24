@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 2078f126f1f6596489fdcd8454bd0d7c, type: 3}
-  m_Name: MeshBurialGizmoSettings_20200728-125811958
+  m_Name: MeshBurialGizmoSettings
   m_EditorClassIdentifier: 
   _niceName: 
   _cachedName: 

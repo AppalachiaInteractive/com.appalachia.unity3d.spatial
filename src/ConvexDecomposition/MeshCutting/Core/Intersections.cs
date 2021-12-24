@@ -1,11 +1,12 @@
 #if UNITY_EDITOR
 using System;
 using System.Collections.Generic;
+using Appalachia.Core.Objects.Root;
 using UnityEngine;
 
 namespace Appalachia.Spatial.ConvexDecomposition.MeshCutting.Core
 {
-    public class Intersections
+    public class Intersections : AppalachiaSimpleBase
     {
 #region Static functions
 

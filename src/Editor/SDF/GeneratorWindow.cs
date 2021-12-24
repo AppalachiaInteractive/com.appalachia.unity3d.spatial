@@ -1,10 +1,12 @@
 ﻿#if UNITY_EDITOR
 using Appalachia.CI.Integration.Assets;
-using UnityEngine;
+using Appalachia.Core.Attributes;
 using UnityEditor;
+using UnityEngine;
 
 namespace Appalachia.Spatial.SDF
 {
+    [CallStaticConstructorInEditor]
     public class GeneratorWindow : UnityEditor.EditorWindow
     {
         private static readonly Generator Generator;

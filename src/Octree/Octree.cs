@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using Appalachia.Core.Collections;
 using Appalachia.Core.Collections.NonSerialized;
+using Appalachia.Utility.Strings;
 using Unity.Profiling;
 using UnityEngine;
 
@@ -609,7 +610,7 @@ namespace Appalachia.Spatial.Octree
                 else
                 {
                     throw new NotSupportedException(
-                        $"Could not reposition key from {oldKey} to {newKey}."
+                        ZString.Format("Could not reposition key from {0} to {1}.", oldKey, newKey)
                     );
                 }
             }

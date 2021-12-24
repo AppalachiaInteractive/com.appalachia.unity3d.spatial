@@ -4,7 +4,7 @@
 
 using System;
 using System.Diagnostics;
-using Appalachia.Core.Behaviours;
+using Appalachia.Core.Objects.Root;
 using Appalachia.Spatial.MeshBurial.State;
 using Unity.Collections;
 using Unity.Mathematics;
@@ -15,7 +15,8 @@ using Unity.Profiling;
 namespace Appalachia.Spatial.MeshBurial.Processing.QueueItems
 {
     [Serializable]
-    public abstract class MeshBurialQueueItem : AppalachiaBase
+    public abstract class MeshBurialQueueItem<T> : AppalachiaBase<T>
+        where T : MeshBurialQueueItem<T>
     {
         private const string _PRF_PFX = nameof(MeshBurialQueueItem) + ".";
 

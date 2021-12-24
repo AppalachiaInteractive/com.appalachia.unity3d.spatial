@@ -3,12 +3,12 @@
 using System;
 using System.Collections.Generic;
 using Appalachia.CI.Integration.Assets;
-using Appalachia.Core.Behaviours;
 using Appalachia.Core.Debugging;
-using Appalachia.Core.Scriptables;
+using Appalachia.Core.Objects.Root;
 using Appalachia.Editing.Debugging.Handle;
 using Appalachia.Spatial.Terrains.Utilities;
-using Appalachia.Utility.Logging;
+using Appalachia.Utility.Async;
+using Appalachia.Utility.Strings;
 using Sirenix.OdinInspector;
 using Unity.Collections;
 using Unity.Profiling;
@@ -21,7 +21,7 @@ namespace Appalachia.Spatial.Terrains
 {
     [ExecuteAlways]
     [RequireComponent(typeof(Terrain))]
-    public class TerrainMetadataComponent : AppalachiaBehaviour
+    public sealed class TerrainMetadataComponent : AppalachiaBehaviour<TerrainMetadataComponent>
     {
         #region Fields and Autoproperties
 
@@ -46,36 +46,39 @@ namespace Appalachia.Spatial.Terrains
 
         #region Event Functions
 
-        protected override void OnEnable()
+        protected override async AppaTask WhenEnabled()
         {
             using (_PRF_OnEnable.Auto())
             {
-                base.OnEnable();
+                await base.WhenEnabled();
 
                 if (terrain == null)
                 {
                     terrain = GetComponent<Terrain>();
                 }
 
+#if UNITY_EDITOR
                 if (terrainMetadata == null)
                 {
-                    TerrainMetadataManager.Initialize();
+                    terrainMetadata = AddMetadataToTerrain(terrain);
                 }
+#endif
             }
         }
 
-        protected override void OnDisable()
+        protected override async AppaTask WhenDisabled()
+
         {
             using (_PRF_OnDisable.Auto())
             {
-                base.OnDisable();
+                await base.WhenDisabled();
 
                 if (terrain == null)
                 {
                     terrain = GetComponent<Terrain>();
                 }
 
-                TerrainMetadataManager.Remove(terrain);
+                TerrainMetadataManager.instance.Remove(terrain);
             }
         }
 
@@ -99,17 +102,21 @@ namespace Appalachia.Spatial.Terrains
 
                         if (comp == null)
                         {
-                            throw new NotSupportedException($"Missing {nameof(TerrainMetadataComponent)}!");
+                            throw new NotSupportedException(
+                                ZString.Format("Missing {0}!", nameof(TerrainMetadataComponent))
+                            );
                         }
 
                         var terrainThreadsafeData = comp.terrainMetadata;
 
                         if (terrainThreadsafeData == null)
                         {
-                            throw new NotSupportedException($"Missing {nameof(TerrainMetadata)}!");
+                            throw new NotSupportedException(
+                                ZString.Format("Missing {0}!", nameof(TerrainMetadata))
+                            );
                         }
 
-                        terrainThreadsafeData.Initialize(terrain, Allocator.Persistent);
+                        terrainThreadsafeData.InitializeTerrain(terrain, Allocator.Persistent);
 
                         comp.terrainMetadata = terrainThreadsafeData;
 
@@ -117,7 +124,7 @@ namespace Appalachia.Spatial.Terrains
                     }
                     catch (Exception ex)
                     {
-                        AppaLog.Error($"Failed to create terrain job data: {ex}");
+                        StaticContext.Log.Error(ZString.Format("Failed to create terrain job data: {0}", ex));
                     }
                 }
 
@@ -235,9 +242,6 @@ namespace Appalachia.Spatial.Terrains
                 }
             }
         }
-#endif
-
-#if UNITY_EDITOR
 
         [UnityEditor.MenuItem(PKG.Menu.Appalachia.Tools.Base + "Terrains/Add TerrainMetadata To All")]
         public static void AddToAllTerrains_Menu()
@@ -259,52 +263,56 @@ namespace Appalachia.Spatial.Terrains
 
                 for (var i = 0; i < terrains.Length; i++)
                 {
-                    try
-                    {
-                        var terrain = terrains[i];
+                    var t = terrains[i];
 
-                        var comp = terrain.GetComponent<TerrainMetadataComponent>();
-
-                        if (comp == null)
-                        {
-                            comp = terrain.gameObject.AddComponent<TerrainMetadataComponent>();
-                        }
-
-                        AssetDatabaseManager.TryGetGUIDAndLocalFileIdentifier(
-                            terrain.terrainData,
-                            out var guid,
-                            out var _
-                        );
-
-                        var terrainName = $"{terrain.terrainData.name}_{guid}";
-                        terrain.name = terrainName;
-
-                        var terrainThreadsafeData = comp.terrainMetadata;
-
-                        if (terrainThreadsafeData == null)
-                        {
-                            terrainThreadsafeData =
-                                AppalachiaObject.LoadOrCreateNew<TerrainMetadata>(terrainName);
-                        }
-
-                        terrainThreadsafeData.profileName = terrainName;
-                        terrainThreadsafeData.UpdateName();
-
-                        terrainThreadsafeData.Initialize(terrain, Allocator.Persistent);
-
-                        comp.terrainMetadata = terrainThreadsafeData;
-
-                        results.Add(terrainThreadsafeData);
-                    }
-                    catch (Exception ex)
-                    {
-                        AppaLog.Error($"Failed to create terrain job data: {ex}");
-                    }
+                    var terrainThreadsafeData = AddMetadataToTerrain(t);
+                    results.Add(terrainThreadsafeData);
                 }
 
                 return results;
             }
         }
+
+        private static TerrainMetadata AddMetadataToTerrain(Terrain t)
+        {
+            TerrainMetadata terrainThreadsafeData = null;
+
+            try
+            {
+                var comp = t.GetComponent<TerrainMetadataComponent>();
+
+                if (comp == null)
+                {
+                    comp = t.gameObject.AddComponent<TerrainMetadataComponent>();
+                }
+
+                AssetDatabaseManager.TryGetGUIDAndLocalFileIdentifier(t.terrainData, out var guid, out var _);
+
+                var terrainName = ZString.Format("{0}_{1}", t.terrainData.name, guid);
+                t.name = terrainName;
+
+                terrainThreadsafeData = comp.terrainMetadata;
+
+                if (terrainThreadsafeData == null)
+                {
+                    terrainThreadsafeData = TerrainMetadata.LoadOrCreateNew(terrainName);
+                }
+
+                terrainThreadsafeData.profileName = terrainName;
+                terrainThreadsafeData.UpdateName();
+
+                terrainThreadsafeData.InitializeTerrain(t, Allocator.Persistent);
+
+                comp.terrainMetadata = terrainThreadsafeData;
+            }
+            catch (Exception ex)
+            {
+                StaticContext.Log.Error(ZString.Format("Failed to create terrain job data: {0}", ex));
+            }
+
+            return terrainThreadsafeData;
+        }
+
 #endif
     }
 }

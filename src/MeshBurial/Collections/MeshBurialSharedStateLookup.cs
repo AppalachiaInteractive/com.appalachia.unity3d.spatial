@@ -21,7 +21,7 @@ namespace Appalachia.Spatial.MeshBurial.Collections
         HideRemoveButton = true,
         NumberOfItemsPerPage = 5
     )]
-    public class MeshBurialSharedStateLookup : AppaLookup<int, MeshBurialSharedState, AppaList_int,
+    public class MeshBurialSharedStateLookup : AppaLookup<int, MeshBurialSharedState, intList,
         AppaList_MeshBurialSharedState>
     {
         protected override string GetDisplayTitle(int key, MeshBurialSharedState value)

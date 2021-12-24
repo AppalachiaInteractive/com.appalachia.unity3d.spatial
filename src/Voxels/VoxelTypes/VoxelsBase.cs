@@ -1312,6 +1312,7 @@ namespace Appalachia.Spatial.Voxels.VoxelTypes
 
         public void OnAfterDeserialize()
         {
+                APPADEBUG.SERIALIZING = true;
             if (__samplePoints != null && __samplePoints.Length > 0)
             {
                 samplePoints.SafeDispose();

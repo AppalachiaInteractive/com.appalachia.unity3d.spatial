@@ -1,7 +1,7 @@
 #region
 
 using System;
-using Appalachia.Core.Scriptables;
+using Appalachia.CI.Integration.Core;
 using Appalachia.Spatial.Voxels.Casting;
 using Appalachia.Spatial.Voxels.Persistence;
 using UnityEngine;
@@ -41,7 +41,7 @@ namespace Appalachia.Spatial.Voxels.VoxelTypes
 #if UNITY_EDITOR
             if (dataStore == null)
             {
-                dataStore = AppalachiaObject.LoadOrCreateNew<TDataStore>(identifier);
+                dataStore = AppalachiaObjectFactory.LoadExistingOrCreateNewAsset<TDataStore>(identifier);
             }
 #endif
         }
