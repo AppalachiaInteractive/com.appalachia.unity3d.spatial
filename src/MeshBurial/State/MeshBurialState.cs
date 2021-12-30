@@ -3,6 +3,7 @@
 #region
 
 using System;
+using Appalachia.Core.Attributes;
 using Appalachia.Core.Objects.Root;
 using Appalachia.Spatial.Terrains;
 using Sirenix.OdinInspector;
@@ -14,9 +15,9 @@ using UnityEngine.Serialization;
 namespace Appalachia.Spatial.MeshBurial.State
 {
     [Serializable]
+    [CallStaticConstructorInEditor]
     public class MeshBurialState : AppalachiaSimpleBase
     {
-        // [CallStaticConstructorInEditor] should be added to the class (initsingletonattribute)
         static MeshBurialState()
         {
             TerrainMetadataManager.InstanceAvailable += i => _terrainMetadataManager = i;

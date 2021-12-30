@@ -14,7 +14,6 @@ namespace Appalachia.Spatial.MeshBurial.State
     [CallStaticConstructorInEditor]
     public static class MeshBurialSharedStateManager
     {
-        // [CallStaticConstructorInEditor] should be added to the class (initsingletonattribute)
         static MeshBurialSharedStateManager()
         {
             MeshBurialSharedStateDictionary.InstanceAvailable += i => _meshBurialSharedStateDictionary = i;

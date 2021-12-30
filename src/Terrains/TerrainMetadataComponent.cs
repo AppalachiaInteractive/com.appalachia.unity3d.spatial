@@ -25,7 +25,6 @@ namespace Appalachia.Spatial.Terrains
     [CallStaticConstructorInEditor]
     public sealed class TerrainMetadataComponent : AppalachiaBehaviour<TerrainMetadataComponent>
     {
-        // [CallStaticConstructorInEditor] should be added to the class (initsingletonattribute)
         static TerrainMetadataComponent()
         {
             TerrainMetadataManager.InstanceAvailable += i => _terrainMetadataManager = i;
