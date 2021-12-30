@@ -4,7 +4,9 @@
 
 using System;
 using Appalachia.CI.Constants;
+using Appalachia.Core.Attributes;
 using Appalachia.Core.Collections.Native;
+using Appalachia.Core.Objects.Initialization;
 using Appalachia.Core.Objects.Root;
 using Appalachia.Jobs.MeshData;
 using Appalachia.Spatial.MeshBurial.Collections;
@@ -21,35 +23,21 @@ using UnityEngine;
 namespace Appalachia.Spatial.MeshBurial.State
 {
     [Serializable]
-    public class MeshBurialAdjustmentState : AppalachiaObject<>
+    [CallStaticConstructorInEditor]
+    public class MeshBurialAdjustmentState : AppalachiaObject<MeshBurialAdjustmentState>
     {
-        
-        
-        private const string _PRF_PFX = nameof(MeshBurialAdjustmentState) + ".";
+        static MeshBurialAdjustmentState()
+        {
+            MeshObjectManager.InstanceAvailable += i => _meshObjectManager = i;
+        }
 
-        private static readonly ProfilerMarker _PRF_InitializeLookupStorage =
-            new(_PRF_PFX + nameof(InitializeLookupStorage));
+        #region Static Fields and Autoproperties
 
-        private static readonly ProfilerMarker _PRF_OnEnable = new(_PRF_PFX + nameof(OnEnable));
+        private static MeshObjectManager _meshObjectManager;
 
-        private static readonly ProfilerMarker _PRF_OnDisable = new(_PRF_PFX + nameof(OnDisable));
+        #endregion
 
-        private static readonly ProfilerMarker _PRF_InitializeLookup =
-            new(_PRF_PFX + nameof(InitializeLookup));
-
-        private static readonly ProfilerMarker _PRF_TryGetValue =
-            new(_PRF_PFX + nameof(TryGetValue));
-
-        private static readonly ProfilerMarker _PRF_Contains = new(_PRF_PFX + nameof(Contains));
-
-        private static readonly ProfilerMarker _PRF_AddOrUpdate =
-            new(_PRF_PFX + nameof(AddOrUpdate));
-
-        private static readonly ProfilerMarker _PRF_Reset = new(_PRF_PFX + nameof(Reset));
-
-        private static readonly ProfilerMarker _PRF_Consume = new(_PRF_PFX + nameof(Consume));
-
-        private static readonly ProfilerMarker _PRF_GetNative = new(_PRF_PFX + nameof(GetNative));
+        #region Fields and Autoproperties
 
         [SerializeField]
         [ListDrawerSettings(
@@ -66,36 +54,86 @@ namespace Appalachia.Spatial.MeshBurial.State
 
         private NativeHashMap<Matrix4x4Key, MeshBurialAdjustment> _nativeAdjustments;
 
-        internal void Reset()
+        #endregion
+
+        public void AddOrUpdate(Matrix4x4 matrix, bool adoptTerrainNormal, Matrix4x4 value, double error)
         {
-            using (_PRF_Reset.Auto())
+            using (_PRF_AddOrUpdate.Auto())
             {
                 InitializeLookup();
 
-                _state.Clear();
-                if (_nativeAdjustments.IsCreated)
+                var key = new Matrix4x4Key(matrix, CONSTANTS.MatrixKeyGrouping);
+
+                lock (this)
                 {
-                    _nativeAdjustments.Clear();
+                    if (_state.ContainsKey(key))
+                    {
+                        var existing = _state[key];
+
+                        existing.entry.adoptTerrainNormal = adoptTerrainNormal;
+                        existing.entry.adjustment = value;
+                        existing.entry.error = error;
+
+                        _state[key] = existing;
+                    }
+                    else
+                    {
+                        var newAdjustment = new MeshBurialAdjustmentEntryWrapper
+                        {
+                            entry = new MeshBurialAdjustmentEntry
+                            {
+                                input = matrix,
+                                adjustment = value,
+                                adoptTerrainNormal = adoptTerrainNormal,
+                                error = error
+                            }
+                        };
+
+                        _state.AddOrUpdate(key, newAdjustment);
+                    }
+
+                    MarkAsModified();
+                }
+            }
+        }
+
+        public bool Contains(Matrix4x4 matrix, bool adoptTerrainNormal)
+        {
+            using (_PRF_Contains.Auto())
+            {
+                return TryGetValue(matrix, adoptTerrainNormal, out _);
+            }
+        }
+
+        public NativeHashMap<Matrix4x4Key, MeshBurialAdjustment> GetNative()
+        {
+            using (_PRF_GetNative.Auto())
+            {
+                InitializeLookup();
+
+                _nativeAdjustments.Clear();
+
+                for (var i = 0; i < _state.Count; i++)
+                {
+                    var key = _state.GetKeyByIndex(i);
+                    var adj = _state.at[i];
+
+                    var adjustment = new MeshBurialAdjustment
+                    {
+                        matrix = adj.entry.adjustment, error = adj.entry.error
+                    };
+
+                    if (!_nativeAdjustments.ContainsKey(key))
+                    {
+                        _nativeAdjustments.Add(key, adjustment);
+                    }
+                    else
+                    {
+                        _nativeAdjustments[key] = adjustment;
+                    }
                 }
 
-               this.MarkAsModified();
-            }
-        }
-
-        protected override async AppaTask WhenEnabled()
-        {
-            using (_PRF_OnEnable.Auto())
-            {
-                await base.WhenEnabled();
-                InitializeLookup();
-            }
-        }
-
-        private void OnDisable()
-        {
-            using (_PRF_OnDisable.Auto())
-            {
-                _nativeAdjustments.SafeDispose();
+                return _nativeAdjustments;
             }
         }
 
@@ -109,29 +147,19 @@ namespace Appalachia.Spatial.MeshBurial.State
             }
         }
 
-        private void InitializeLookup()
+        public void ResetState()
         {
-            using (_PRF_InitializeLookup.Auto())
+            using (_PRF_ResetState.Auto())
             {
-                if (_state == null)
+                InitializeLookup();
+
+                _state.Clear();
+                if (_nativeAdjustments.IsCreated)
                 {
-                    _state = new MeshBurialAdjustmentEntryWrapperLookup();
-                   this.MarkAsModified();
+                    _nativeAdjustments.Clear();
                 }
 
-                _state.SetObjectOwnership(this);
-
-                if (_nativeAdjustments.ShouldAllocate())
-                {
-                    _nativeAdjustments =
-                        new NativeHashMap<Matrix4x4Key, MeshBurialAdjustment>(
-                            2048,
-                            Allocator.Persistent
-                        );
-                    MeshObjectManager.instance.RegisterDisposalDependency(
-                        () => _nativeAdjustments.SafeDispose()
-                    );
-                }
+                MarkAsModified();
             }
         }
 
@@ -168,59 +196,6 @@ namespace Appalachia.Spatial.MeshBurial.State
             }
         }
 
-        public bool Contains(Matrix4x4 matrix, bool adoptTerrainNormal)
-        {
-            using (_PRF_Contains.Auto())
-            {
-                return TryGetValue(matrix, adoptTerrainNormal, out _);
-            }
-        }
-
-        public void AddOrUpdate(
-            Matrix4x4 matrix,
-            bool adoptTerrainNormal,
-            Matrix4x4 value,
-            double error)
-        {
-            using (_PRF_AddOrUpdate.Auto())
-            {
-                InitializeLookup();
-
-                var key = new Matrix4x4Key(matrix, CONSTANTS.MatrixKeyGrouping);
-
-                lock (this)
-                {
-                    if (_state.ContainsKey(key))
-                    {
-                        var existing = _state[key];
-
-                        existing.entry.adoptTerrainNormal = adoptTerrainNormal;
-                        existing.entry.adjustment = value;
-                        existing.entry.error = error;
-
-                        _state[key] = existing;
-                    }
-                    else
-                    {
-                        var newAdjustment = new MeshBurialAdjustmentEntryWrapper
-                        {
-                            entry = new MeshBurialAdjustmentEntry
-                            {
-                                input = matrix,
-                                adjustment = value,
-                                adoptTerrainNormal = adoptTerrainNormal,
-                                error = error
-                            }
-                        };
-
-                        _state.AddOrUpdate(key, newAdjustment);
-                    }
-
-                   this.MarkAsModified();
-                }
-            }
-        }
-
         internal void Consume(MeshBurialAdjustmentState other)
         {
             using (_PRF_Consume.Auto())
@@ -231,50 +206,87 @@ namespace Appalachia.Spatial.MeshBurial.State
                     {
                         var otherUpdate = other._state.at[i];
 
-                        var key = new Matrix4x4Key(
-                            otherUpdate.entry.input,
-                            CONSTANTS.MatrixKeyGrouping
-                        );
+                        var key = new Matrix4x4Key(otherUpdate.entry.input, CONSTANTS.MatrixKeyGrouping);
 
                         _state.AddIfKeyNotPresent(key, otherUpdate);
                     }
 
-                   this.MarkAsModified();
+                    MarkAsModified();
                 }
             }
         }
 
-        public NativeHashMap<Matrix4x4Key, MeshBurialAdjustment> GetNative()
+        protected override async AppaTask Initialize(Initializer initializer)
         {
-            using (_PRF_GetNative.Auto())
+            using (_PRF_Initialize.Auto())
             {
+                await base.Initialize(initializer);
+
                 InitializeLookup();
-
-                _nativeAdjustments.Clear();
-
-                for (var i = 0; i < _state.Count; i++)
-                {
-                    var key = _state.GetKeyByIndex(i);
-                    var adj = _state.at[i];
-
-                    var adjustment = new MeshBurialAdjustment
-                    {
-                        matrix = adj.entry.adjustment, error = adj.entry.error
-                    };
-
-                    if (!_nativeAdjustments.ContainsKey(key))
-                    {
-                        _nativeAdjustments.Add(key, adjustment);
-                    }
-                    else
-                    {
-                        _nativeAdjustments[key] = adjustment;
-                    }
-                }
-
-                return _nativeAdjustments;
             }
         }
+
+        protected override async AppaTask WhenDisabled()
+        {
+            using (_PRF_WhenDisabled.Auto())
+            {
+                await base.WhenDisabled();
+                _nativeAdjustments.SafeDispose();
+            }
+        }
+
+        private void InitializeLookup()
+        {
+            using (_PRF_InitializeLookup.Auto())
+            {
+                if (_state == null)
+                {
+                    _state = new MeshBurialAdjustmentEntryWrapperLookup();
+                    MarkAsModified();
+                }
+
+                _state.SetObjectOwnership(this);
+
+                if (_nativeAdjustments.ShouldAllocate())
+                {
+                    _nativeAdjustments =
+                        new NativeHashMap<Matrix4x4Key, MeshBurialAdjustment>(2048, Allocator.Persistent);
+                    _meshObjectManager.RegisterDisposalDependency(() => _nativeAdjustments.SafeDispose());
+                }
+            }
+        }
+
+        #region Profiling
+
+        private const string _PRF_PFX = nameof(MeshBurialAdjustmentState) + ".";
+
+        private static readonly ProfilerMarker _PRF_Initialize =
+            new ProfilerMarker(_PRF_PFX + nameof(Initialize));
+
+        private static readonly ProfilerMarker _PRF_InitializeLookupStorage =
+            new(_PRF_PFX + nameof(InitializeLookupStorage));
+
+        private static readonly ProfilerMarker _PRF_OnEnable = new(_PRF_PFX + nameof(OnEnable));
+        private static readonly ProfilerMarker _PRF_OnDisable = new(_PRF_PFX + nameof(OnDisable));
+
+        private static readonly ProfilerMarker _PRF_InitializeLookup =
+            new(_PRF_PFX + nameof(InitializeLookup));
+
+        private static readonly ProfilerMarker _PRF_TryGetValue = new(_PRF_PFX + nameof(TryGetValue));
+        private static readonly ProfilerMarker _PRF_Contains = new(_PRF_PFX + nameof(Contains));
+        private static readonly ProfilerMarker _PRF_AddOrUpdate = new(_PRF_PFX + nameof(AddOrUpdate));
+        private static readonly ProfilerMarker _PRF_ResetState = new(_PRF_PFX + nameof(ResetState));
+        private static readonly ProfilerMarker _PRF_Consume = new(_PRF_PFX + nameof(Consume));
+
+        private static readonly ProfilerMarker _PRF_GetNative = new(_PRF_PFX + nameof(GetNative));
+
+        private static readonly ProfilerMarker _PRF_WhenDisabled =
+            new ProfilerMarker(_PRF_PFX + nameof(WhenDisabled));
+
+        private static readonly ProfilerMarker _PRF_WhenEnabled =
+            new ProfilerMarker(_PRF_PFX + nameof(WhenEnabled));
+
+        #endregion
     }
 }
 

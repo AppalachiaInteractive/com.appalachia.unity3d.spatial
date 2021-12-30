@@ -138,7 +138,6 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data
 
         #endregion
 
-        // [CallStaticConstructorInEditor] should be added to the class (initsingletonattribute)
         static DecomposedColliderData()
         {
             RegisterDependency<DecomposedColliderDataReview>(i => _decomposedColliderDataReview = i);

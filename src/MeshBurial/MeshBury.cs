@@ -10,6 +10,7 @@ using Appalachia.Core.Collections.Native;
 using Appalachia.Core.Debugging;
 using Appalachia.Core.Objects.Initialization;
 using Appalachia.Core.Preferences;
+using Appalachia.Editing.Core.Behaviours;
 using Appalachia.Editing.Debugging.Handle;
 using Appalachia.Jobs.MeshData;
 using Appalachia.Jobs.Optimization.Options;
@@ -37,7 +38,7 @@ namespace Appalachia.Spatial.MeshBurial
 {
     [CallStaticConstructorInEditor]
     [ExecuteAlways]
-    public class MeshBury : EditorOnlyAppalachiaBehaviour
+    public class MeshBury : EditorOnlyAppalachiaBehaviour<MeshBury>
     {
         #region Constants and Static Readonly
 
@@ -47,10 +48,11 @@ namespace Appalachia.Spatial.MeshBurial
 
         #endregion
 
-        // [CallStaticConstructorInEditor] should be added to the class (initsingletonattribute)
         static MeshBury()
         {
-            MeshBurialAdjustmentCollection.InstanceAvailable += i => _meshBurialAdjustmentCollection = i;
+            RegisterDependency<MeshBurialAdjustmentCollection>(i => _meshBurialAdjustmentCollection = i);
+            RegisterDependency<TerrainMetadataManager>(i => _terrainMetadataManager = i);
+            RegisterDependency<MeshObjectManager>(i => _meshObjectManager = i);
         }
 
         #region Preferences
@@ -189,6 +191,9 @@ namespace Appalachia.Spatial.MeshBurial
         #region Static Fields and Autoproperties
 
         private static MeshBurialAdjustmentCollection _meshBurialAdjustmentCollection;
+        private static MeshObjectManager _meshObjectManager;
+
+        private static TerrainMetadataManager _terrainMetadataManager;
 
         #endregion
 
@@ -355,27 +360,6 @@ namespace Appalachia.Spatial.MeshBurial
                     _hasCachedUpdateValues = false;
                     enabled = false;
                 }
-            }
-        }
-
-        protected override async AppaTask WhenDisabled()
-
-        {
-            using (_PRF_OnDisable.Auto())
-            {
-                await base.WhenDisabled();
-
-                _hasCachedUpdateValues = false;
-
-                _pendingHandle.Complete();
-
-                _randoms.SafeDispose();
-                _dependencyList.SafeDisposeAll();
-                _instanceData?.Dispose();
-                _state = null;
-                _adjustment = null;
-                _matrices.SafeDispose();
-                _terrainHashCodes = null;
             }
         }
 
@@ -597,7 +581,7 @@ namespace Appalachia.Spatial.MeshBurial
                     SmartHandles.DrawHandleLine(pos, endR, wh, U, R, Size, wRC);
                 }
 
-                var terrainData = TerrainMetadataManager.instance.GetTerrain(_terrainHashCodes[0]);
+                var terrainData = _terrainMetadataManager.GetTerrain(_terrainHashCodes[0]);
                 var terrainNormal = terrainData.GetTerrainNormal(pos);
 
                 {
@@ -688,7 +672,7 @@ namespace Appalachia.Spatial.MeshBurial
             {
                 _meshObject.data.Dispose();
 
-                _meshObject = MeshObjectManager.instance.GetCheapestMeshWrapper(_gameObject, true);
+                _meshObject = _meshObjectManager.GetCheapestMeshWrapper(_gameObject, true);
             }
         }
 
@@ -740,7 +724,7 @@ namespace Appalachia.Spatial.MeshBurial
 
                 if ((_meshObject == null) || !_meshObject.data.isCreated)
                 {
-                    _meshObject = MeshObjectManager.instance.GetCheapestMeshWrapper(gameObject, true);
+                    _meshObject = _meshObjectManager.GetCheapestMeshWrapper(gameObject, true);
                 }
 
                 if (_instanceData == null)
@@ -788,7 +772,28 @@ namespace Appalachia.Spatial.MeshBurial
 
                 _matrices[0] = p.localToWorldMatrix;
 
-                _terrainHashCodes[0] = TerrainMetadataManager.instance.GetTerrainHashCodeAt(p.position);
+                _terrainHashCodes[0] = _terrainMetadataManager.GetTerrainHashCodeAt(p.position);
+            }
+        }
+
+        protected override async AppaTask WhenDisabled()
+
+        {
+            using (_PRF_OnDisable.Auto())
+            {
+                await base.WhenDisabled();
+
+                _hasCachedUpdateValues = false;
+
+                _pendingHandle.Complete();
+
+                _randoms.SafeDispose();
+                _dependencyList.SafeDisposeAll();
+                _instanceData?.Dispose();
+                _state = null;
+                _adjustment = null;
+                _matrices.SafeDispose();
+                _terrainHashCodes = null;
             }
         }
 

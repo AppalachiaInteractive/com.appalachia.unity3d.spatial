@@ -21,16 +21,18 @@ namespace Appalachia.Spatial.MeshBurial.Processing
     [CallStaticConstructorInEditor]
     public static partial class MeshBurialManagementProcessor
     {
-        // [CallStaticConstructorInEditor] should be added to the class (initsingletonattribute)
         static MeshBurialManagementProcessor()
         {
             MeshBurialManagementQueue.InstanceAvailable += i => _meshBurialManagementQueue = i;
             MeshBurialAdjustmentCollection.InstanceAvailable += i => _meshBurialAdjustmentCollection = i;
+            MeshBurialExecutionManager.InstanceAvailable += i => _meshBurialExecutionManager = i;
         }
 
         #region Static Fields and Autoproperties
 
         private static MeshBurialAdjustmentCollection _meshBurialAdjustmentCollection;
+
+        private static MeshBurialExecutionManager _meshBurialExecutionManager;
 
         private static MeshBurialManagementQueue _meshBurialManagementQueue;
 
@@ -39,7 +41,7 @@ namespace Appalachia.Spatial.MeshBurial.Processing
         {
             using (_PRF_RefreshPrefabRenderingSets.Auto())
             {
-                var renderingSets = PrefabRenderingManager.instance.renderingSets;
+                var renderingSets = _prefabRenderingManager.renderingSets;
 
                 for (var i = 0; i < renderingSets.Sets.Count; i++)
                 {
@@ -54,7 +56,7 @@ namespace Appalachia.Spatial.MeshBurial.Processing
 
         #endregion
 
-        private static MeshBurialManagementQueue QUEUES => _meshBurialManagementQueue;
+        private static MeshBurialManagementQueue _queues => _meshBurialManagementQueue;
 
         public static void EnqueueCell(VegetationCell cell, int packageIndex = -1, int itemIndex = -1)
         {
@@ -62,8 +64,8 @@ namespace Appalachia.Spatial.MeshBurial.Processing
             {
                 InitializeVSP();
 
-                var keys = QUEUES.pendingVegetationKeys;
-                var queue = QUEUES.vegetation;
+                var keys = _queues.pendingVegetationKeys;
+                var queue = _queues.vegetation;
 
                 if (keys.Count == 0)
                 {
@@ -179,7 +181,7 @@ namespace Appalachia.Spatial.MeshBurial.Processing
                     return;
                 }
 
-                lookup.Reset();
+                lookup.ResetState();
             }
         }
 
@@ -200,8 +202,6 @@ namespace Appalachia.Spatial.MeshBurial.Processing
         {
             using (_PRF_Initialize.Auto())
             {
-                QUEUES.InitializeExternal();
-
                 _vspMeshBurialEnabled = false;
                 UnityEditor.EditorApplication.delayCall += ToggleEnableVSPMeshBurials;
                 MeshBurialExecutionManager.InitializeEnableMeshBurials();
@@ -226,7 +226,7 @@ namespace Appalachia.Spatial.MeshBurial.Processing
             {
                 queue.Enqueue(item);
 
-                QUEUES.MarkAsModified();
+                _queues.MarkAsModified();
             }
         }
 
@@ -253,7 +253,7 @@ namespace Appalachia.Spatial.MeshBurial.Processing
         {
             using (_PRF_EnqueuePrefabRenderingSet.Auto())
             {
-                renderingSet.SyncExternalParameters(PrefabRenderingManager.instance.prefabSource);
+                renderingSet.SyncExternalParameters(_prefabRenderingManager.prefabSource);
 
                 if (renderingSet.instanceManager.nextState != RuntimeStateCode.Enabled)
                 {

@@ -17,14 +17,30 @@ namespace Appalachia.Spatial.MeshBurial.Processing.QueueItems
     [Serializable]
     public class MeshBurialGameObjectQueueItem : MeshBurialSingularQueueItem
     {
-        public MeshBurialGameObjectQueueItem(GameObject model, bool adoptTerrainNormal = true) :
-            base(
-                ZString.Format("GameObject: {0}", model.name),
-                model,
-                model.transform.localToWorldMatrix,
-                adoptTerrainNormal
-            )
+        public MeshBurialGameObjectQueueItem(GameObject model, bool adoptTerrainNormal = true) : base(
+            ZString.Format("GameObject: {0}", model.name),
+            model,
+            model.transform.localToWorldMatrix,
+            model,
+            adoptTerrainNormal
+        )
         {
+        }
+
+        public override void GetAllMatrices(NativeList<float4x4> matrices)
+        {
+            matrices.Add(_model.transform.localToWorldMatrix);
+        }
+
+        public override void SetAllMatrices(NativeArray<float4x4> matrices)
+        {
+            _model.transform.Matrix4x4ToTransform(matrices[0]);
+        }
+
+        [DebuggerStepThrough]
+        public override string ToString()
+        {
+            return name;
         }
 
         /*
@@ -41,21 +57,6 @@ namespace Appalachia.Spatial.MeshBurial.Processing.QueueItems
 
         protected override void OnCompleteInternal()
         {
-        }
-
-        public override void GetAllMatrices(NativeList<float4x4> matrices)
-        {
-            matrices.Add(_model.transform.localToWorldMatrix);
-        }
-
-        public override void SetAllMatrices(NativeArray<float4x4> matrices)
-        {
-            _model.transform.Matrix4x4ToTransform(matrices[0]);
-        }
-
-        [DebuggerStepThrough] public override string ToString()
-        {
-            return name;
         }
     }
 }

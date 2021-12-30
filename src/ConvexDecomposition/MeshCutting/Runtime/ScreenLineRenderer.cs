@@ -1,6 +1,8 @@
 ﻿#if UNITY_EDITOR
+using Appalachia.Core.Objects.Initialization;
 using Appalachia.Core.Objects.Root;
 using Appalachia.Utility.Async;
+using Unity.Profiling;
 using UnityEngine;
 
 namespace Appalachia.Spatial.ConvexDecomposition.MeshCutting.Runtime
@@ -24,15 +26,6 @@ namespace Appalachia.Spatial.ConvexDecomposition.MeshCutting.Runtime
         public event LineDrawnHandler OnLineDrawn;
 
         #region Event Functions
-
-        // Use this for initialization
-        protected override void Start()
-        {
-            base.Start();
-
-            cam = Camera.main;
-            dragging = false;
-        }
 
         // Update is called once per frame
         private void Update()
@@ -66,10 +59,17 @@ namespace Appalachia.Spatial.ConvexDecomposition.MeshCutting.Runtime
             }
         }
 
-        protected override async AppaTask WhenEnabled()
+        #endregion
+
+        protected override async AppaTask Initialize(Initializer initializer)
         {
-            await base.WhenEnabled();
-            Camera.onPostRender += PostRenderDrawLine;
+            using (_PRF_Initialize.Auto())
+            {
+                await base.Initialize(initializer);
+
+                cam = Camera.main;
+                dragging = false;
+            }
         }
 
         protected override async AppaTask WhenDisabled()
@@ -79,7 +79,11 @@ namespace Appalachia.Spatial.ConvexDecomposition.MeshCutting.Runtime
             Camera.onPostRender -= PostRenderDrawLine;
         }
 
-        #endregion
+        protected override async AppaTask WhenEnabled()
+        {
+            await base.WhenEnabled();
+            Camera.onPostRender += PostRenderDrawLine;
+        }
 
         /// <summary>
         ///     Draws the line in viewport space using start and end variables
@@ -99,6 +103,15 @@ namespace Appalachia.Spatial.ConvexDecomposition.MeshCutting.Runtime
                 GL.PopMatrix();
             }
         }
+
+        #region Profiling
+
+        private const string _PRF_PFX = nameof(ScreenLineRenderer) + ".";
+
+        private static readonly ProfilerMarker _PRF_Initialize =
+            new ProfilerMarker(_PRF_PFX + nameof(Initialize));
+
+        #endregion
     }
 }
 

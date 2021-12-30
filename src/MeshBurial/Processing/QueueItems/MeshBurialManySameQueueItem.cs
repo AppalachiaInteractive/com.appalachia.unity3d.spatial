@@ -16,7 +16,6 @@ namespace Appalachia.Spatial.MeshBurial.Processing.QueueItems
     [CallStaticConstructorInEditor]
     public abstract class MeshBurialManySameQueueItem : MeshBurialManyQueueItem
     {
-        // [CallStaticConstructorInEditor] should be added to the class (initsingletonattribute)
         static MeshBurialManySameQueueItem()
         {
             MeshBurialAdjustmentCollection.InstanceAvailable += i => _meshBurialAdjustmentCollection = i;
@@ -26,7 +25,7 @@ namespace Appalachia.Spatial.MeshBurial.Processing.QueueItems
             string name,
             GameObject model,
             int length,
-            bool adoptTerrainNormal = true) : base(name, length)
+            bool adoptTerrainNormal = true) : base(name, length, model)
         {
             if (model == null)
             {

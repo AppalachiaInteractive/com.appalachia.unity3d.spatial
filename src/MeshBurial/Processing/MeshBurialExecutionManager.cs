@@ -30,7 +30,6 @@ namespace Appalachia.Spatial.MeshBurial.Processing
     public partial class
         MeshBurialExecutionManager : SingletonEditorOnlyAppalachiaBehaviour<MeshBurialExecutionManager>
     {
-        // [CallStaticConstructorInEditor] should be added to the class (initsingletonattribute)
         static MeshBurialExecutionManager()
         {
             MeshBurialManagementQueue.InstanceAvailable += i => _meshBurialManagementQueue = i;
@@ -159,29 +158,6 @@ namespace Appalachia.Spatial.MeshBurial.Processing
             }
         }
 
-        protected override async AppaTask WhenDisabled()
-
-        {
-            using (_PRF_OnDisable.Auto())
-            {
-                await base.WhenDisabled();
-
-                pendingHandle.Complete();
-
-                NativeDisposal();
-            }
-        }
-
-        protected override async AppaTask WhenDestroyed()
-        {
-            using (_PRF_OnDestroy.Auto())
-            {
-                await base.WhenDestroyed();
-
-                NativeDisposal();
-            }
-        }
-
         #endregion
 
         public void EnsureCompleted()
@@ -212,6 +188,29 @@ namespace Appalachia.Spatial.MeshBurial.Processing
                 }
 
                 PopulateQueueingActions();
+            }
+        }
+
+        protected override async AppaTask WhenDestroyed()
+        {
+            using (_PRF_OnDestroy.Auto())
+            {
+                await base.WhenDestroyed();
+
+                NativeDisposal();
+            }
+        }
+
+        protected override async AppaTask WhenDisabled()
+
+        {
+            using (_PRF_OnDisable.Auto())
+            {
+                await base.WhenDisabled();
+
+                pendingHandle.Complete();
+
+                NativeDisposal();
             }
         }
 

@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Appalachia.Core.Attributes;
 using Appalachia.Core.Attributes.Editing;
 using Appalachia.Core.Debugging;
 using Appalachia.Core.Objects.Initialization;
@@ -25,16 +26,20 @@ namespace Appalachia.Spatial.ConvexDecomposition.Generation
 {
     [ExecuteAlways]
     [DisallowMultipleComponent]
+    [CallStaticConstructorInEditor]
     public partial class DecomposedCollider : EditorOnlyFrustumCulledBehaviour<DecomposedCollider>
     {
-        // [CallStaticConstructorInEditor] should be added to the class (initsingletonattribute)
         static DecomposedCollider()
         {
             PrefabRenderingManager.InstanceAvailable += i => _prefabRenderingManager = i;
         }
 
+        #region Static Fields and Autoproperties
+
         private static PrefabRenderingManager _prefabRenderingManager;
-        
+
+        #endregion
+
         #region Fields and Autoproperties
 
         [PropertyOrder(-150)]

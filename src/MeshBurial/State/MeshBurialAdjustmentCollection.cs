@@ -6,6 +6,7 @@ using Appalachia.Core.Assets;
 using Appalachia.Core.Collections.Interfaces;
 using Appalachia.Core.Objects.Root;
 using Appalachia.Spatial.MeshBurial.Collections;
+using Appalachia.Utility.Async;
 using Sirenix.OdinInspector;
 using Unity.Profiling;
 using UnityEngine;
@@ -14,21 +15,9 @@ using UnityEngine;
 
 namespace Appalachia.Spatial.MeshBurial.State
 {
-    public class
-        MeshBurialAdjustmentCollection : SingletonAppalachiaObject<
-            MeshBurialAdjustmentCollection>
+    public class MeshBurialAdjustmentCollection : SingletonAppalachiaObject<MeshBurialAdjustmentCollection>
     {
-        
-        
-        private const string _PRF_PFX = nameof(MeshBurialAdjustmentCollection) + ".";
-
-        private static readonly ProfilerMarker _PRF_WhenEnabled =
-            new(_PRF_PFX + nameof(WhenEnabled));
-
-        private static readonly ProfilerMarker _PRF_GetByPrefab =
-            new(_PRF_PFX + nameof(GetByPrefab));
-
-        private static readonly ProfilerMarker _PRF_Reset = new(_PRF_PFX + nameof(Reset));
+        #region Fields and Autoproperties
 
         [SerializeField]
         [ListDrawerSettings(
@@ -40,56 +29,22 @@ namespace Appalachia.Spatial.MeshBurial.State
         )]
         private MeshBurialAdjustmentStateLookup _state;
 
-        public IAppaLookupReadOnly<GameObject, MeshBurialAdjustmentState,
-            AppaList_MeshBurialAdjustmentState> State
+        #endregion
+
+        public IAppaLookupReadOnly<GameObject, MeshBurialAdjustmentState, AppaList_MeshBurialAdjustmentState>
+            State
         {
             get
             {
                 if (_state == null)
                 {
                     _state = new MeshBurialAdjustmentStateLookup();
-                   this.MarkAsModified();
+                    MarkAsModified();
 
-                   _state.SetObjectOwnership(this);
+                    _state.SetObjectOwnership(this);
                 }
 
                 return _state;
-            }
-        }
-
-        public void Reset()
-        {
-            using (_PRF_Reset.Auto())
-            {
-                if (_state == null)
-                {
-                    return;
-                }
-                
-                for (var i = 0; i < _state.Count; i++)
-                {
-                    _state.at[i].Reset();
-                }
-
-                _state.Clear();
-
-               this.MarkAsModified();
-
-                AssetDatabaseSaveManager.SaveAssetsNextFrame();
-            }
-        }
-
-        protected override void WhenEnabled()
-        {
-            using (_PRF_WhenEnabled.Auto())
-            {
-                if (_state == null)
-                {
-                    _state = new MeshBurialAdjustmentStateLookup();
-                   this.MarkAsModified();
-                }
-
-                _state.SetObjectOwnership(this);
             }
         }
 
@@ -108,7 +63,7 @@ namespace Appalachia.Spatial.MeshBurial.State
                         adjustment.InitializeLookupStorage(prefab);
 
                         _state.AddOrUpdate(prefab, adjustment);
-                       this.MarkAsModified();
+                        MarkAsModified();
                     }
 
                     return adjustment;
@@ -119,11 +74,61 @@ namespace Appalachia.Spatial.MeshBurial.State
 
                 _state.AddOrUpdate(prefab, newState);
 
-               this.MarkAsModified();
+                MarkAsModified();
 
                 return newState;
             }
         }
+
+        public void ResetState()
+        {
+            using (_PRF_Reset.Auto())
+            {
+                if (_state == null)
+                {
+                    return;
+                }
+
+                for (var i = 0; i < _state.Count; i++)
+                {
+                    _state.at[i].ResetState();
+                }
+
+                _state.Clear();
+
+                MarkAsModified();
+
+                AssetDatabaseSaveManager.SaveAssetsNextFrame();
+            }
+        }
+
+        protected override async AppaTask WhenEnabled()
+        {
+            using (_PRF_WhenEnabled.Auto())
+            {
+                await base.WhenEnabled();
+
+                if (_state == null)
+                {
+                    _state = new MeshBurialAdjustmentStateLookup();
+                    MarkAsModified();
+                }
+
+                _state.SetObjectOwnership(this);
+            }
+        }
+
+        #region Profiling
+
+        private const string _PRF_PFX = nameof(MeshBurialAdjustmentCollection) + ".";
+
+        private static readonly ProfilerMarker _PRF_WhenEnabled = new(_PRF_PFX + nameof(WhenEnabled));
+
+        private static readonly ProfilerMarker _PRF_GetByPrefab = new(_PRF_PFX + nameof(GetByPrefab));
+
+        private static readonly ProfilerMarker _PRF_Reset = new(_PRF_PFX + nameof(Reset));
+
+        #endregion
     }
 }
 

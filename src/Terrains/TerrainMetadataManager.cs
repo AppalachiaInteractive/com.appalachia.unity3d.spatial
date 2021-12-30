@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Appalachia.Core.Attributes;
 using Appalachia.Core.Attributes.Editing;
 using Appalachia.Core.Collections.Native;
+using Appalachia.Core.Objects.Initialization;
 using Appalachia.Core.Objects.Root;
 using Appalachia.Spatial.Terrains.Utilities;
 using Appalachia.Utility.Async;
@@ -26,37 +27,17 @@ namespace Appalachia.Spatial.Terrains
             MainTerrainMetadataDictionary.InstanceAvailable += i => _mainTerrainMetadataDictionary = i;
         }
 
+        #region Static Fields and Autoproperties
+
         [InlineEditor, ShowInInspector]
         private static MainTerrainMetadataDictionary _mainTerrainMetadataDictionary;
+
+        #endregion
 
         #region Fields and Autoproperties
 
         private NativeHashMap<int, TerrainJobData> _nativeData;
         private NativeKeyArray2D<int, float> _nativeHeights;
-
-        #endregion
-
-        #region Event Functions
-
-        protected override async AppaTask WhenDisabled()
-
-        {
-            using (_PRF_OnDisable.Auto())
-            {
-                for (var i = 0; i < _mainTerrainMetadataDictionary.Lookup.Count; i++)
-                {
-                    var data = _mainTerrainMetadataDictionary.Lookup.Items.GetByIndex(i);
-
-                    if (data.heights.IsCreated)
-                    {
-                        data.heights.SafeDispose();
-                    }
-                }
-
-                _nativeData.SafeDispose();
-                _nativeHeights.SafeDispose();
-            }
-        }
 
         #endregion
 
@@ -77,8 +58,6 @@ namespace Appalachia.Spatial.Terrains
         {
             using (_PRF_GetNativeMetadata.Auto())
             {
-                
-
                 if (_nativeData.ShouldAllocate())
                 {
                     _nativeData = new NativeHashMap<int, TerrainJobData>(4, Allocator.Persistent);
@@ -137,8 +116,6 @@ namespace Appalachia.Spatial.Terrains
         {
             using (_PRF_GetTerrainHashCodeAt.Auto())
             {
-                
-
                 var terrain = Terrain.activeTerrains.GetTerrainAtPosition(position);
                 return terrain.GetHashCode();
             }
@@ -156,10 +133,12 @@ namespace Appalachia.Spatial.Terrains
             }
         }
 
-        protected override void Initialize()
+        protected override async AppaTask Initialize(Initializer initializer)
         {
             using (_PRF_Initialize.Auto())
             {
+                await base.Initialize(initializer);
+
                 _mainTerrainMetadataDictionary.Lookup.Clear();
 
                 List<TerrainMetadata> results;
@@ -191,20 +170,41 @@ namespace Appalachia.Spatial.Terrains
             }
         }
 
+        protected override async AppaTask WhenDisabled()
+
+        {
+            using (_PRF_WhenDisabled.Auto())
+            {
+                await base.WhenDisabled();
+
+                for (var i = 0; i < _mainTerrainMetadataDictionary.Lookup.Count; i++)
+                {
+                    var data = _mainTerrainMetadataDictionary.Lookup.Items.GetByIndex(i);
+
+                    if (data.heights.IsCreated)
+                    {
+                        data.heights.SafeDispose();
+                    }
+                }
+
+                _nativeData.SafeDispose();
+                _nativeHeights.SafeDispose();
+            }
+        }
+
         #region Profiling
 
         private const string _PRF_PFX = nameof(TerrainMetadataManager) + ".";
 
-        private static readonly ProfilerMarker _PRF_CheckLookup =
-            new ProfilerMarker(_PRF_PFX + nameof(CheckLookup));
+        private static readonly ProfilerMarker _PRF_Initialize =
+            new ProfilerMarker(_PRF_PFX + nameof(Initialize));
 
-        private static readonly ProfilerMarker _PRF_OnDisable =
+        private static readonly ProfilerMarker _PRF_WhenDisabled =
             new ProfilerMarker(_PRF_PFX + nameof(OnDisable));
 
         private static readonly ProfilerMarker _PRF_TerrainMetadataManager =
             new(_PRF_PFX + nameof(TerrainMetadataManager));
 
-        private static readonly ProfilerMarker _PRF_Initialize = new(_PRF_PFX + nameof(Initialize));
         private static readonly ProfilerMarker _PRF_GetTerrain = new(_PRF_PFX + nameof(GetTerrain));
 
         private static readonly ProfilerMarker _PRF_GetNativeMetadata =

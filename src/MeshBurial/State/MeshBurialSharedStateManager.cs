@@ -3,7 +3,7 @@
 #region
 
 using Appalachia.CI.Integration.Assets;
-using Appalachia.Core.Attributes.Editing;
+using Appalachia.Core.Attributes;
 using Unity.Profiling;
 using UnityEngine;
 
@@ -11,21 +11,28 @@ using UnityEngine;
 
 namespace Appalachia.Spatial.MeshBurial.State
 {
-    [EditorOnlyInitializeOnLoad]
+    [CallStaticConstructorInEditor]
     public static class MeshBurialSharedStateManager
     {
-        private const string _PRF_PFX = nameof(MeshBurialSharedStateManager) + ".";
+        // [CallStaticConstructorInEditor] should be added to the class (initsingletonattribute)
+        static MeshBurialSharedStateManager()
+        {
+            MeshBurialSharedStateDictionary.InstanceAvailable += i => _meshBurialSharedStateDictionary = i;
+        }
+
+        #region Static Fields and Autoproperties
 
         private static readonly ProfilerMarker _PRF_Get = new(_PRF_PFX + nameof(Get));
 
-        private static readonly ProfilerMarker _PRF_GetByPrefab =
-            new(_PRF_PFX + nameof(GetByPrefab));
+        private static readonly ProfilerMarker _PRF_GetByPrefab = new(_PRF_PFX + nameof(GetByPrefab));
 
-        private static readonly ProfilerMarker _PRF_GetByGameObject =
-            new(_PRF_PFX + nameof(GetByGameObject));
+        private static readonly ProfilerMarker _PRF_GetByGameObject = new(_PRF_PFX + nameof(GetByGameObject));
 
-        private static readonly ProfilerMarker _PRF_GetByHashCode =
-            new(_PRF_PFX + nameof(GetByHashCode));
+        private static readonly ProfilerMarker _PRF_GetByHashCode = new(_PRF_PFX + nameof(GetByHashCode));
+
+        private static MeshBurialSharedStateDictionary _meshBurialSharedStateDictionary;
+
+        #endregion
 
         public static MeshBurialSharedState Get(GameObject go)
         {
@@ -34,7 +41,7 @@ namespace Appalachia.Spatial.MeshBurial.State
                 if (UnityEditor.PrefabUtility.IsPartOfPrefabAsset(go) ||
                     UnityEditor.PrefabUtility.IsAnyPrefabInstanceRoot(go))
                 {
-                    AssetDatabaseManager.TryGetGUIDAndLocalFileIdentifier(go, out var guid, out long _);
+                    AssetDatabaseManager.TryGetGUIDAndLocalFileIdentifier(go, out var guid, out var _);
 
                     var hashCode = guid.GetHashCode();
 
@@ -42,20 +49,6 @@ namespace Appalachia.Spatial.MeshBurial.State
                 }
 
                 return GetByHashCode(go.GetHashCode(), go);
-            }
-        }
-
-        public static MeshBurialSharedState GetByPrefab(GameObject prefab)
-        {
-            using (_PRF_GetByPrefab.Auto())
-            {
-                AssetDatabaseManager.TryGetGUIDAndLocalFileIdentifier(prefab, out var guid, out long _);
-
-                var hashCode = guid.GetHashCode();
-
-                var state = GetByHashCode(hashCode, prefab);
-
-                return state;
             }
         }
 
@@ -71,7 +64,7 @@ namespace Appalachia.Spatial.MeshBurial.State
         {
             using (_PRF_GetByHashCode.Auto())
             {
-                var state = MeshBurialSharedStateDictionary.instance;
+                var state = _meshBurialSharedStateDictionary;
 
                 if (state.State.ContainsKey(hashCode))
                 {
@@ -88,6 +81,26 @@ namespace Appalachia.Spatial.MeshBurial.State
                 return meshObj;
             }
         }
+
+        public static MeshBurialSharedState GetByPrefab(GameObject prefab)
+        {
+            using (_PRF_GetByPrefab.Auto())
+            {
+                AssetDatabaseManager.TryGetGUIDAndLocalFileIdentifier(prefab, out var guid, out var _);
+
+                var hashCode = guid.GetHashCode();
+
+                var state = GetByHashCode(hashCode, prefab);
+
+                return state;
+            }
+        }
+
+        #region Profiling
+
+        private const string _PRF_PFX = nameof(MeshBurialSharedStateManager) + ".";
+
+        #endregion
     }
 }
 

@@ -16,7 +16,6 @@ namespace Appalachia.Spatial.MeshBurial.Processing.QueueItems
     [CallStaticConstructorInEditor]
     public abstract class MeshBurialSingularQueueItem : MeshBurialQueueItem
     {
-        // [CallStaticConstructorInEditor] should be added to the class (initsingletonattribute)
         static MeshBurialSingularQueueItem()
         {
             MeshBurialAdjustmentCollection.InstanceAvailable += i => _meshBurialAdjustmentCollection = i;
@@ -26,7 +25,8 @@ namespace Appalachia.Spatial.MeshBurial.Processing.QueueItems
             string name,
             GameObject model,
             float4x4 matrix,
-            bool adoptTerrainNormal = true) : base(name, 1)
+            UnityEngine.Object owner,
+            bool adoptTerrainNormal = true) : base(name, 1, owner)
         {
             _model = model;
             _hashCode = _model.GetHashCode();

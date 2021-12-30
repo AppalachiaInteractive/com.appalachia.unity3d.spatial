@@ -15,32 +15,22 @@ using Unity.Profiling;
 namespace Appalachia.Spatial.MeshBurial.Processing.QueueItems
 {
     [Serializable]
-    public abstract class MeshBurialQueueItem<T> : AppalachiaBase<T>
-        where T : MeshBurialQueueItem<T>
+    public abstract class MeshBurialQueueItem : AppalachiaBase
     {
-        private const string _PRF_PFX = nameof(MeshBurialQueueItem) + ".";
-
-        private static readonly ProfilerMarker _PRF_Initialize = new(_PRF_PFX + nameof(Initialize));
-
-        private static readonly ProfilerMarker _PRF_GetMeshBurialSharedState =
-            new(_PRF_PFX + nameof(GetMeshBurialSharedState));
-
-        private static readonly ProfilerMarker _PRF_GetMeshBurialAdjustmentState =
-            new(_PRF_PFX + nameof(GetMeshBurialAdjustmentState));
-
-        private static readonly ProfilerMarker _PRF_Complete = new(_PRF_PFX + nameof(Complete));
-        private bool _completed;
-
-        private bool _initialized;
-
         //private int _current;
 
-        protected MeshBurialQueueItem(string name, int length)
+        protected MeshBurialQueueItem(string name, int length, UnityEngine.Object owner) : base(owner)
         {
             //_current = 0;
             this.name = name;
             this.length = length;
         }
+
+        #region Fields and Autoproperties
+
+        private bool _completed;
+
+        private bool _initialized;
 
         /*
         public int current
@@ -54,62 +44,16 @@ namespace Appalachia.Spatial.MeshBurial.Processing.QueueItems
 
         public string name { get; }
 
-        private void Initialize()
-        {
-            if (_initialized)
-            {
-                return;
-            }
+        #endregion
 
-            using (_PRF_Initialize.Auto())
-            {
-                _initialized = true;
+        //public abstract int[] GetAllTerrainHashCodes();
 
-                OnInitializeInternal();
-            }
-        }
+        [DebuggerStepThrough]
+        public abstract override string ToString();
 
-        public int GetModelHashCode()
-        {
-            Initialize();
-            return GetModelHashCodeInternal();
-        }
+        public abstract void GetAllMatrices(NativeList<float4x4> matrices);
 
-        public bool GetAdoptTerrainNormal()
-        {
-            Initialize();
-            return GetAdoptTerrainNormalInternal();
-        }
-
-        public float GetDegreeAdjustmentStrength()
-        {
-            Initialize();
-            return GetDegreeAdjustmentStrengthInternal();
-        }
-
-        public MeshBurialSharedState GetMeshBurialSharedState()
-        {
-            using (_PRF_GetMeshBurialSharedState.Auto())
-            {
-                Initialize();
-
-                var state = GetMeshBurialSharedStateInternal();
-
-                return state;
-            }
-        }
-
-        public MeshBurialAdjustmentState GetMeshBurialAdjustmentState()
-        {
-            using (_PRF_GetMeshBurialAdjustmentState.Auto())
-            {
-                Initialize();
-
-                var state = GetMeshBurialAdjustmentStateInternal();
-
-                return state;
-            }
-        }
+        public abstract void SetAllMatrices(NativeArray<float4x4> matrices);
 
         public void Complete()
         {
@@ -128,7 +72,55 @@ namespace Appalachia.Spatial.MeshBurial.Processing.QueueItems
             }
         }
 
-        protected abstract void OnInitializeInternal();
+        public bool GetAdoptTerrainNormal()
+        {
+            Initialize();
+            return GetAdoptTerrainNormalInternal();
+        }
+
+        public float GetDegreeAdjustmentStrength()
+        {
+            Initialize();
+            return GetDegreeAdjustmentStrengthInternal();
+        }
+
+        public MeshBurialAdjustmentState GetMeshBurialAdjustmentState()
+        {
+            using (_PRF_GetMeshBurialAdjustmentState.Auto())
+            {
+                Initialize();
+
+                var state = GetMeshBurialAdjustmentStateInternal();
+
+                return state;
+            }
+        }
+
+        public MeshBurialSharedState GetMeshBurialSharedState()
+        {
+            using (_PRF_GetMeshBurialSharedState.Auto())
+            {
+                Initialize();
+
+                var state = GetMeshBurialSharedStateInternal();
+
+                return state;
+            }
+        }
+
+        public int GetModelHashCode()
+        {
+            Initialize();
+            return GetModelHashCodeInternal();
+        }
+
+        protected abstract bool GetAdoptTerrainNormalInternal();
+
+        protected abstract float GetDegreeAdjustmentStrengthInternal();
+
+        protected abstract MeshBurialAdjustmentState GetMeshBurialAdjustmentStateInternal();
+
+        protected abstract MeshBurialSharedState GetMeshBurialSharedStateInternal();
 
         //protected abstract bool TryGetMatrixInternal(int i, out float4x4 matrix);
 
@@ -136,25 +128,42 @@ namespace Appalachia.Spatial.MeshBurial.Processing.QueueItems
 
         protected abstract int GetModelHashCodeInternal();
 
-        protected abstract bool GetAdoptTerrainNormalInternal();
-
-        protected abstract float GetDegreeAdjustmentStrengthInternal();
-
-        protected abstract MeshBurialSharedState GetMeshBurialSharedStateInternal();
-
-        protected abstract MeshBurialAdjustmentState GetMeshBurialAdjustmentStateInternal();
-
         //protected abstract int GetTerrainHashCodeInternal(int i);
 
         protected abstract void OnCompleteInternal();
 
-        public abstract void GetAllMatrices(NativeList<float4x4> matrices);
+        protected abstract void OnInitializeInternal();
 
-        public abstract void SetAllMatrices(NativeArray<float4x4> matrices);
+        private void Initialize()
+        {
+            if (_initialized)
+            {
+                return;
+            }
 
-        //public abstract int[] GetAllTerrainHashCodes();
+            using (_PRF_Initialize.Auto())
+            {
+                _initialized = true;
 
-        [DebuggerStepThrough] public abstract override string ToString();
+                OnInitializeInternal();
+            }
+        }
+
+        #region Profiling
+
+        private const string _PRF_PFX = nameof(MeshBurialQueueItem) + ".";
+
+        private static readonly ProfilerMarker _PRF_Initialize = new(_PRF_PFX + nameof(Initialize));
+
+        private static readonly ProfilerMarker _PRF_GetMeshBurialSharedState =
+            new(_PRF_PFX + nameof(GetMeshBurialSharedState));
+
+        private static readonly ProfilerMarker _PRF_GetMeshBurialAdjustmentState =
+            new(_PRF_PFX + nameof(GetMeshBurialAdjustmentState));
+
+        private static readonly ProfilerMarker _PRF_Complete = new(_PRF_PFX + nameof(Complete));
+
+        #endregion
     }
 }
 

@@ -4,6 +4,7 @@
 
 using System;
 using Appalachia.Core.Attributes;
+using Appalachia.Core.Objects.Root;
 using Appalachia.Jobs.MeshData;
 using Sirenix.OdinInspector;
 using UnityEngine;
@@ -14,21 +15,23 @@ namespace Appalachia.Spatial.MeshBurial.State
 {
     [Serializable]
     [CallStaticConstructorInEditor]
-    public class MeshBurialSharedState
+    public class MeshBurialSharedState : AppalachiaBase<MeshBurialSharedState>
     {
-        // [CallStaticConstructorInEditor] should be added to the class (initsingletonattribute)
         static MeshBurialSharedState()
         {
-            MeshBurialOptimizationParameters.InstanceAvailable += i => _meshBurialOptimizationParameters = i;
-            MeshBurialGizmoSettings.InstanceAvailable += i => _meshBurialGizmoSettings = i;
+            RegisterDependency<MeshBurialGizmoSettings>(i => _meshBurialGizmoSettings = i);
+            RegisterDependency<MeshBurialOptimizationParameters>(i => _meshBurialOptimizationParameters = i);
+            MeshObjectManager.InstanceAvailable += i => _meshObjectManager = i;
         }
 
-        public MeshBurialSharedState(GameObject instanceOrPrefab, MeshBurialOptimizationParameters op)
+        public MeshBurialSharedState(GameObject instanceOrPrefab, MeshBurialOptimizationParameters op) : base(
+            instanceOrPrefab
+        )
         {
             _meshBurialOptimizationParameters = op;
 
             _obj = instanceOrPrefab;
-            _meshAsset = MeshObjectManager.instance.GetCheapestMesh(_obj);
+            _meshAsset = _meshObjectManager.GetCheapestMesh(_obj);
         }
 
         #region Static Fields and Autoproperties
@@ -44,6 +47,8 @@ namespace Appalachia.Spatial.MeshBurial.State
         [ShowInInspector]
         [HideReferenceObjectPicker]
         private static MeshBurialOptimizationParameters _meshBurialOptimizationParameters;
+
+        private static MeshObjectManager _meshObjectManager;
 
         #endregion
 
@@ -76,7 +81,7 @@ namespace Appalachia.Spatial.MeshBurial.State
                      get => _meshObject;
                      private set => _meshObject = value;
                  }*/
-        public MeshObjectWrapper meshObject => MeshObjectManager.instance.GetByMesh(_meshAsset, true);
+        public MeshObjectWrapper meshObject => _meshObjectManager.GetByMesh(_meshAsset, true);
 
         /*public void OnDrawGizmos(Matrix4x4 matrix, TerrainThreadsafeData terrain)
         {

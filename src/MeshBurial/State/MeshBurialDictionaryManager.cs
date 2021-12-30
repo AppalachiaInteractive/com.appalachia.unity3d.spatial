@@ -12,7 +12,6 @@ namespace Appalachia.Spatial.MeshBurial.State
     [CallStaticConstructorInEditor]
     public static class MeshBurialDictionaryManager
     {
-        // [CallStaticConstructorInEditor] should be added to the class (initsingletonattribute)
         static MeshBurialDictionaryManager()
         {
             MeshBurialOptimizationParameters.InstanceAvailable += i => _meshBurialOptimizationParameters = i;

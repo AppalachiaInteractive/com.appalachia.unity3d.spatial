@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using Appalachia.CI.Integration.Assets;
+using Appalachia.Core.Attributes;
 using Appalachia.Core.Debugging;
 using Appalachia.Core.Objects.Root;
 using Appalachia.Editing.Debugging.Handle;
@@ -21,8 +22,21 @@ namespace Appalachia.Spatial.Terrains
 {
     [ExecuteAlways]
     [RequireComponent(typeof(Terrain))]
+    [CallStaticConstructorInEditor]
     public sealed class TerrainMetadataComponent : AppalachiaBehaviour<TerrainMetadataComponent>
     {
+        // [CallStaticConstructorInEditor] should be added to the class (initsingletonattribute)
+        static TerrainMetadataComponent()
+        {
+            TerrainMetadataManager.InstanceAvailable += i => _terrainMetadataManager = i;
+        }
+
+        #region Static Fields and Autoproperties
+
+        private static TerrainMetadataManager _terrainMetadataManager;
+
+        #endregion
+
         #region Fields and Autoproperties
 
         [FoldoutGroup("Gizmos")] public bool gizmosEnabled;
@@ -41,46 +55,6 @@ namespace Appalachia.Spatial.Terrains
         public TerrainMetadata terrainMetadata;
 
         [FoldoutGroup("Gizmos")] public Vector3 center;
-
-        #endregion
-
-        #region Event Functions
-
-        protected override async AppaTask WhenEnabled()
-        {
-            using (_PRF_OnEnable.Auto())
-            {
-                await base.WhenEnabled();
-
-                if (terrain == null)
-                {
-                    terrain = GetComponent<Terrain>();
-                }
-
-#if UNITY_EDITOR
-                if (terrainMetadata == null)
-                {
-                    terrainMetadata = AddMetadataToTerrain(terrain);
-                }
-#endif
-            }
-        }
-
-        protected override async AppaTask WhenDisabled()
-
-        {
-            using (_PRF_OnDisable.Auto())
-            {
-                await base.WhenDisabled();
-
-                if (terrain == null)
-                {
-                    terrain = GetComponent<Terrain>();
-                }
-
-                TerrainMetadataManager.instance.Remove(terrain);
-            }
-        }
 
         #endregion
 
@@ -129,6 +103,42 @@ namespace Appalachia.Spatial.Terrains
                 }
 
                 return results;
+            }
+        }
+
+        protected override async AppaTask WhenDisabled()
+
+        {
+            using (_PRF_OnDisable.Auto())
+            {
+                await base.WhenDisabled();
+
+                if (terrain == null)
+                {
+                    terrain = GetComponent<Terrain>();
+                }
+
+                _terrainMetadataManager.Remove(terrain);
+            }
+        }
+
+        protected override async AppaTask WhenEnabled()
+        {
+            using (_PRF_OnEnable.Auto())
+            {
+                await base.WhenEnabled();
+
+                if (terrain == null)
+                {
+                    terrain = GetComponent<Terrain>();
+                }
+
+#if UNITY_EDITOR
+                if (terrainMetadata == null)
+                {
+                    terrainMetadata = AddMetadataToTerrain(terrain);
+                }
+#endif
             }
         }
 

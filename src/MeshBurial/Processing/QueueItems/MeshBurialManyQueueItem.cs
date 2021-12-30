@@ -11,7 +11,11 @@ namespace Appalachia.Spatial.MeshBurial.Processing.QueueItems
     [Serializable]
     public abstract class MeshBurialManyQueueItem : MeshBurialQueueItem
     {
-        protected MeshBurialManyQueueItem(string name, int length) : base(name, length)
+        protected MeshBurialManyQueueItem(string name, int length, UnityEngine.Object owner) : base(
+            name,
+            length,
+            owner
+        )
         {
         }
 
