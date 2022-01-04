@@ -12,29 +12,46 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7f97bd62b7a94727b38e9b9361534781, type: 3}
   m_Name: MeshBurialManagementQueue
   m_EditorClassIdentifier: 
-  _initializationData:
-    _tags: []
-    _resetToken: 
   _cachedName: 
   _niceName: 
+  _initializer:
+    _tags: []
+    _resetToken: 
   array:
     _array: []
     _current:
+      _owner: {fileID: 0}
+      _initializer:
+        _tags: []
+        _resetToken: 
+      _adoptTerrainNormal: 0
       _model: {fileID: 0}
       _modelHashCode: 0
-      _adoptTerrainNormal: 0
       matrices: []
   vegetation:
     _array: []
     _current:
+      _owner: {fileID: 0}
+      _initializer:
+        _tags: []
+        _resetToken: 
+      _adoptTerrainNormal: 0
       _model: {fileID: 0}
       _modelHashCode: 0
-      _adoptTerrainNormal: 0
   native:
     _array: []
     _current:
+      _owner: {fileID: 0}
+      _initializer:
+        _tags: []
+        _resetToken: 
+      _adoptTerrainNormal: 0
       _model: {fileID: 0}
       _modelHashCode: 0
-      _adoptTerrainNormal: 0
   gameObject:
     _array: []
+    _current:
+      _owner: {fileID: 0}
+      _initializer:
+        _tags: []
+        _resetToken: 

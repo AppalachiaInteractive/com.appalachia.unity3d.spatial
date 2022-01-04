@@ -8,5 +8,15 @@ namespace Appalachia.Spatial.Terrains
         TerrainMetadata, intList, TerrainMetadataList, TerrainMetadataLookup, TerrainMetadataDictionary,
         MainTerrainMetadataDictionary>
     {
+#if UNITY_EDITOR
+        [UnityEditor.MenuItem(
+            PKG.Menu.Assets.Base + nameof(MainTerrainMetadataDictionary),
+            priority = PKG.Menu.Assets.Priority
+        )]
+        public static void CreateAsset()
+        {
+            CreateNew<MainTerrainMetadataDictionary>();
+        }
+#endif
     }
 }

@@ -1,6 +1,7 @@
 #region
 
 using System;
+using Appalachia.Core.Attributes;
 using Appalachia.Core.Attributes.Editing;
 using Appalachia.Core.Filtering;
 using Appalachia.Core.Objects.Initialization;
@@ -17,8 +18,26 @@ using UnityEngine;
 namespace Appalachia.Spatial.Voxels.Components
 {
     [Serializable]
+    [CallStaticConstructorInEditor]
     public sealed class SimpleVoxel : AppalachiaBehaviour<SimpleVoxel>
     {
+        static SimpleVoxel()
+        {
+#if UNITY_EDITOR
+            RegisterDependency<MainVoxelDataGizmoSettingsCollection>(
+                i => _mainVoxelDataGizmoSettingsCollection = i
+            );
+#endif
+        }
+
+        #region Static Fields and Autoproperties
+
+#if UNITY_EDITOR
+        private static MainVoxelDataGizmoSettingsCollection _mainVoxelDataGizmoSettingsCollection;
+#endif
+
+        #endregion
+
         #region Fields and Autoproperties
 
         [OnValueChanged(nameof(RefreshChildCollections))]
@@ -52,6 +71,14 @@ namespace Appalachia.Spatial.Voxels.Components
         private MeshRenderer[] _renderers;
         private VoxelTypes.Voxels _voxels;
 
+#if UNITY_EDITOR
+        [NonSerialized]
+        [ShowInInspector]
+        [InlineEditor]
+        private VoxelDataGizmoSettings _gizmoSettings;
+
+#endif
+
         #endregion
 
         [ShowInInspector]
@@ -77,29 +104,11 @@ namespace Appalachia.Spatial.Voxels.Components
 
         #region Event Functions
 
-        protected override async AppaTask WhenDisabled()
-
-        {
-            using (_PRF_OnDisable.Auto())
-            {
-                await base.WhenDisabled();
-
-                _voxels?.Dispose();
-            }
-        }
-
-        protected override async AppaTask WhenDestroyed()
-        {
-            using (_PRF_OnDestroy.Auto())
-            {
-                await base.WhenDestroyed();
-
-                _voxels?.Dispose();
-            }
-        }
-
 #if UNITY_EDITOR
 
+        private static readonly ProfilerMarker _PRF_OnDrawGizmosSelected =
+            new ProfilerMarker(_PRF_PFX + nameof(OnDrawGizmosSelected));
+        
         private void OnDrawGizmosSelected()
         {
             using (_PRF_OnDrawGizmosSelected.Auto())
@@ -146,13 +155,33 @@ namespace Appalachia.Spatial.Voxels.Components
 
                 RefreshChildCollections();
 
-                MainVoxelDataGizmoSettingsCollection.InstanceAvailable += i =>
-                {
-                    _gizmoSettings = i.Lookup.GetOrLoadOrCreateNew(
-                        VoxelDataGizmoStyle.Simple,
-                        nameof(VoxelDataGizmoStyle.Simple)
-                    );
-                };
+#if UNITY_EDITOR
+                _gizmoSettings = _mainVoxelDataGizmoSettingsCollection.Lookup.GetOrLoadOrCreateNew(
+                    VoxelDataGizmoStyle.Simple,
+                    nameof(VoxelDataGizmoStyle.Simple)
+                );
+#endif
+            }
+        }
+
+        protected override async AppaTask WhenDestroyed()
+        {
+            using (_PRF_OnDestroy.Auto())
+            {
+                await base.WhenDestroyed();
+
+                _voxels?.Dispose();
+            }
+        }
+
+        protected override async AppaTask WhenDisabled()
+
+        {
+            using (_PRF_OnDisable.Auto())
+            {
+                await base.WhenDisabled();
+
+                _voxels?.Dispose();
             }
         }
 
@@ -176,9 +205,6 @@ namespace Appalachia.Spatial.Voxels.Components
         private static readonly ProfilerMarker _PRF_Initialize =
             new ProfilerMarker(_PRF_PFX + nameof(Initialize));
 
-        private static readonly ProfilerMarker _PRF_OnDrawGizmosSelected =
-            new ProfilerMarker(_PRF_PFX + nameof(OnDrawGizmosSelected));
-
         private static readonly ProfilerMarker _PRF_Process = new ProfilerMarker(_PRF_PFX + nameof(Process));
 
         private static readonly ProfilerMarker _PRF_RefreshChildCollections =
@@ -194,13 +220,5 @@ namespace Appalachia.Spatial.Voxels.Components
             new ProfilerMarker(_PRF_PFX + nameof(OnDestroy));
 
         #endregion
-
-#if UNITY_EDITOR
-        [NonSerialized]
-        [ShowInInspector]
-        [InlineEditor]
-        private VoxelDataGizmoSettings _gizmoSettings;
-
-#endif
     }
 }

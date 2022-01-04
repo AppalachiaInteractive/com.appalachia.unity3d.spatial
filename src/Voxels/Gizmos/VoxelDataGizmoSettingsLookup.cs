@@ -2,6 +2,7 @@
 
 #region
 
+using System;
 using Appalachia.Core.Collections;
 using UnityEngine;
 
@@ -9,6 +10,7 @@ using UnityEngine;
 
 namespace Appalachia.Spatial.Voxels.Gizmos
 {
+    [Serializable]
     public class VoxelDataGizmoSettingsLookup : AppaLookup<VoxelDataGizmoStyle, VoxelDataGizmoSettings,
         VoxelDataGizmoStyleList, VoxelDataGizmoSettingsList>
     {

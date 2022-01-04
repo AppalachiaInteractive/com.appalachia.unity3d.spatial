@@ -30,6 +30,11 @@ namespace Appalachia.Spatial.ConvexDecomposition.MeshCutting.Runtime
         // Update is called once per frame
         private void Update()
         {
+            if (!DependenciesAreReady || !FullyInitialized)
+            {
+                return;
+            }
+
             if (!dragging && Input.GetMouseButtonDown(0))
             {
                 start = cam.ScreenToViewportPoint(Input.mousePosition);

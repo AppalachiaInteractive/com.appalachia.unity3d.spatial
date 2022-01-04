@@ -264,6 +264,11 @@ namespace Appalachia.Spatial.MeshBurial
         {
             using (_PRF_Update.Auto())
             {
+                if (!DependenciesAreReady || !FullyInitialized)
+                {
+                    return;
+                }
+                
                 try
                 {
                     if (_hasCachedUpdateValues)

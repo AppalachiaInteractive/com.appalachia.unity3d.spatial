@@ -12,8 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 01ab8b7de1f544d9a070ca49cb622d59, type: 3}
   m_Name: Buoyancy
   m_EditorClassIdentifier: 
-  _niceName: 
   _cachedName: 
+  _niceName: 
+  _initializer:
+    _tags: []
+    _resetToken: 
   style: 10
   drawBounds: 0
   boundsColor: {r: 0.36200002, g: 0.29557624, b: 0.23602402, a: 0.45490196}

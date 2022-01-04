@@ -12,9 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ffd4823ce76849dc8bbd5666d392bf11, type: 3}
   m_Name: MainTerrainMetadataDictionary
   m_EditorClassIdentifier: 
-  _initializationData:
-    _tags: []
-    _resetToken: 
   _cachedName: 
   _niceName: 
+  _initializer:
+    _tags: []
+    _resetToken: 
   _lookup: {fileID: 11400000, guid: 79977bdccc8bc9146b3bf03dfaadb910, type: 2}

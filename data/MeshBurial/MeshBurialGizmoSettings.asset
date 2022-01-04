@@ -12,8 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2078f126f1f6596489fdcd8454bd0d7c, type: 3}
   m_Name: MeshBurialGizmoSettings
   m_EditorClassIdentifier: 
-  _niceName: 
   _cachedName: 
+  _niceName: 
+  _initializer:
+    _tags: []
+    _resetToken: 
   drawAllTriangles: 0
   drawBorders: 1
   drawTerrainIntersection: 1

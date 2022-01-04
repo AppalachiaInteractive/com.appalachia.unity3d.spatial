@@ -7,6 +7,16 @@ namespace Appalachia.Spatial.Voxels.Gizmos
         VoxelDataGizmoStyle, VoxelDataGizmoSettings, VoxelDataGizmoStyleList, VoxelDataGizmoSettingsList,
         VoxelDataGizmoSettingsLookup, VoxelDataGizmoSettingsCollection, MainVoxelDataGizmoSettingsCollection>
     {
+#if UNITY_EDITOR
+        [UnityEditor.MenuItem(
+            PKG.Menu.Assets.Base + nameof(MainVoxelDataGizmoSettingsCollection),
+            priority = PKG.Menu.Assets.Priority
+        )]
+        public static void CreateAsset()
+        {
+            CreateNew<MainVoxelDataGizmoSettingsCollection>();
+        }
+#endif
     }
 }
 

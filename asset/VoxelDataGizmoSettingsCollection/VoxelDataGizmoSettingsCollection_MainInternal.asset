@@ -9,14 +9,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a8f65395a79a40899479912f477fe6aa, type: 3}
-  m_Name: DecomposedColliderDataReview
+  m_Script: {fileID: 11500000, guid: 2b74641683824373899a5385778e9bb2, type: 3}
+  m_Name: VoxelDataGizmoSettingsCollection_MainInternal
   m_EditorClassIdentifier: 
-  _initializationData:
-    _tags: []
-    _resetToken: 
   _cachedName: 
   _niceName: 
-  index:
-    initializerCount: 741
+  _initializer:
+    _tags: []
+    _resetToken: 
+  _defaultValue: {fileID: 0}
+  _items:
+    initializerCount: 64
     _object: {fileID: 11400000}

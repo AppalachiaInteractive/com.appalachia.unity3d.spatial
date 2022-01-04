@@ -12,6 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fee3300097a54496b0e3864b5b57a33a, type: 3}
   m_Name: Lenape_Male_v1_s1_INTERACTION-INFO
   m_EditorClassIdentifier: 
+  _cachedName: 
+  _niceName: 
+  _initializer:
+    _tags: []
+    _resetToken: 
   texture: {fileID: 2800000, guid: 16c79a47f8bbd144eb0c60a10f1762c3, type: 3}
   size: 2.7120082
   offset: 0

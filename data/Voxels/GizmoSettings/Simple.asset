@@ -12,8 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 01ab8b7de1f544d9a070ca49cb622d59, type: 3}
   m_Name: Simple
   m_EditorClassIdentifier: 
-  _niceName: 
   _cachedName: 
+  _niceName: 
+  _initializer:
+    _tags: []
+    _resetToken: 
   style: 0
   drawBounds: 0
   boundsColor: {r: 1, g: 1, b: 1, a: 1}

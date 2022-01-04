@@ -24,7 +24,7 @@ namespace Appalachia.Spatial.Terrains
     {
         static TerrainMetadataManager()
         {
-            MainTerrainMetadataDictionary.InstanceAvailable += i => _mainTerrainMetadataDictionary = i;
+            RegisterDependency<MainTerrainMetadataDictionary>(i => _mainTerrainMetadataDictionary = i);
         }
 
         #region Static Fields and Autoproperties

@@ -12,12 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f5f19be6cd193e84a98225184f27d12b, type: 3}
   m_Name: MeshBurialOptimizationParameters
   m_EditorClassIdentifier: 
-  _initializationData:
-    _nonSerializedTags: []
-    _tags: []
-    _resetToken: 
   _cachedName: 
   _niceName: 
+  _initializer:
+    _tags: []
+    _resetToken: 
   optimizerType: 3
   xzDegreeAdjustment: 30
   xzDegreeAdjustmentMinimal: 8

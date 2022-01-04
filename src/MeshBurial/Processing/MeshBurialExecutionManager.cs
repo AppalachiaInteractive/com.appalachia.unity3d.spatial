@@ -105,6 +105,11 @@ namespace Appalachia.Spatial.MeshBurial.Processing
         {
             using (_PRF_Update.Auto())
             {
+                if (!DependenciesAreReady || !FullyInitialized)
+                {
+                    return;
+                }
+                
                 _iterationStart = DateTime.Now;
 
                 CheckAndLogQueueDepth();
