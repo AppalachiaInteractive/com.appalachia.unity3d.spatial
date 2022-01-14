@@ -4,7 +4,6 @@ using Appalachia.Core.Objects.Initialization;
 using Appalachia.Core.Objects.Root;
 using Appalachia.Spatial.ConvexDecomposition.MeshCutting.Core;
 using Appalachia.Utility.Async;
-using Unity.Profiling;
 using UnityEngine;
 
 namespace Appalachia.Spatial.ConvexDecomposition.MeshCutting.Runtime
@@ -33,16 +32,12 @@ namespace Appalachia.Spatial.ConvexDecomposition.MeshCutting.Runtime
 
         protected override async AppaTask Initialize(Initializer initializer)
         {
-            using (_PRF_Initialize.Auto())
-            {
-                await base.Initialize(initializer);
+            await base.Initialize(initializer);
 
-                meshCutter = new MeshCutter(256);
-            }
+            meshCutter = new MeshCutter(256);
         }
 
         protected override async AppaTask WhenDisabled()
-
         {
             await base.WhenDisabled();
             lineRenderer.OnLineDrawn -= OnLineDrawn;
@@ -230,10 +225,7 @@ namespace Appalachia.Spatial.ConvexDecomposition.MeshCutting.Runtime
 
         #region Profiling
 
-        private const string _PRF_PFX = nameof(MouseSlice) + ".";
-
-        private static readonly ProfilerMarker _PRF_Initialize =
-            new ProfilerMarker(_PRF_PFX + nameof(Initialize));
+        
 
         #endregion
     }

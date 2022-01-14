@@ -197,7 +197,7 @@ namespace Appalachia.Spatial.MeshBurial.Processing
             }
         }
 
-        [ExecuteOnEnable]
+        //[ExecuteOnEnable]
         private static void Initialize()
         {
             using (_PRF_Initialize.Auto())

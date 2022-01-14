@@ -104,8 +104,6 @@ namespace Appalachia.Spatial.ConvexDecomposition.Generation
 
         #region Profiling
 
-        private const string _PRF_PFX = nameof(DecomposedCollider) + ".";
-
         private static readonly ProfilerMarker _PRF_Decompose =
             new ProfilerMarker(_PRF_PFX + nameof(Decompose));
 

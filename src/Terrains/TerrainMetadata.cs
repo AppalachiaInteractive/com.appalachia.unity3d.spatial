@@ -215,10 +215,10 @@ namespace Appalachia.Spatial.Terrains
 
         protected override async AppaTask Initialize(Initializer initializer)
         {
+            await base.Initialize(initializer);
+
             using (_PRF_Initialize.Auto())
             {
-                await base.Initialize(initializer);
-
                 if (_terrainData == null)
                 {
                     return;
@@ -245,12 +245,8 @@ namespace Appalachia.Spatial.Terrains
 
         #region Profiling
 
-        private const string _PRF_PFX = nameof(TerrainMetadata) + ".";
 
         private static readonly ProfilerMarker _PRF_InitializeTerrain =
-            new ProfilerMarker(_PRF_PFX + nameof(InitializeTerrain));
-
-        private static readonly ProfilerMarker _PRF_Initialize =
             new ProfilerMarker(_PRF_PFX + nameof(InitializeTerrain));
 
         private static readonly ProfilerMarker _PRF_OnEnable = new(_PRF_PFX + nameof(OnEnable));

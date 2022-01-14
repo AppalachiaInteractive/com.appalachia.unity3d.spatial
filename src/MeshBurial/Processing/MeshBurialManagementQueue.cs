@@ -39,48 +39,42 @@ namespace Appalachia.Spatial.MeshBurial.Processing
 
         public int Count => vegetation.Count + native.Count + array.Count + gameObject.Count; // +
 
-        private static readonly ProfilerMarker _PRF_Initialize =
-            new ProfilerMarker(_PRF_PFX + nameof(Initialize));
-
         protected override async AppaTask Initialize(Initializer initializer)
         {
-            using (_PRF_Initialize.Auto())
+            await base.Initialize(initializer);
+
+            if (pendingVegetationKeys == null)
             {
-                await base.Initialize(initializer);
-
-                if (pendingVegetationKeys == null)
-                {
-                    pendingVegetationKeys = new NonSerializedAppaLookup2<int, int, AppaSet_int>();
-                }
-
-                if (vegetation == null)
-                {
-                    vegetation = new AppaTemporalQueue<MeshBurialVegetationQueueItem>();
-                }
-
-                if (native == null)
-                {
-                    native = new AppaTemporalQueue<MeshBurialNativeQueueItem>();
-                }
-
-                if (array == null)
-                {
-                    array = new AppaTemporalQueue<MeshBurialArrayQueueItem>();
-                }
-
-                if (gameObject == null)
-                {
-                    gameObject = new AppaTemporalQueue<MeshBurialGameObjectQueueItem>();
-                }
-
-                //if (prefabSpawnPointStates == null) { prefabSpawnPointStates = new AppaTemporalQueue<PrefabSpawnPointStateQueueItem>(); }
-
-                //if (runtimePrefabRenderingElements == null) { runtimePrefabRenderingElements = new AppaTemporalQueue<MeshBurialRuntimePrefabRenderingElementQueueItem>(); }
-
-                //if (runtimePrefabRenderingSets == null) { runtimePrefabRenderingSets = new AppaTemporalQueue<MeshBurialRuntimePrefabRenderingSetQueueItem>(); }
-
-                MarkAsModified();
+                pendingVegetationKeys = new NonSerializedAppaLookup2<int, int, AppaSet_int>();
             }
+
+            if (vegetation == null)
+            {
+                vegetation = new AppaTemporalQueue<MeshBurialVegetationQueueItem>();
+            }
+
+            if (native == null)
+            {
+                native = new AppaTemporalQueue<MeshBurialNativeQueueItem>();
+            }
+
+            if (array == null)
+            {
+                array = new AppaTemporalQueue<MeshBurialArrayQueueItem>();
+            }
+
+            if (gameObject == null)
+            {
+                gameObject = new AppaTemporalQueue<MeshBurialGameObjectQueueItem>();
+            }
+
+            //if (prefabSpawnPointStates == null) { prefabSpawnPointStates = new AppaTemporalQueue<PrefabSpawnPointStateQueueItem>(); }
+
+            //if (runtimePrefabRenderingElements == null) { runtimePrefabRenderingElements = new AppaTemporalQueue<MeshBurialRuntimePrefabRenderingElementQueueItem>(); }
+
+            //if (runtimePrefabRenderingSets == null) { runtimePrefabRenderingSets = new AppaTemporalQueue<MeshBurialRuntimePrefabRenderingSetQueueItem>(); }
+
+            MarkAsModified();
         }
 
         #region Menu Items
@@ -119,15 +113,15 @@ namespace Appalachia.Spatial.MeshBurial.Processing
 
         #region Profiling
 
-        private const string _PRF_PFX = nameof(MeshBurialManagementQueue) + ".";
+        
 
         private static readonly ProfilerMarker _PRF_ClearQueues = new(_PRF_PFX + nameof(ClearQueues));
+
+        #endregion
 
         //prefabSpawnPointStates.Count +
         //runtimePrefabRenderingElements.Count +
         //runtimePrefabRenderingSets.Count;
-
-        #endregion
     }
 }
 

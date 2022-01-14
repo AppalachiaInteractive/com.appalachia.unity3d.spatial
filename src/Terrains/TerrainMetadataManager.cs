@@ -24,6 +24,8 @@ namespace Appalachia.Spatial.Terrains
     {
         static TerrainMetadataManager()
         {
+            
+
             RegisterDependency<MainTerrainMetadataDictionary>(i => _mainTerrainMetadataDictionary = i);
         }
 
@@ -135,10 +137,10 @@ namespace Appalachia.Spatial.Terrains
 
         protected override async AppaTask Initialize(Initializer initializer)
         {
+            await base.Initialize(initializer);
+
             using (_PRF_Initialize.Auto())
             {
-                await base.Initialize(initializer);
-
                 _mainTerrainMetadataDictionary.Lookup.Clear();
 
                 List<TerrainMetadata> results;
@@ -171,12 +173,11 @@ namespace Appalachia.Spatial.Terrains
         }
 
         protected override async AppaTask WhenDisabled()
-
         {
+            await base.WhenDisabled();
+
             using (_PRF_WhenDisabled.Auto())
             {
-                await base.WhenDisabled();
-
                 for (var i = 0; i < _mainTerrainMetadataDictionary.Lookup.Count; i++)
                 {
                     var data = _mainTerrainMetadataDictionary.Lookup.Items.GetByIndex(i);
@@ -194,31 +195,27 @@ namespace Appalachia.Spatial.Terrains
 
         #region Profiling
 
-        private const string _PRF_PFX = nameof(TerrainMetadataManager) + ".";
-
-        private static readonly ProfilerMarker _PRF_Initialize =
-            new ProfilerMarker(_PRF_PFX + nameof(Initialize));
-
-        private static readonly ProfilerMarker _PRF_WhenDisabled =
-            new ProfilerMarker(_PRF_PFX + nameof(OnDisable));
-
-        private static readonly ProfilerMarker _PRF_TerrainMetadataManager =
-            new(_PRF_PFX + nameof(TerrainMetadataManager));
-
-        private static readonly ProfilerMarker _PRF_GetTerrain = new(_PRF_PFX + nameof(GetTerrain));
+        private static readonly ProfilerMarker _PRF_GetNativeHeights =
+            new(_PRF_PFX + nameof(GetNativeHeights));
 
         private static readonly ProfilerMarker _PRF_GetNativeMetadata =
             new(_PRF_PFX + nameof(GetNativeMetadata));
 
-        private static readonly ProfilerMarker _PRF_GetNativeHeights =
-            new(_PRF_PFX + nameof(GetNativeHeights));
+        private static readonly ProfilerMarker _PRF_GetTerrain = new(_PRF_PFX + nameof(GetTerrain));
+
+        private static readonly ProfilerMarker _PRF_GetTerrainAt = new(_PRF_PFX + nameof(GetTerrainAt));
 
         private static readonly ProfilerMarker _PRF_GetTerrainHashCodeAt =
             new(_PRF_PFX + nameof(GetTerrainHashCodeAt));
 
-        private static readonly ProfilerMarker _PRF_GetTerrainAt = new(_PRF_PFX + nameof(GetTerrainAt));
+        
 
         private static readonly ProfilerMarker _PRF_Remove = new(_PRF_PFX + nameof(Remove));
+
+        private static readonly ProfilerMarker _PRF_TerrainMetadataManager =
+            new(_PRF_PFX + nameof(TerrainMetadataManager));
+
+        
 
         #endregion
     }

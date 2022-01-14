@@ -36,7 +36,7 @@ namespace Appalachia.Spatial.MeshBurial.State
                     _state = new MeshBurialSharedStateLookup();
                     MarkAsModified();
 
-                    _state.SetObjectOwnership(this);
+                    _state.SetSerializationOwner(this);
                 }
 
                 return _state;
@@ -53,7 +53,7 @@ namespace Appalachia.Spatial.MeshBurial.State
                 MarkAsModified();
             }
 
-            _state.SetObjectOwnership(this);
+            _state.SetSerializationOwner(this);
         }
     }
 }

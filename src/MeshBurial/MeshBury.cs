@@ -264,11 +264,11 @@ namespace Appalachia.Spatial.MeshBurial
         {
             using (_PRF_Update.Auto())
             {
-                if (!DependenciesAreReady || !FullyInitialized)
+                if (ShouldSkipUpdate)
                 {
                     return;
                 }
-                
+
                 try
                 {
                     if (_hasCachedUpdateValues)
@@ -305,7 +305,7 @@ namespace Appalachia.Spatial.MeshBurial
                 }
                 catch (Exception ex)
                 {
-                    Debug.LogError(ex);
+                    Context.Log.Error(nameof(Update).GenericMethodException(this), this, ex);
                     enabled = false;
                 }
             }
@@ -361,7 +361,7 @@ namespace Appalachia.Spatial.MeshBurial
                 }
                 catch (Exception ex)
                 {
-                    Debug.LogError(ex);
+                    Context.Log.Error(nameof(LateUpdate).GenericMethodException(this), this, ex);
                     _hasCachedUpdateValues = false;
                     enabled = false;
                 }
@@ -683,111 +683,107 @@ namespace Appalachia.Spatial.MeshBurial
 
         protected override async AppaTask Initialize(Initializer initializer)
         {
-            using (_PRF_Initialize.Auto())
+            await base.Initialize(initializer);
+
+            if (_gameObject == null)
             {
-                await base.Initialize(initializer);
+                var path = PrefabUtility.GetPrefabAssetPathOfNearestInstanceRoot(gameObject);
+                if (string.IsNullOrWhiteSpace(path))
+                {
+                    return;
+                }
+
+                _gameObject = AssetDatabaseManager.LoadAssetAtPath<GameObject>(path);
 
                 if (_gameObject == null)
                 {
-                    var path = PrefabUtility.GetPrefabAssetPathOfNearestInstanceRoot(gameObject);
-                    if (string.IsNullOrWhiteSpace(path))
-                    {
-                        return;
-                    }
-
-                    _gameObject = AssetDatabaseManager.LoadAssetAtPath<GameObject>(path);
-
-                    if (_gameObject == null)
-                    {
-                        enabled = false;
-                        return;
-                    }
+                    enabled = false;
+                    return;
                 }
-
-                var t = transform;
-                var p = t.parent;
-
-                if (p == null)
-                {
-                    var newParent = new GameObject(ZString.Format("PARENT_{0}", (object)name));
-                    p = newParent.transform;
-                    p.SetMatrix4x4ToTransform(t.localToWorldMatrix);
-
-                    t.SetParent(p, true);
-                }
-
-                if (_matrices.ShouldAllocate() || (_matrices.Length == 0))
-                {
-                    _matrices.SafeDispose();
-                    _matrices = new NativeArray<float4x4>(1, Allocator.Persistent);
-                }
-
-                if ((_terrainHashCodes == null) || (_terrainHashCodes.Length == 0))
-                {
-                    _terrainHashCodes = new int[1];
-                }
-
-                if ((_meshObject == null) || !_meshObject.data.isCreated)
-                {
-                    _meshObject = _meshObjectManager.GetCheapestMeshWrapper(gameObject, true);
-                }
-
-                if (_instanceData == null)
-                {
-                    _instanceData = new MeshBurialInstanceData();
-                }
-
-                if (_dependencyList.ShouldAllocate())
-                {
-                    _dependencyList = new NativeList<JobHandle>(Allocator.Persistent);
-                }
-                else
-                {
-                    SafeNative.SafeClear(ref _dependencyList);
-                }
-
-                if (_state == null)
-                {
-                    _state = MeshBurialSharedStateManager.GetByPrefab(_gameObject);
-                }
-
-                if (_adjustment == null)
-                {
-                    _adjustment = _meshBurialAdjustmentCollection.GetByPrefab(_gameObject);
-                }
-
-                if (_randoms.ShouldAllocate())
-                {
-                    _randoms = new JobRandoms(Allocator.Persistent);
-                }
-
-                var randomSearch = _optimizationOptions.randomSearch;
-                randomSearch.iterations = iterations;
-
-                _optimizationOptions.randomSearch = randomSearch;
-
-                _burialOptions.threshold = errorThreshold;
-                _burialOptions.accountForMeshNormal = accountForMeshNormal;
-                _burialOptions.matchTerrainNormal = matchTerrainNormal;
-                permissiveness = math.clamp(permissiveness, 1, maxPermissiveness);
-                _burialOptions.permissiveness = permissiveness;
-                _burialOptions.adjustHeight = adjustHeight;
-                _burialOptions.applyParameters = applyParameters;
-                _burialOptions.testValue = float4x4.identity;
-
-                _matrices[0] = p.localToWorldMatrix;
-
-                _terrainHashCodes[0] = _terrainMetadataManager.GetTerrainHashCodeAt(p.position);
             }
+
+            var t = transform;
+            var p = t.parent;
+
+            if (p == null)
+            {
+                var newParent = new GameObject(ZString.Format("PARENT_{0}", (object)name));
+                p = newParent.transform;
+                p.SetMatrix4x4ToTransform(t.localToWorldMatrix);
+
+                t.SetParent(p, true);
+            }
+
+            if (_matrices.ShouldAllocate() || (_matrices.Length == 0))
+            {
+                _matrices.SafeDispose();
+                _matrices = new NativeArray<float4x4>(1, Allocator.Persistent);
+            }
+
+            if ((_terrainHashCodes == null) || (_terrainHashCodes.Length == 0))
+            {
+                _terrainHashCodes = new int[1];
+            }
+
+            if ((_meshObject == null) || !_meshObject.data.isCreated)
+            {
+                _meshObject = _meshObjectManager.GetCheapestMeshWrapper(gameObject, true);
+            }
+
+            if (_instanceData == null)
+            {
+                _instanceData = new MeshBurialInstanceData();
+            }
+
+            if (_dependencyList.ShouldAllocate())
+            {
+                _dependencyList = new NativeList<JobHandle>(Allocator.Persistent);
+            }
+            else
+            {
+                SafeNative.SafeClear(ref _dependencyList);
+            }
+
+            if (_state == null)
+            {
+                _state = MeshBurialSharedStateManager.GetByPrefab(_gameObject);
+            }
+
+            if (_adjustment == null)
+            {
+                _adjustment = _meshBurialAdjustmentCollection.GetByPrefab(_gameObject);
+            }
+
+            if (_randoms.ShouldAllocate())
+            {
+                _randoms = new JobRandoms(Allocator.Persistent);
+            }
+
+            var randomSearch = _optimizationOptions.randomSearch;
+            randomSearch.iterations = iterations;
+
+            _optimizationOptions.randomSearch = randomSearch;
+
+            _burialOptions.threshold = errorThreshold;
+            _burialOptions.accountForMeshNormal = accountForMeshNormal;
+            _burialOptions.matchTerrainNormal = matchTerrainNormal;
+            permissiveness = math.clamp(permissiveness, 1, maxPermissiveness);
+            _burialOptions.permissiveness = permissiveness;
+            _burialOptions.adjustHeight = adjustHeight;
+            _burialOptions.applyParameters = applyParameters;
+            _burialOptions.testValue = float4x4.identity;
+
+            _matrices[0] = p.localToWorldMatrix;
+
+            _terrainHashCodes[0] = _terrainMetadataManager.GetTerrainHashCodeAt(p.position);
         }
 
         protected override async AppaTask WhenDisabled()
-
         {
-            using (_PRF_OnDisable.Auto())
-            {
-                await base.WhenDisabled();
+            await base.WhenDisabled();
 
+            using (_PRF_WhenDisabled.Auto())
+            {
                 _hasCachedUpdateValues = false;
 
                 _pendingHandle.Complete();
@@ -803,19 +799,6 @@ namespace Appalachia.Spatial.MeshBurial
         }
 
         #region Profiling
-
-        private const string _PRF_PFX = nameof(MeshBury) + ".";
-
-        private static readonly ProfilerMarker _PRF_Initialize =
-            new ProfilerMarker(_PRF_PFX + nameof(Initialize));
-
-        private static readonly ProfilerMarker _PRF_Update = new ProfilerMarker(_PRF_PFX + nameof(Update));
-
-        private static readonly ProfilerMarker _PRF_LateUpdate =
-            new ProfilerMarker(_PRF_PFX + nameof(LateUpdate));
-
-        private static readonly ProfilerMarker _PRF_OnDisable =
-            new ProfilerMarker(_PRF_PFX + nameof(OnDisable));
 
         private static readonly ProfilerMarker _PRF_OnDrawGizmosSelected =
             new ProfilerMarker(_PRF_PFX + nameof(OnDrawGizmosSelected));

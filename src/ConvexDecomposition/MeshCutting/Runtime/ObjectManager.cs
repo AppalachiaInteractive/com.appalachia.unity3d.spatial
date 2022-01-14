@@ -4,7 +4,6 @@ using System.Linq;
 using Appalachia.Core.Objects.Initialization;
 using Appalachia.Core.Objects.Root;
 using Appalachia.Utility.Async;
-using Unity.Profiling;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -45,23 +44,17 @@ namespace Appalachia.Spatial.ConvexDecomposition.MeshCutting.Runtime
 
         protected override async AppaTask Initialize(Initializer initializer)
         {
-            using (_PRF_Initialize.Auto())
-            {
-                await base.Initialize(initializer);
+            await base.Initialize(initializer);
 
-                dropdown.ClearOptions();
-                dropdown.AddOptions(objects.Select(r => r.gameObject.name).ToList());
+            dropdown.ClearOptions();
+            dropdown.AddOptions(objects.Select(r => r.gameObject.name).ToList());
 
-                cameraOrbit = FindObjectOfType<CameraOrbit>();
-            }
+            cameraOrbit = FindObjectOfType<CameraOrbit>();
         }
 
         #region Profiling
 
-        private const string _PRF_PFX = nameof(ObjectManager) + ".";
-
-        private static readonly ProfilerMarker _PRF_Initialize =
-            new ProfilerMarker(_PRF_PFX + nameof(Initialize));
+        
 
         #endregion
     }

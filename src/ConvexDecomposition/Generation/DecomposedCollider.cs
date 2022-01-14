@@ -145,22 +145,19 @@ namespace Appalachia.Spatial.ConvexDecomposition.Generation
 
         protected override async AppaTask Initialize(Initializer initializer)
         {
-            using (_PRF_Initialize.Auto())
+            await base.Initialize(initializer);
+
+            if (visibilityEnabled)
             {
-                await base.Initialize(initializer);
-
-                if (visibilityEnabled)
-                {
-                    return;
-                }
-
-                if (PrefabUtility.IsPartOfPrefabAsset(gameObject))
-                {
-                    return;
-                }
-
-                Setup();
+                return;
             }
+
+            if (PrefabUtility.IsPartOfPrefabAsset(gameObject))
+            {
+                return;
+            }
+
+            Setup();
         }
 
         private void OnPostDecompose()
@@ -279,9 +276,6 @@ namespace Appalachia.Spatial.ConvexDecomposition.Generation
             new ProfilerMarker(_PRF_PFX + nameof(OnPostDecompose));
 
         private static readonly ProfilerMarker _PRF_Refresh = new ProfilerMarker(_PRF_PFX + nameof(Refresh));
-
-        private static readonly ProfilerMarker _PRF_Initialize =
-            new ProfilerMarker(_PRF_PFX + nameof(OnEnable));
 
         private static readonly ProfilerMarker _PRF_Setup = new ProfilerMarker(_PRF_PFX + nameof(Setup));
 

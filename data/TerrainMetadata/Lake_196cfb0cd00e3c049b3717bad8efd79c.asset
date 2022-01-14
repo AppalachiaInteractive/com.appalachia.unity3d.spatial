@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3cdb1edae21241c7a10a9b73aedc6533, type: 3}
   m_Name: Lake_196cfb0cd00e3c049b3717bad8efd79c
   m_EditorClassIdentifier: 
-  _cachedName: 
-  _niceName: 
+  _cachedName: Lake_196cfb0cd00e3c049b3717bad8efd79c
+  _niceName: Lake_196cfb 0cd 00e 3c 049b 3717bad 8efd 79c
   _initializer:
     _tags:
     - profileName

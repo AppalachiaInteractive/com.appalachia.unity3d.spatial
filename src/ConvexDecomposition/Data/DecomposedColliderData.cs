@@ -140,6 +140,8 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data
 
         static DecomposedColliderData()
         {
+            
+            
             RegisterDependency<DecomposedColliderDataReview>(i => _decomposedColliderDataReview = i);
             RegisterDependency<PhysicsMaterialsCollection>(i => _physicsMaterialsCollection = i);
 
@@ -1512,7 +1514,7 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data
 
                         for (var i = 0; i < existingMeshes.Length; i++)
                         {
-                            var path = AssetDatabaseManager.GUIDToAssetPath(existingMeshes[i]);
+                            var path = AssetDatabaseManager.GUIDToAssetPath(existingMeshes[i]).relativePath;
 
                             if (!string.IsNullOrWhiteSpace(path) &&
                                 !AssetDatabaseManager.IsSubAsset(
@@ -2151,7 +2153,7 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data
 
                 for (var i = 0; i < existingMeshes.Length; i++)
                 {
-                    var path = AssetDatabaseManager.GUIDToAssetPath(existingMeshes[i]);
+                    var path = AssetDatabaseManager.GUIDToAssetPath(existingMeshes[i]).relativePath;
 
                     if (string.IsNullOrWhiteSpace(path))
                     {
@@ -2771,11 +2773,6 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data
             }
         }
 
-        #region Profiling
-
-        private const string _PRF_PFX = nameof(DecomposedColliderData) + ".";
-
-        #endregion
     }
 }
 

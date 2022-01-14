@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 161e6a270f964e8399d62997c767d92a, type: 3}
   m_Name: TerrainMetadataDictionary_MainInternal
   m_EditorClassIdentifier: 
-  _cachedName: 
-  _niceName: 
+  _cachedName: TerrainMetadataDictionary_MainInternal
+  _niceName: Terrain Metadata Dictionary_Main Internal
   _initializer:
     _tags: []
     _resetToken: 
@@ -23,12 +23,11 @@ MonoBehaviour:
     _object: {fileID: 11400000}
     keys:
       _capacityIncreaseMultiplier: 2
-      _values: 425b0200
+      _values: 
       noTracking: 0
-      _count: 1
+      _count: 0
     values:
       _capacityIncreaseMultiplier: 2
-      _values:
-      - {fileID: 11400000, guid: 7ebdfc37b882ff74a974239794282c66, type: 2}
+      _values: []
       noTracking: 0
-      _count: 1
+      _count: 0

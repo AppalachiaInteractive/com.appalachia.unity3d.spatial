@@ -2,7 +2,6 @@
 using Appalachia.Core.Objects.Initialization;
 using Appalachia.Core.Objects.Root;
 using Appalachia.Utility.Async;
-using Unity.Profiling;
 using UnityEngine;
 
 namespace Appalachia.Spatial.ConvexDecomposition.MeshCutting.Runtime
@@ -82,32 +81,26 @@ namespace Appalachia.Spatial.ConvexDecomposition.MeshCutting.Runtime
 
         protected override async AppaTask Initialize(Initializer initializer)
         {
-            using (_PRF_Initialize.Auto())
+            await base.Initialize(initializer);
+
+            var angles = transform.eulerAngles;
+            rotationYAxis = angles.y;
+            rotationXAxis = angles.x;
+
+            _rigidbody = initializer.Get(this, _rigidbody, nameof(Rigidbody));
+
+            _rigidbody.freezeRotation = true;
+
+            // Clone the target's position so that it stays fixed
+            if (target)
             {
-                await base.Initialize(initializer);
-
-                var angles = transform.eulerAngles;
-                rotationYAxis = angles.y;
-                rotationXAxis = angles.x;
-
-                _rigidbody = await initializer.Get<Rigidbody>(this, nameof(Rigidbody));
-
-                _rigidbody.freezeRotation = true;
-
-                // Clone the target's position so that it stays fixed
-                if (target)
-                {
-                    fixedPosition = target.position;
-                }
+                fixedPosition = target.position;
             }
         }
 
         #region Profiling
 
-        private const string _PRF_PFX = nameof(CameraOrbit) + ".";
-
-        private static readonly ProfilerMarker _PRF_Initialize =
-            new ProfilerMarker(_PRF_PFX + nameof(Initialize));
+        
 
         #endregion
     }

@@ -41,7 +41,7 @@ namespace Appalachia.Spatial.MeshBurial.State
                     _state = new MeshBurialAdjustmentStateLookup();
                     MarkAsModified();
 
-                    _state.SetObjectOwnership(this);
+                    _state.SetSerializationOwner(this);
                 }
 
                 return _state;
@@ -82,7 +82,7 @@ namespace Appalachia.Spatial.MeshBurial.State
 
         public void ResetState()
         {
-            using (_PRF_Reset.Auto())
+            using (_PRF_ResetState.Auto())
             {
                 if (_state == null)
                 {
@@ -114,19 +114,16 @@ namespace Appalachia.Spatial.MeshBurial.State
                     MarkAsModified();
                 }
 
-                _state.SetObjectOwnership(this);
+                _state.SetSerializationOwner(this);
             }
         }
 
         #region Profiling
 
-        private const string _PRF_PFX = nameof(MeshBurialAdjustmentCollection) + ".";
-
-        private static readonly ProfilerMarker _PRF_WhenEnabled = new(_PRF_PFX + nameof(WhenEnabled));
-
         private static readonly ProfilerMarker _PRF_GetByPrefab = new(_PRF_PFX + nameof(GetByPrefab));
 
-        private static readonly ProfilerMarker _PRF_Reset = new(_PRF_PFX + nameof(Reset));
+        private static readonly ProfilerMarker _PRF_ResetState =
+            new ProfilerMarker(_PRF_PFX + nameof(ResetState));
 
         #endregion
     }

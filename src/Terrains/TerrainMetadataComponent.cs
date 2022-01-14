@@ -106,12 +106,11 @@ namespace Appalachia.Spatial.Terrains
         }
 
         protected override async AppaTask WhenDisabled()
-
         {
-            using (_PRF_OnDisable.Auto())
-            {
-                await base.WhenDisabled();
+            await base.WhenDisabled();
 
+            using (_PRF_WhenDisabled.Auto())
+            {
                 if (terrain == null)
                 {
                     terrain = GetComponent<Terrain>();
@@ -123,10 +122,10 @@ namespace Appalachia.Spatial.Terrains
 
         protected override async AppaTask WhenEnabled()
         {
-            using (_PRF_OnEnable.Auto())
-            {
-                await base.WhenEnabled();
+            await base.WhenEnabled();
 
+            using (_PRF_WhenEnabled.Auto())
+            {
                 if (terrain == null)
                 {
                     terrain = GetComponent<Terrain>();
@@ -143,16 +142,8 @@ namespace Appalachia.Spatial.Terrains
 
         #region Profiling
 
-        private const string _PRF_PFX = nameof(TerrainMetadataComponent) + ".";
-
         private static readonly ProfilerMarker _PRF_GetFromAllTerrains =
             new ProfilerMarker(_PRF_PFX + nameof(GetFromAllTerrains));
-
-        private static readonly ProfilerMarker
-            _PRF_OnEnable = new ProfilerMarker(_PRF_PFX + nameof(OnEnable));
-
-        private static readonly ProfilerMarker _PRF_OnDisable =
-            new ProfilerMarker(_PRF_PFX + nameof(OnDisable));
 
         #endregion
 

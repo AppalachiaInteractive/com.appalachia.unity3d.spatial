@@ -2,7 +2,6 @@
 using Appalachia.Core.Objects.Initialization;
 using Appalachia.Core.Objects.Root;
 using Appalachia.Utility.Async;
-using Unity.Profiling;
 using UnityEngine;
 
 namespace Appalachia.Spatial.ConvexDecomposition.MeshCutting.Runtime
@@ -11,6 +10,8 @@ namespace Appalachia.Spatial.ConvexDecomposition.MeshCutting.Runtime
     {
         // Line Drawn event handler
         public delegate void LineDrawnHandler(Vector3 begin, Vector3 end, Vector3 depth);
+
+        public event LineDrawnHandler OnLineDrawn;
 
         #region Fields and Autoproperties
 
@@ -23,14 +24,12 @@ namespace Appalachia.Spatial.ConvexDecomposition.MeshCutting.Runtime
 
         #endregion
 
-        public event LineDrawnHandler OnLineDrawn;
-
         #region Event Functions
 
         // Update is called once per frame
         private void Update()
         {
-            if (!DependenciesAreReady || !FullyInitialized)
+            if (ShouldSkipUpdate)
             {
                 return;
             }
@@ -68,17 +67,13 @@ namespace Appalachia.Spatial.ConvexDecomposition.MeshCutting.Runtime
 
         protected override async AppaTask Initialize(Initializer initializer)
         {
-            using (_PRF_Initialize.Auto())
-            {
-                await base.Initialize(initializer);
+            await base.Initialize(initializer);
 
-                cam = Camera.main;
-                dragging = false;
-            }
+            cam = Camera.main;
+            dragging = false;
         }
 
         protected override async AppaTask WhenDisabled()
-
         {
             await base.WhenDisabled();
             Camera.onPostRender -= PostRenderDrawLine;
@@ -111,10 +106,7 @@ namespace Appalachia.Spatial.ConvexDecomposition.MeshCutting.Runtime
 
         #region Profiling
 
-        private const string _PRF_PFX = nameof(ScreenLineRenderer) + ".";
-
-        private static readonly ProfilerMarker _PRF_Initialize =
-            new ProfilerMarker(_PRF_PFX + nameof(Initialize));
+        
 
         #endregion
     }

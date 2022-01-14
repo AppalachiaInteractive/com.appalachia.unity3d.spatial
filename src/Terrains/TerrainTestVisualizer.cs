@@ -39,7 +39,7 @@ namespace Appalachia.Spatial.Terrains
                 terrain = Terrain.activeTerrain;
             }
 
-            texture = terrain.terrainData.heightmapTexture.Capture();
+            texture = terrain.terrainData.heightmapTexture.ToTexture2D();
             _transform.position = terrain.transform.position;
         }
 

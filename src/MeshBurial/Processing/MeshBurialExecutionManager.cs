@@ -5,10 +5,10 @@ using Appalachia.Core.Assets;
 using Appalachia.Core.Attributes;
 using Appalachia.Core.Collections;
 using Appalachia.Core.Collections.Native;
+using Appalachia.Core.Execution;
 using Appalachia.Core.Objects.Initialization;
 using Appalachia.Core.Preferences;
 using Appalachia.Editing.Core.Behaviours;
-using Appalachia.Jobs.MeshData;
 using Appalachia.Jobs.Optimization.Options;
 using Appalachia.Jobs.Optimization.Utilities;
 using Appalachia.Jobs.Transfers;
@@ -32,8 +32,8 @@ namespace Appalachia.Spatial.MeshBurial.Processing
     {
         static MeshBurialExecutionManager()
         {
-            MeshBurialManagementQueue.InstanceAvailable += i => _meshBurialManagementQueue = i;
-            MeshBurialAdjustmentCollection.InstanceAvailable += i => _meshBurialAdjustmentCollection = i;
+            RegisterDependency<MeshBurialManagementQueue>(i => _meshBurialManagementQueue = i);
+            RegisterDependency<MeshBurialAdjustmentCollection>(i => _meshBurialAdjustmentCollection = i);
         }
 
         #region Preferences
@@ -105,11 +105,11 @@ namespace Appalachia.Spatial.MeshBurial.Processing
         {
             using (_PRF_Update.Auto())
             {
-                if (!DependenciesAreReady || !FullyInitialized)
+                if (ShouldSkipUpdate)
                 {
                     return;
                 }
-                
+
                 _iterationStart = DateTime.Now;
 
                 CheckAndLogQueueDepth();
@@ -175,44 +175,40 @@ namespace Appalachia.Spatial.MeshBurial.Processing
 
         protected override async AppaTask Initialize(Initializer initializer)
         {
-            using (_PRF_Initialize.Auto())
+            await base.Initialize(initializer);
+
+            CleanupManager.Store(EnsureCompleted);
+
+            if (IsBuryingEnabled.Value)
             {
-                await base.Initialize(initializer);
-
-                MeshObjectManager.instance.RegisterDisposalDependency(EnsureCompleted);
-
-                if (IsBuryingEnabled.Value)
-                {
-                    IsBuryingEnabled.Value = false;
-                    UnityEditor.EditorApplication.delayCall += ToggleEnableMeshBurials;
-                }
-
-                if (!randoms.IsCreated)
-                {
-                    randoms = new JobRandoms(Allocator.Persistent);
-                }
-
-                PopulateQueueingActions();
+                IsBuryingEnabled.Value = false;
+                UnityEditor.EditorApplication.delayCall += ToggleEnableMeshBurials;
             }
+
+            if (!randoms.IsCreated)
+            {
+                randoms = new JobRandoms(Allocator.Persistent);
+            }
+
+            PopulateQueueingActions();
         }
 
         protected override async AppaTask WhenDestroyed()
         {
-            using (_PRF_OnDestroy.Auto())
-            {
-                await base.WhenDestroyed();
+            await base.WhenDestroyed();
 
+            using (_PRF_WhenDestroyed.Auto())
+            {
                 NativeDisposal();
             }
         }
 
         protected override async AppaTask WhenDisabled()
-
         {
+            await base.WhenDisabled();
+
             using (_PRF_OnDisable.Auto())
             {
-                await base.WhenDisabled();
-
                 pendingHandle.Complete();
 
                 NativeDisposal();
@@ -786,8 +782,6 @@ namespace Appalachia.Spatial.MeshBurial.Processing
 
         #region Profiling
 
-        private const string _PRF_PFX = nameof(MeshBurialExecutionManager) + ".";
-
         private readonly ProfilerMarker _PRF_ApplyFinalizedResults =
             new(_PRF_PFX + nameof(ApplyFinalizedResults));
 
@@ -800,11 +794,6 @@ namespace Appalachia.Spatial.MeshBurial.Processing
         private readonly ProfilerMarker _PRF_EnsureCompleted = new(_PRF_PFX + nameof(EnsureCompleted));
 
         private readonly ProfilerMarker _PRF_FinalizeResultData = new(_PRF_PFX + nameof(FinalizeResultData));
-
-        private readonly ProfilerMarker _PRF_Initialize = new(_PRF_PFX + nameof(Initialize));
-
-        private static readonly ProfilerMarker _PRF_OnDestroy =
-            new ProfilerMarker(_PRF_PFX + nameof(OnDestroy));
 
         private static readonly ProfilerMarker _PRF_NativeDisposal =
             new ProfilerMarker(_PRF_PFX + nameof(NativeDisposal));
@@ -835,8 +824,6 @@ namespace Appalachia.Spatial.MeshBurial.Processing
         private readonly ProfilerMarker _PRF_ShouldEscape = new(_PRF_PFX + nameof(ShouldEscape));
 
         private readonly ProfilerMarker _PRF_StatusLog = new(_PRF_PFX + nameof(StatusLog));
-
-        private static readonly ProfilerMarker _PRF_Update = new ProfilerMarker(_PRF_PFX + nameof(Update));
 
         #endregion
     }

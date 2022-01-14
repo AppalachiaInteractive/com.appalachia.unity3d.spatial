@@ -409,7 +409,7 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data.Review
                     index = new DecomposedColliderDataReviewItemIndex(dataList.Count);
                 }
 
-                index.SetObjectOwnership(this);
+                index.SetSerializationOwner(this);
                 index.Clear();
 
                 for (var i = 0; i < dataList.Count; i++)
@@ -481,8 +481,6 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data.Review
 
         #region Profiling
 
-        private const string _PRF_PFX = nameof(DecomposedColliderDataReview) + ".";
-
         private static readonly ProfilerMarker _PRF_RebuildList =
             new ProfilerMarker(_PRF_PFX + nameof(RebuildList));
 
@@ -504,8 +502,7 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data.Review
         private static readonly ProfilerMarker _PRF_SortVerticesDesc =
             new ProfilerMarker(_PRF_PFX + nameof(SortVerticesDesc));
 
-        private static readonly ProfilerMarker _PRF_WhenEnabled =
-            new ProfilerMarker(_PRF_PFX + nameof(WhenEnabled));
+        
 
         #endregion
 

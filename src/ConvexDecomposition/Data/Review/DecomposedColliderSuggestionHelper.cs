@@ -1,6 +1,6 @@
+#if UNITY_EDITOR
 using System;
 using Appalachia.CI.Integration.Assets;
-using Appalachia.Core.Extensions;
 using Appalachia.Utility.Extensions;
 using Sirenix.OdinInspector;
 using Unity.Profiling;
@@ -10,11 +10,18 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data.Review
 {
     public static class DecomposedColliderSuggestionHelper
     {
-        private const string _PRF_PFX = nameof(DecomposedColliderSuggestionHelper) + ".";
-        
+        #region Constants and Static Readonly
+
+        private const string _assetFilter = "t:Model collider";
+
+        #endregion
+
+        #region Static Fields and Autoproperties
+
         [NonSerialized] private static ValueDropdownList<GameObject> ___assets;
 
-        private static readonly ProfilerMarker _PRF__assets = new ProfilerMarker(_PRF_PFX + nameof(assets));
+        #endregion
+
         internal static ValueDropdownList<GameObject> assets
         {
             get
@@ -41,9 +48,6 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data.Review
             }
         }
 
-        private const string _assetFilter = "t:Model collider";
-
-        private static readonly ProfilerMarker _PRF_RebuildAssetsList = new ProfilerMarker(_PRF_PFX + nameof(RebuildAssetsList));
         public static void RebuildAssetsList()
         {
             using (_PRF_RebuildAssetsList.Auto())
@@ -52,7 +56,6 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data.Review
             }
         }
 
-        private static readonly ProfilerMarker _PRF_SuggestExternal = new ProfilerMarker(_PRF_PFX + nameof(SuggestExternal));
         public static GameObject SuggestExternal(string searchTerm)
         {
             using (_PRF_SuggestExternal.Auto())
@@ -62,14 +65,16 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data.Review
                 return match.Value;
             }
         }
-        
-        public static void UpdateReplacementReview(ref DecomposedColliderReplacementReviewItem replacementReview, GameObject replacementModel)
+
+        public static void UpdateReplacementReview(
+            ref DecomposedColliderReplacementReviewItem replacementReview,
+            GameObject replacementModel)
         {
             if (replacementReview == null)
             {
                 replacementReview = new DecomposedColliderReplacementReviewItem();
             }
-            
+
             replacementReview.pieces = 0;
             replacementReview.triangles = 0;
             replacementReview.vertices = 0;
@@ -78,7 +83,7 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data.Review
             {
                 return;
             }
-            
+
             var modelPath = AssetDatabaseManager.GetAssetPath(replacementModel);
 
             var subassets = AssetDatabaseManager.LoadAllAssetsAtPath(modelPath);
@@ -91,10 +96,26 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data.Review
                 {
                     replacementReview.pieces += 1;
 
-                    replacementReview.triangles += (m.triangles.Length/3);
+                    replacementReview.triangles += m.triangles.Length / 3;
                     replacementReview.vertices += m.vertexCount;
                 }
             }
         }
+
+        #region Profiling
+
+        private const string _PRF_PFX = nameof(DecomposedColliderSuggestionHelper) + ".";
+
+        private static readonly ProfilerMarker _PRF__assets = new ProfilerMarker(_PRF_PFX + nameof(assets));
+
+        private static readonly ProfilerMarker _PRF_RebuildAssetsList =
+            new ProfilerMarker(_PRF_PFX + nameof(RebuildAssetsList));
+
+        private static readonly ProfilerMarker _PRF_SuggestExternal =
+            new ProfilerMarker(_PRF_PFX + nameof(SuggestExternal));
+
+        #endregion
     }
 }
+
+#endif

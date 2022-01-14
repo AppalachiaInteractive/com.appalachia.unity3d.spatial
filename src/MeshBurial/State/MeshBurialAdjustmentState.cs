@@ -6,9 +6,9 @@ using System;
 using Appalachia.CI.Constants;
 using Appalachia.Core.Attributes;
 using Appalachia.Core.Collections.Native;
+using Appalachia.Core.Execution;
 using Appalachia.Core.Objects.Initialization;
 using Appalachia.Core.Objects.Root;
-using Appalachia.Jobs.MeshData;
 using Appalachia.Spatial.MeshBurial.Collections;
 using Appalachia.Spatial.MeshBurial.Processing;
 using Appalachia.Spatial.SpatialKeys;
@@ -26,17 +26,6 @@ namespace Appalachia.Spatial.MeshBurial.State
     [CallStaticConstructorInEditor]
     public class MeshBurialAdjustmentState : AppalachiaObject<MeshBurialAdjustmentState>
     {
-        static MeshBurialAdjustmentState()
-        {
-            MeshObjectManager.InstanceAvailable += i => _meshObjectManager = i;
-        }
-
-        #region Static Fields and Autoproperties
-
-        private static MeshObjectManager _meshObjectManager;
-
-        #endregion
-
         #region Fields and Autoproperties
 
         [SerializeField]
@@ -218,12 +207,9 @@ namespace Appalachia.Spatial.MeshBurial.State
 
         protected override async AppaTask Initialize(Initializer initializer)
         {
-            using (_PRF_Initialize.Auto())
-            {
-                await base.Initialize(initializer);
+            await base.Initialize(initializer);
 
-                InitializeLookup();
-            }
+            InitializeLookup();
         }
 
         protected override async AppaTask WhenDisabled()
@@ -245,46 +231,38 @@ namespace Appalachia.Spatial.MeshBurial.State
                     MarkAsModified();
                 }
 
-                _state.SetObjectOwnership(this);
+                _state.SetSerializationOwner(this);
 
                 if (_nativeAdjustments.ShouldAllocate())
                 {
                     _nativeAdjustments =
                         new NativeHashMap<Matrix4x4Key, MeshBurialAdjustment>(2048, Allocator.Persistent);
-                    _meshObjectManager.RegisterDisposalDependency(() => _nativeAdjustments.SafeDispose());
+
+                    CleanupManager.Store(() => _nativeAdjustments.SafeDispose());
                 }
             }
         }
 
         #region Profiling
 
-        private const string _PRF_PFX = nameof(MeshBurialAdjustmentState) + ".";
+        private static readonly ProfilerMarker _PRF_AddOrUpdate = new(_PRF_PFX + nameof(AddOrUpdate));
+        private static readonly ProfilerMarker _PRF_Consume = new(_PRF_PFX + nameof(Consume));
+        private static readonly ProfilerMarker _PRF_Contains = new(_PRF_PFX + nameof(Contains));
 
-        private static readonly ProfilerMarker _PRF_Initialize =
-            new ProfilerMarker(_PRF_PFX + nameof(Initialize));
-
-        private static readonly ProfilerMarker _PRF_InitializeLookupStorage =
-            new(_PRF_PFX + nameof(InitializeLookupStorage));
-
-        private static readonly ProfilerMarker _PRF_OnEnable = new(_PRF_PFX + nameof(OnEnable));
-        private static readonly ProfilerMarker _PRF_OnDisable = new(_PRF_PFX + nameof(OnDisable));
+        private static readonly ProfilerMarker _PRF_GetNative = new(_PRF_PFX + nameof(GetNative));
 
         private static readonly ProfilerMarker _PRF_InitializeLookup =
             new(_PRF_PFX + nameof(InitializeLookup));
 
-        private static readonly ProfilerMarker _PRF_TryGetValue = new(_PRF_PFX + nameof(TryGetValue));
-        private static readonly ProfilerMarker _PRF_Contains = new(_PRF_PFX + nameof(Contains));
-        private static readonly ProfilerMarker _PRF_AddOrUpdate = new(_PRF_PFX + nameof(AddOrUpdate));
+        private static readonly ProfilerMarker _PRF_InitializeLookupStorage =
+            new(_PRF_PFX + nameof(InitializeLookupStorage));
+
+        private static readonly ProfilerMarker _PRF_OnDisable = new(_PRF_PFX + nameof(OnDisable));
+
+        private static readonly ProfilerMarker _PRF_OnEnable = new(_PRF_PFX + nameof(OnEnable));
         private static readonly ProfilerMarker _PRF_ResetState = new(_PRF_PFX + nameof(ResetState));
-        private static readonly ProfilerMarker _PRF_Consume = new(_PRF_PFX + nameof(Consume));
 
-        private static readonly ProfilerMarker _PRF_GetNative = new(_PRF_PFX + nameof(GetNative));
-
-        private static readonly ProfilerMarker _PRF_WhenDisabled =
-            new ProfilerMarker(_PRF_PFX + nameof(WhenDisabled));
-
-        private static readonly ProfilerMarker _PRF_WhenEnabled =
-            new ProfilerMarker(_PRF_PFX + nameof(WhenEnabled));
+        private static readonly ProfilerMarker _PRF_TryGetValue = new(_PRF_PFX + nameof(TryGetValue));
 
         #endregion
     }
