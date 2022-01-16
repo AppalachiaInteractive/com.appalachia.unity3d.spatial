@@ -23,9 +23,9 @@ MonoBehaviour:
     _object: {fileID: 11400000}
     keys:
       _capacityIncreaseMultiplier: 2
-      _values: cc930000c2ae0000f0ae0000e2ae0000bc1e0200d6370400425b0200ac1002002aef000068f30000b4fc0000d6ff00009efe0000264c0100
+      _values: cc930000c2ae0000f0ae0000e2ae0000bc1e0200d6370400425b0200ac1002002aef000068f30000b4fc0000d6ff00009efe0000264c010076550100
       noTracking: 0
-      _count: 14
+      _count: 15
     values:
       _capacityIncreaseMultiplier: 2
       _values:
@@ -43,5 +43,6 @@ MonoBehaviour:
       - {fileID: 11400000, guid: 7ebdfc37b882ff74a974239794282c66, type: 2}
       - {fileID: 11400000, guid: 7ebdfc37b882ff74a974239794282c66, type: 2}
       - {fileID: 11400000, guid: 7ebdfc37b882ff74a974239794282c66, type: 2}
+      - {fileID: 11400000, guid: 7ebdfc37b882ff74a974239794282c66, type: 2}
       noTracking: 0
-      _count: 14
+      _count: 15

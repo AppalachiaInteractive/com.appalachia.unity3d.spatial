@@ -23,11 +23,12 @@ MonoBehaviour:
     _object: {fileID: 11400000}
     keys:
       _capacityIncreaseMultiplier: 2
-      _values: 
+      _values: 76550100
       noTracking: 0
-      _count: 0
+      _count: 1
     values:
       _capacityIncreaseMultiplier: 2
-      _values: []
+      _values:
+      - {fileID: 11400000, guid: 7ebdfc37b882ff74a974239794282c66, type: 2}
       noTracking: 0
-      _count: 0
+      _count: 1
