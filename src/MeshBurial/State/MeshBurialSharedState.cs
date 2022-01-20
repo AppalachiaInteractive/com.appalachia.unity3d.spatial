@@ -19,11 +19,13 @@ namespace Appalachia.Spatial.MeshBurial.State
     {
         static MeshBurialSharedState()
         {
-            
-            
             RegisterDependency<MeshBurialGizmoSettings>(i => _meshBurialGizmoSettings = i);
             RegisterDependency<MeshBurialOptimizationParameters>(i => _meshBurialOptimizationParameters = i);
             MeshObjectManager.InstanceAvailable += i => _meshObjectManager = i;
+        }
+
+        public MeshBurialSharedState()
+        {
         }
 
         public MeshBurialSharedState(GameObject instanceOrPrefab, MeshBurialOptimizationParameters op) : base(
