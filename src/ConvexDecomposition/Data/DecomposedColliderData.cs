@@ -145,7 +145,7 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data
             RegisterDependency<DecomposedColliderDataReview>(i => _decomposedColliderDataReview = i);
             RegisterDependency<PhysicsMaterialsCollection>(i => _physicsMaterialsCollection = i);
 
-            MeshObjectManager.InstanceAvailable += i => _meshObjectManager = i;
+            When.Behaviour<MeshObjectManager>().IsAvailableThen( i => _meshObjectManager = i);
         }
 
         #region Preferences

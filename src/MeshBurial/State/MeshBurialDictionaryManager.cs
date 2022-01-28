@@ -4,6 +4,7 @@
 
 using System.Collections.Generic;
 using Appalachia.Core.Attributes;
+using Appalachia.Core.Objects.Availability;
 
 #endregion
 
@@ -14,7 +15,9 @@ namespace Appalachia.Spatial.MeshBurial.State
     {
         static MeshBurialDictionaryManager()
         {
-            MeshBurialOptimizationParameters.InstanceAvailable += i => _meshBurialOptimizationParameters = i;
+            RegisterInstanceCallbacks.WithoutSorting()
+                                     .When.Object<MeshBurialOptimizationParameters>()
+                                     .IsAvailableThen(i => _meshBurialOptimizationParameters = i);
         }
 
         #region Static Fields and Autoproperties

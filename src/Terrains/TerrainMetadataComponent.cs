@@ -27,7 +27,7 @@ namespace Appalachia.Spatial.Terrains
     {
         static TerrainMetadataComponent()
         {
-            TerrainMetadataManager.InstanceAvailable += i => _terrainMetadataManager = i;
+            When.Behaviour<TerrainMetadataManager>().IsAvailableThen( i => _terrainMetadataManager = i);
         }
 
         #region Static Fields and Autoproperties

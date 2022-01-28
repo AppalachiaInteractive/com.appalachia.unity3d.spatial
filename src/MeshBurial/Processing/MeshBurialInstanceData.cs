@@ -6,6 +6,7 @@ using System;
 using Appalachia.Core.Attributes;
 using Appalachia.Core.Collections.Extensions;
 using Appalachia.Core.Collections.Native;
+using Appalachia.Core.Objects.Availability;
 using Appalachia.Jobs.Optimization.Metadata;
 using Appalachia.Jobs.Optimization.Parameters;
 using Appalachia.Spatial.MeshBurial.State;
@@ -33,7 +34,9 @@ namespace Appalachia.Spatial.MeshBurial.Processing
 
         static MeshBurialInstanceData()
         {
-            TerrainMetadataManager.InstanceAvailable += i => _terrainMetadataManager = i;
+            RegisterInstanceCallbacks.WithoutSorting()
+                                     .When.Behaviour<TerrainMetadataManager>()
+                                     .IsAvailableThen(i => _terrainMetadataManager = i);
         }
 
         #region Static Fields and Autoproperties

@@ -40,7 +40,7 @@ namespace Appalachia.Spatial.Terrains
             }
 
             texture = terrain.terrainData.heightmapTexture.ToTexture2D();
-            _transform.position = terrain.transform.position;
+            Transform.position = terrain.transform.position;
         }
 
         protected override void GetVisualizationInfo(

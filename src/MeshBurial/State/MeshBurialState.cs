@@ -4,6 +4,7 @@
 
 using System;
 using Appalachia.Core.Attributes;
+using Appalachia.Core.Objects.Availability;
 using Appalachia.Core.Objects.Root;
 using Appalachia.Spatial.Terrains;
 using Sirenix.OdinInspector;
@@ -20,7 +21,9 @@ namespace Appalachia.Spatial.MeshBurial.State
     {
         static MeshBurialState()
         {
-            TerrainMetadataManager.InstanceAvailable += i => _terrainMetadataManager = i;
+            RegisterInstanceCallbacks.For<MeshBurialState>()
+                                     .When.Behaviour<TerrainMetadataManager>()
+                                     .IsAvailableThen(i => _terrainMetadataManager = i);
         }
 
         public MeshBurialState(MeshBurialSharedState shared, Matrix4x4 ltw, int terrainHashCode)

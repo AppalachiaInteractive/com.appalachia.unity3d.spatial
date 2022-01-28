@@ -79,9 +79,6 @@ namespace Appalachia.Spatial.Voxels.Components
         private static readonly ProfilerMarker _PRF_InitializeEditor =
             new ProfilerMarker(_PRF_PFX + nameof(InitializeEditor));
 
-        private static readonly ProfilerMarker _PRF_OnDrawGizmosSelected =
-            new ProfilerMarker(_PRF_PFX + nameof(OnDrawGizmosSelected));
-
         #endregion
     }
 }

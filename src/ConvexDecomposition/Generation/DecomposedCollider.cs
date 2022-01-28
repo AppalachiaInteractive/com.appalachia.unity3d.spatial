@@ -31,7 +31,7 @@ namespace Appalachia.Spatial.ConvexDecomposition.Generation
     {
         static DecomposedCollider()
         {
-            PrefabRenderingManager.InstanceAvailable += i => _prefabRenderingManager = i;
+            When.Behaviour<PrefabRenderingManager>().IsAvailableThen( i => _prefabRenderingManager = i);
         }
 
         #region Static Fields and Autoproperties
@@ -87,13 +87,13 @@ namespace Appalachia.Spatial.ConvexDecomposition.Generation
             {
                 if (colliderTransform == null)
                 {
-                    colliderTransform = _transform.Find(DecomposedColliderData.childName);
+                    colliderTransform = Transform.Find(DecomposedColliderData.childName);
 
                     if (colliderTransform == null)
                     {
                         var colliderRoot = new GameObject(DecomposedColliderData.childName);
 
-                        colliderRoot.transform.SetParent(_transform, false);
+                        colliderRoot.transform.SetParent(Transform, false);
 
                         colliderTransform = colliderRoot.transform;
                     }
@@ -281,9 +281,6 @@ namespace Appalachia.Spatial.ConvexDecomposition.Generation
 
         private static readonly ProfilerMarker _PRF_FindColliderRoot =
             new ProfilerMarker(_PRF_PFX + nameof(FindColliderRoot));
-
-        private static readonly ProfilerMarker _PRF_OnDrawGizmosSelected =
-            new ProfilerMarker(_PRF_PFX + nameof(OnDrawGizmosSelected));
 
         #endregion
     }

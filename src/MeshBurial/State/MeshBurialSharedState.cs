@@ -21,7 +21,7 @@ namespace Appalachia.Spatial.MeshBurial.State
         {
             RegisterDependency<MeshBurialGizmoSettings>(i => _meshBurialGizmoSettings = i);
             RegisterDependency<MeshBurialOptimizationParameters>(i => _meshBurialOptimizationParameters = i);
-            MeshObjectManager.InstanceAvailable += i => _meshObjectManager = i;
+            When.Behaviour<MeshObjectManager>().IsAvailableThen(i => _meshObjectManager = i);
         }
 
         public MeshBurialSharedState()

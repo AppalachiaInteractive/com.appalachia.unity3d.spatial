@@ -61,7 +61,7 @@ namespace Appalachia.Spatial
         [DisableIf(nameof(locked))]
         public bool yToZero = true;
 
-        [Range(.01F, 1000F)]
+        [PropertyRange(.01F, 1000F)]
         [DisableIf(nameof(locked))]
         public float gridCellSize = 15f;
 

@@ -7,6 +7,7 @@ using Appalachia.Core.Attributes;
 using Appalachia.Core.Collections;
 using Appalachia.Core.Collections.Implementations.Sets;
 using Appalachia.Core.Collections.NonSerialized;
+using Appalachia.Core.Objects.Availability;
 using Appalachia.Spatial.MeshBurial.Processing.QueueItems;
 using Appalachia.Spatial.MeshBurial.State;
 using AwesomeTechnologies.VegetationSystem;
@@ -23,9 +24,15 @@ namespace Appalachia.Spatial.MeshBurial.Processing
     {
         static MeshBurialManagementProcessor()
         {
-            MeshBurialManagementQueue.InstanceAvailable += i => _meshBurialManagementQueue = i;
-            MeshBurialAdjustmentCollection.InstanceAvailable += i => _meshBurialAdjustmentCollection = i;
-            MeshBurialExecutionManager.InstanceAvailable += i => _meshBurialExecutionManager = i;
+            RegisterInstanceCallbacks.WithoutSorting()
+                                     .When.Object<MeshBurialManagementQueue>()
+                                     .IsAvailableThen(i => _meshBurialManagementQueue = i);
+            RegisterInstanceCallbacks.WithoutSorting()
+                                     .When.Object<MeshBurialAdjustmentCollection>()
+                                     .IsAvailableThen(i => _meshBurialAdjustmentCollection = i);
+            RegisterInstanceCallbacks.WithoutSorting()
+                                     .When.Behaviour<MeshBurialExecutionManager>()
+                                     .IsAvailableThen(i => _meshBurialExecutionManager = i);
         }
 
         #region Static Fields and Autoproperties

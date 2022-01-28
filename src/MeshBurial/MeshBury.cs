@@ -800,9 +800,6 @@ namespace Appalachia.Spatial.MeshBurial
 
         #region Profiling
 
-        private static readonly ProfilerMarker _PRF_OnDrawGizmosSelected =
-            new ProfilerMarker(_PRF_PFX + nameof(OnDrawGizmosSelected));
-
         private static readonly ProfilerMarker _PRF_ReinitializeMesh =
             new ProfilerMarker(_PRF_PFX + nameof(ReinitializeMesh));
 

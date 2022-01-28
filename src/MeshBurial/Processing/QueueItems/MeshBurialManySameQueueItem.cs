@@ -4,6 +4,7 @@
 
 using System;
 using Appalachia.Core.Attributes;
+using Appalachia.Core.Objects.Availability;
 using Appalachia.Spatial.MeshBurial.State;
 using Unity.Profiling;
 using UnityEngine;
@@ -18,7 +19,9 @@ namespace Appalachia.Spatial.MeshBurial.Processing.QueueItems
     {
         static MeshBurialManySameQueueItem()
         {
-            MeshBurialAdjustmentCollection.InstanceAvailable += i => _meshBurialAdjustmentCollection = i;
+            RegisterInstanceCallbacks.For<MeshBurialManySameQueueItem>()
+                                     .When.Object<MeshBurialAdjustmentCollection>()
+                                     .IsAvailableThen(i => _meshBurialAdjustmentCollection = i);
         }
 
         protected MeshBurialManySameQueueItem(

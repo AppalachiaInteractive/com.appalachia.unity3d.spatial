@@ -4,6 +4,7 @@
 
 using Appalachia.CI.Integration.Assets;
 using Appalachia.Core.Attributes;
+using Appalachia.Core.Objects.Availability;
 using Unity.Profiling;
 using UnityEngine;
 
@@ -16,7 +17,9 @@ namespace Appalachia.Spatial.MeshBurial.State
     {
         static MeshBurialSharedStateManager()
         {
-            MeshBurialSharedStateDictionary.InstanceAvailable += i => _meshBurialSharedStateDictionary = i;
+            RegisterInstanceCallbacks.WithoutSorting()
+                                     .When.Object<MeshBurialSharedStateDictionary>()
+                                     .IsAvailableThen(i => _meshBurialSharedStateDictionary = i);
         }
 
         #region Static Fields and Autoproperties

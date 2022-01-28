@@ -30,7 +30,7 @@ namespace Appalachia.Spatial.Visualizers
 
         protected override Bounds GetBounds()
         {
-            var center = _transform.position + (.5f * size);
+            var center = Transform.position + (.5f * size);
             return new Bounds(center, size);
         }
 
@@ -52,7 +52,7 @@ namespace Appalachia.Spatial.Visualizers
                 _data = HeightmapJobHelper.LoadHeightData(texture, Allocator.Persistent);
             }
 
-            var mapPosition = _transform.position;
+            var mapPosition = Transform.position;
 
             height = HeightmapJobHelper.GetWorldSpaceHeight(
                 position,

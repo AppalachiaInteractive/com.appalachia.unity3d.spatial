@@ -86,8 +86,8 @@ namespace Appalachia.Spatial.Voxels.Components
                 }
 
                 _voxels = style == VoxelPopulationStyle.Colliders
-                    ? VoxelTypes.Voxels.Voxelize(_transform, _colliders, resolution)
-                    : VoxelTypes.Voxels.Voxelize(_transform, _renderers, resolution);
+                    ? VoxelTypes.Voxels.Voxelize(Transform, _colliders, resolution)
+                    : VoxelTypes.Voxels.Voxelize(Transform, _renderers, resolution);
             }
         }
 
@@ -130,11 +130,11 @@ namespace Appalachia.Spatial.Voxels.Components
         {
             using (_PRF_RefreshChildCollections.Auto())
             {
-                _colliders = _transform.FilterComponentsFromChildren<Collider>()
+                _colliders = Transform.FilterComponentsFromChildren<Collider>()
                                        .NoTriggers()
                                        .ActiveOnly()
                                        .RunFilter();
-                _renderers = _transform.FilterComponentsFromChildren<MeshRenderer>().RunFilter();
+                _renderers = Transform.FilterComponentsFromChildren<MeshRenderer>().RunFilter();
             }
         }
 

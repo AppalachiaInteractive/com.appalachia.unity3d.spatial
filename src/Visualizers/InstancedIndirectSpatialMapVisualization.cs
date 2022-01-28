@@ -21,7 +21,7 @@ namespace Appalachia.Spatial.Visualizers
 
         protected override Bounds GetBounds()
         {
-            var center = _transform.position + (.5f * size);
+            var center = Transform.position + (.5f * size);
             return new Bounds(center, size);
         }
 
@@ -53,7 +53,7 @@ namespace Appalachia.Spatial.Visualizers
 
             var valueAtPosition = SpatialMapJobHelper.GetWorldSpaceValue(
                 position,
-                _transform.position,
+                Transform.position,
                 _data,
                 texture.width,
                 texture.height,
