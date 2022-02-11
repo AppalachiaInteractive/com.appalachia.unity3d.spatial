@@ -24,6 +24,7 @@ using Appalachia.Utility.Colors;
 using Appalachia.Utility.Constants;
 using Appalachia.Utility.Extensions;
 using Appalachia.Utility.Strings;
+using Appalachia.Utility.Timing;
 using Sirenix.OdinInspector;
 using Unity.Collections;
 using Unity.Jobs;
@@ -627,7 +628,7 @@ namespace Appalachia.Spatial.MeshBurial
 
                 if (drawRotation.v)
                 {
-                    var slerpTime = Mathf.PingPong(Time.time * rotationSpeed.v, 1.0f);
+                    var slerpTime = Mathf.PingPong(CoreClock.Instance.Time * rotationSpeed.v, 1.0f);
 
                     var gDist = rotationGizmoDistance.v;
                     var terrainRotation = quaternion.LookRotationSafe(terrainNormal, float3c.up);

@@ -130,7 +130,7 @@ namespace Appalachia.Spatial.MeshBurial.State
 
             if (gizmos.drawTerrainHeights)
             {
-                var frameCount = Time.frameCount;
+                var frameCount = CoreClock.Instance.FrameCount;
                 
                 if (frameCount > _terrainFrameCountLastRender)
                 {

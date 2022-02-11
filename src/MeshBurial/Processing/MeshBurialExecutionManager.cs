@@ -16,6 +16,7 @@ using Appalachia.Spatial.MeshBurial.Processing.QueueItems;
 using Appalachia.Spatial.MeshBurial.State;
 using Appalachia.Utility.Async;
 using Appalachia.Utility.Strings;
+using Appalachia.Utility.Timing;
 using AwesomeTechnologies.VegetationStudio;
 using AwesomeTechnologies.VegetationSystem;
 using Unity.Collections;
@@ -250,10 +251,14 @@ namespace Appalachia.Spatial.MeshBurial.Processing
                     if ((queueDepth > _lastLogAt) ||
                         ((queueDepth != _lastLogAt) &&
                          (_LOG.Value > 0) &&
-                         ((Time.frameCount % _LOG.Value) == 0)))
+                         ((CoreClock.Instance.FrameCount % _LOG.Value) == 0)))
                     {
                         Context.Log.Info(
-                            ZString.Format("Mesh Burial Queue Depth: {0}  [{1}]", queueDepth, Time.frameCount)
+                            ZString.Format(
+                                "Mesh Burial Queue Depth: {0}  [{1}]",
+                                queueDepth,
+                                CoreClock.Instance.FrameCount
+                            )
                         );
                         _lastLogAt = queueDepth;
                     }
@@ -267,7 +272,10 @@ namespace Appalachia.Spatial.MeshBurial.Processing
                         if (_appliedAdjustments > 0)
                         {
                             Context.Log.Info(
-                                ZString.Format("Mesh Burial Queue Depth: 0  [{0}]", Time.frameCount)
+                                ZString.Format(
+                                    "Mesh Burial Queue Depth: 0  [{0}]",
+                                    CoreClock.Instance.FrameCount
+                                )
                             );
                         }
 

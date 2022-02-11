@@ -20,10 +20,10 @@ MonoBehaviour:
   array:
     _array: []
     _current:
-      _owner: {fileID: 0}
       _initializer:
         _tags: []
         _resetToken: 
+      _owner: {fileID: 0}
       _adoptTerrainNormal: 0
       _model: {fileID: 0}
       _modelHashCode: 0
@@ -31,27 +31,27 @@ MonoBehaviour:
   vegetation:
     _array: []
     _current:
-      _owner: {fileID: 0}
       _initializer:
         _tags: []
         _resetToken: 
+      _owner: {fileID: 0}
       _adoptTerrainNormal: 0
       _model: {fileID: 0}
       _modelHashCode: 0
   native:
     _array: []
     _current:
-      _owner: {fileID: 0}
       _initializer:
         _tags: []
         _resetToken: 
+      _owner: {fileID: 0}
       _adoptTerrainNormal: 0
       _model: {fileID: 0}
       _modelHashCode: 0
   gameObject:
     _array: []
     _current:
-      _owner: {fileID: 0}
       _initializer:
         _tags: []
         _resetToken: 
+      _owner: {fileID: 0}

@@ -8,7 +8,7 @@ using Appalachia.CI.Integration.FileSystem;
 using Appalachia.Core.Assets;
 using Appalachia.Core.Attributes;
 using Appalachia.Core.Attributes.Editing;
-using Appalachia.Core.Filtering;
+using Appalachia.Core.Objects.Filtering;
 using Appalachia.Core.Objects.Root;
 using Appalachia.Core.Preferences;
 using Appalachia.Core.Preferences.Globals;
@@ -27,6 +27,7 @@ using Appalachia.Utility.Colors;
 using Appalachia.Utility.Constants;
 using Appalachia.Utility.Extensions;
 using Appalachia.Utility.Strings;
+using Appalachia.Utility.Timing;
 using Sirenix.OdinInspector;
 using Unity.Mathematics;
 using Unity.Profiling;
@@ -39,6 +40,8 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data
     [CallStaticConstructorInEditor]
     public class DecomposedColliderData : AppalachiaObject<DecomposedColliderData>
     {
+        public event OnPostDecompose OnPostDecompose;
+
         #region Constants and Static Readonly
 
         public const string childName = "COLLIDERS";
@@ -140,12 +143,10 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data
 
         static DecomposedColliderData()
         {
-            
-            
             RegisterDependency<DecomposedColliderDataReview>(i => _decomposedColliderDataReview = i);
             RegisterDependency<PhysicsMaterialsCollection>(i => _physicsMaterialsCollection = i);
 
-            When.Behaviour<MeshObjectManager>().IsAvailableThen( i => _meshObjectManager = i);
+            When.Behaviour<MeshObjectManager>().IsAvailableThen(i => _meshObjectManager = i);
         }
 
         #region Preferences
@@ -231,56 +232,47 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data
         [DisableIf(nameof(locked))]
         public static PhysicMaterialLookupSelection swapToSelector;
 
-        private static readonly ProfilerMarker _PRF_ClampColliderIndex =
-            new(_PRF_PFX + nameof(ClampColliderIndex));
+        private static readonly ProfilerMarker _PRF_ApplyMaterials = new(_PRF_PFX + nameof(ApplyMaterials));
 
         private static readonly ProfilerMarker _PRF_CheckForMissingAssets =
             new(_PRF_PFX + nameof(CheckForMissingAssets));
 
-        private static readonly ProfilerMarker _PRF_GetSaveDirectory =
-            new(_PRF_PFX + nameof(GetSaveDirectory));
+        private static readonly ProfilerMarker _PRF_CheckOriginalMesh =
+            new(_PRF_PFX + nameof(CheckOriginalMesh));
+
+        private static readonly ProfilerMarker _PRF_ClampColliderIndex =
+            new(_PRF_PFX + nameof(ClampColliderIndex));
 
         private static readonly ProfilerMarker _PRF_ConfirmMeshNames =
             new(_PRF_PFX + nameof(ConfirmMeshNames));
 
-        private static readonly ProfilerMarker _PRF_CheckOriginalMesh =
-            new(_PRF_PFX + nameof(CheckOriginalMesh));
+        private static readonly ProfilerMarker _PRF_DecompositionRequired =
+            new(_PRF_PFX + nameof(DecompositionRequired));
 
-        private static readonly ProfilerMarker _PRF_GetOriginalMesh = new(_PRF_PFX + nameof(GetOriginalMesh));
         private static readonly ProfilerMarker _PRF_DeleteOldMeshes = new(_PRF_PFX + nameof(DeleteOldMeshes));
-
-        private static readonly ProfilerMarker _PRF_UpdateTransformData =
-            new(_PRF_PFX + nameof(UpdateTransformData));
-
-        private static readonly ProfilerMarker _PRF_Save = new(_PRF_PFX + nameof(Save));
-        private static readonly ProfilerMarker _PRF_ApplyMaterials = new(_PRF_PFX + nameof(ApplyMaterials));
         private static readonly ProfilerMarker _PRF_DeleteSelected = new(_PRF_PFX + nameof(DeleteSelected));
-
-        private static readonly ProfilerMarker _PRF_InitializeColliders =
-            new(_PRF_PFX + nameof(InitializeColliders));
 
         private static readonly ProfilerMarker _PRF_ExecuteDecompositionExplicit =
             new(_PRF_PFX + nameof(ExecuteDecompositionExplicit));
 
-        private static readonly ProfilerMarker _PRF_DecompositionRequired =
-            new(_PRF_PFX + nameof(DecompositionRequired));
-
         private static readonly ProfilerMarker _PRF_GenerateDecomposedMeshes =
             new(_PRF_PFX + nameof(GenerateDecomposedMeshes));
 
+        private static readonly ProfilerMarker _PRF_GetOriginalMesh = new(_PRF_PFX + nameof(GetOriginalMesh));
+
+        private static readonly ProfilerMarker _PRF_GetSaveDirectory =
+            new(_PRF_PFX + nameof(GetSaveDirectory));
+
+        private static readonly ProfilerMarker _PRF_InitializeColliders =
+            new(_PRF_PFX + nameof(InitializeColliders));
+
+        private static readonly ProfilerMarker _PRF_Save = new(_PRF_PFX + nameof(Save));
+
+        private static readonly ProfilerMarker _PRF_UpdateTransformData =
+            new(_PRF_PFX + nameof(UpdateTransformData));
+
         private static readonly ProfilerMarker _PRF_SetExternalModel =
             new(_PRF_PFX + nameof(SetExternalModel));
-
-        private static readonly ProfilerMarker _PRF_LoadExternalMeshes =
-            new(_PRF_PFX + nameof(LoadExternalMeshes));
-
-        private static readonly ProfilerMarker _PRF_SuggestExternal = new(_PRF_PFX + nameof(SuggestExternal));
-
-        private static readonly ProfilerMarker _PRF_ReplaceExternalModel =
-            new(_PRF_PFX + nameof(ReplaceExternalModel));
-
-        private static readonly ProfilerMarker _PRF_SelectReplacement =
-            new(_PRF_PFX + nameof(SelectReplacement));
 
         private static int _cacheFrameCount;
 
@@ -661,8 +653,6 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data
         private int _max_index => elements?.Count - 1 ?? 0;
 
         private ValueDropdownList<GameObject> _assets => DecomposedColliderSuggestionHelper.assets;
-
-        public event OnPostDecompose OnPostDecompose;
 
         public static string GetSaveDirectory(DecomposedCollider c, out string name)
         {
@@ -1389,8 +1379,8 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data
                 return;
             }
 
-            var frameCount = Time.frameCount;
-            if (Time.frameCount > _cacheFrameCount)
+            var frameCount = CoreClock.Instance.FrameCount;
+            if (CoreClock.Instance.FrameCount > _cacheFrameCount)
             {
                 _cachedSelections = UnityEditor.Selection.transforms;
                 _cacheFrameCount = frameCount;
@@ -2773,6 +2763,20 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data
             }
         }
 
+        #region Profiling
+
+        private static readonly ProfilerMarker _PRF_LoadExternalMeshes =
+            new(_PRF_PFX + nameof(LoadExternalMeshes));
+
+        private static readonly ProfilerMarker _PRF_ReplaceExternalModel =
+            new(_PRF_PFX + nameof(ReplaceExternalModel));
+
+        private static readonly ProfilerMarker _PRF_SelectReplacement =
+            new(_PRF_PFX + nameof(SelectReplacement));
+
+        private static readonly ProfilerMarker _PRF_SuggestExternal = new(_PRF_PFX + nameof(SuggestExternal));
+
+        #endregion
     }
 }
 

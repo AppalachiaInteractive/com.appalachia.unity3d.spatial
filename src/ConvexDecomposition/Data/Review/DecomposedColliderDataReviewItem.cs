@@ -21,17 +21,26 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data.Review
     [Serializable, HideReferenceObjectPicker]
     public class DecomposedColliderDataReviewItem : AppalachiaSimpleBase
     {
+        #region Fields and Autoproperties
+
         [HideInInspector] public DecomposedCollider dc;
 
-        [SmartTitle(_TITLE,  _SUBTITLE,  _TITLE,  _SUBTITLE,  false, true, titleColor: nameof(_titleColor))]
-        [SmartTitle(_TITLE2, _SUBTITLE2, _TITLE2, _SUBTITLE2, false, true, titleColor: nameof(reviewColor))]
+        [SmartTitle(_TITLE,  _SUBTITLE,  false, true, titleColor: nameof(_titleColor))]
+        [SmartTitle(_TITLE2, _SUBTITLE2, false, true, titleColor: nameof(reviewColor))]
         [PropertyOrder(0)]
         [SerializeField]
         [SmartLabel]
         [SmartInlineButton(nameof(SuggestExternal), "Suggest", false, false, _fbc, nameof(_disableSuggest))]
-        [SmartInlineButton(nameof(SyncExternal),    "Sync",    false, false, _fbc, nameof(_disableSyncExternal))]
-        [SmartInlineButton(nameof(Frame),           "Frame",   false, false, _fbc, nameof(_disableFrame))]
-        [SmartInlineButton(nameof(SelectComponent), "Select",  false, false, _fbc, nameof(_disableSelectComponent))]
+        [SmartInlineButton(nameof(SyncExternal),    "Sync", false, false, _fbc, nameof(_disableSyncExternal))]
+        [SmartInlineButton(nameof(Frame),           "Frame", false, false, _fbc, nameof(_disableFrame))]
+        [SmartInlineButton(
+            nameof(SelectComponent),
+            "Select",
+            false,
+            false,
+            _fbc,
+            nameof(_disableSelectComponent)
+        )]
         public DecomposedColliderData data;
 
         [PropertyOrder(1)]
@@ -51,24 +60,18 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data.Review
         [GUIColor(nameof(_modColor))]
         [PropertyOrder(200)]
         [PropertyRange(1, 64)]
-        [SmartInlineButton(nameof(ProcessAgain), "Process Again", false, false, nameof(_modColor), nameof(_disableProcessAgain))]
+        [SmartInlineButton(
+            nameof(ProcessAgain),
+            "Process Again",
+            false,
+            false,
+            nameof(_modColor),
+            nameof(_disableProcessAgain)
+        )]
         [SerializeField, SmartLabel]
         public int targetPieces;
 
-        [TabGroup(_TABS, _EXTERNAL, UseFixedHeight = true, Order = 20)]
-        [GUIColor(nameof(_modColor))]
-        [PropertyOrder(250)]
-        [ValueDropdown(nameof(assetsDropdown))]
-        [SmartInlineButton(nameof(SetExternalToSuggestion), "Replace", false, false, nameof(_modColor), nameof(_disableReplace))]
-        [SmartInlineButton(nameof(SuggestExternal),     "Suggest", false, false, nameof(_modColor), nameof(_disableSuggest))]
-        [SmartInlineButton(nameof(SelectReplacement),   "Select",  false, false, nameof(_modColor), nameof(_disableReplace))]
-        [ShowInInspector, HideDuplicateReferenceBox, HideReferenceObjectPicker, SmartLabel(Color = nameof(_modColor))]
-        [OnValueChanged(nameof(UpdateReplacementReview))]
-        public GameObject replacementModel
-        {
-            get => data.suggestedReplacementModel;
-            set => data.suggestedReplacementModel = value;
-        }
+        #endregion
 
         [TabGroup(_TABS, _EXTERNAL, UseFixedHeight = true, Order = 20)]
         [GUIColor(nameof(_modColor))]
@@ -89,7 +92,73 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data.Review
             set => data.replacementReview = value;
         }
 
-#region Helpers
+        [TabGroup(_TABS, _EXTERNAL, UseFixedHeight = true, Order = 20)]
+        [GUIColor(nameof(_modColor))]
+        [PropertyOrder(250)]
+        [ValueDropdown(nameof(assetsDropdown))]
+        [SmartInlineButton(
+            nameof(SetExternalToSuggestion),
+            "Replace",
+            false,
+            false,
+            nameof(_modColor),
+            nameof(_disableReplace)
+        )]
+        [SmartInlineButton(
+            nameof(SuggestExternal),
+            "Suggest",
+            false,
+            false,
+            nameof(_modColor),
+            nameof(_disableSuggest)
+        )]
+        [SmartInlineButton(
+            nameof(SelectReplacement),
+            "Select",
+            false,
+            false,
+            nameof(_modColor),
+            nameof(_disableReplace)
+        )]
+        [ShowInInspector, HideDuplicateReferenceBox, HideReferenceObjectPicker,
+         SmartLabel(Color = nameof(_modColor))]
+        [OnValueChanged(nameof(UpdateReplacementReview))]
+        public GameObject replacementModel
+        {
+            get => data.suggestedReplacementModel;
+            set => data.suggestedReplacementModel = value;
+        }
+
+        #region Profiling
+
+        private const string _PRF_PFX = nameof(DecomposedColliderDataReviewItem) + ".";
+
+        private static readonly ProfilerMarker
+            _PRF_ToString = new ProfilerMarker(_PRF_PFX + nameof(ToString));
+
+        private static readonly ProfilerMarker _PRF_SyncExternal =
+            new ProfilerMarker(_PRF_PFX + nameof(SyncExternal));
+
+        private static readonly ProfilerMarker _PRF_SuggestExternal =
+            new ProfilerMarker(_PRF_PFX + nameof(SuggestExternal));
+
+        private static readonly ProfilerMarker _PRF_ProcessAgain =
+            new ProfilerMarker(_PRF_PFX + nameof(ProcessAgain));
+
+        private static readonly ProfilerMarker _PRF_SelectComponent =
+            new ProfilerMarker(_PRF_PFX + nameof(SelectComponent));
+
+        private static readonly ProfilerMarker _PRF_Replace =
+            new ProfilerMarker(_PRF_PFX + nameof(SetExternalToSuggestion));
+
+        private static readonly ProfilerMarker _PRF_SelectReplacement =
+            new ProfilerMarker(_PRF_PFX + nameof(SelectReplacement));
+
+        private static readonly ProfilerMarker _PRF_Frame = new ProfilerMarker(_PRF_PFX + nameof(Frame));
+
+        #endregion
+
+        #region Helpers
 
         public void Reset()
         {
@@ -119,7 +188,10 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data.Review
 
         private void UpdateReplacementReview()
         {
-            DecomposedColliderSuggestionHelper.UpdateReplacementReview(ref data.replacementReview, replacementModel);
+            DecomposedColliderSuggestionHelper.UpdateReplacementReview(
+                ref data.replacementReview,
+                replacementModel
+            );
         }
 
         public void ProcessAgain()
@@ -183,14 +255,14 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data.Review
             }
         }
 
-#endregion
+        #endregion
 
-#region ToString
+        #region ToString
 
         private string _toString;
-        private static readonly ProfilerMarker _PRF_ToString = new ProfilerMarker(_PRF_PFX + nameof(ToString));
 
-        [DebuggerStepThrough] public override string ToString()
+        [DebuggerStepThrough]
+        public override string ToString()
         {
             using (_PRF_ToString.Auto())
             {
@@ -211,24 +283,9 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data.Review
             }
         }
 
-#endregion
+        #endregion
 
-#region Profiling
-
-        private const string _PRF_PFX = nameof(DecomposedColliderDataReviewItem) + ".";
-
-        private static readonly ProfilerMarker _PRF_SyncExternal = new ProfilerMarker(_PRF_PFX + nameof(SyncExternal));
-        private static readonly ProfilerMarker _PRF_SuggestExternal = new ProfilerMarker(_PRF_PFX + nameof(SuggestExternal));
-        private static readonly ProfilerMarker _PRF_ProcessAgain = new ProfilerMarker(_PRF_PFX + nameof(ProcessAgain));
-        private static readonly ProfilerMarker _PRF_SelectComponent = new ProfilerMarker(_PRF_PFX + nameof(SelectComponent));
-        private static readonly ProfilerMarker _PRF_Replace = new ProfilerMarker(_PRF_PFX + nameof(SetExternalToSuggestion));
-        private static readonly ProfilerMarker _PRF_SelectReplacement = new ProfilerMarker(_PRF_PFX + nameof(SelectReplacement));
-
-        private static readonly ProfilerMarker _PRF_Frame = new ProfilerMarker(_PRF_PFX + nameof(Frame));
-
-#endregion
-
-#region UI
+        #region UI
 
         private const string _TITLE = "$" + nameof(_title);
         private const string _SUBTITLE = "$" + nameof(_subtitle);
@@ -286,8 +343,16 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data.Review
 
         private bool _disableReplace => replacementModel == null;
         private bool _disableSelectComponent => dc == null;
-        private bool _disableSyncExternal => (dc == null) || (data == null) || !data.externallyCreated || (data.externalModel == null) || data.locked;
-        private bool _disableSuggest => (dc == null) || (data == null) || data.externallyCreated || (data.externalModel != null);
+
+        private bool _disableSyncExternal =>
+            (dc == null) ||
+            (data == null) ||
+            !data.externallyCreated ||
+            (data.externalModel == null) ||
+            data.locked;
+
+        private bool _disableSuggest =>
+            (dc == null) || (data == null) || data.externallyCreated || (data.externalModel != null);
 
         private bool _disableFrame => dc == null;
 
@@ -338,7 +403,7 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data.Review
             }
         }
 
-#endregion
+        #endregion
     }
 }
 

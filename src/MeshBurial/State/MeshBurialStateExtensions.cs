@@ -58,7 +58,7 @@ using (ASPECT.Many(ASPECT.Profile(), ASPECT.Trace()))
            
 using (ASPECT.Many(ASPECT.Profile(), ASPECT.Trace()))
             {
-                var startTime = Time.realtimeSinceStartup;
+                var startTime = CoreClock.Instance.RealtimeSinceStartup;
 
                 if (updateinitial.error)
                 {
@@ -254,7 +254,7 @@ using (ASPECT.Many(ASPECT.Profile(), ASPECT.Trace()))
                 proposed *= Matrix4x4.Translate(state.CalculateBurialAdjustment(proposed));
 
                 state.optimized.bestMatrix = proposed;
-                var endTime = Time.realtimeSinceStartup;
+                var endTime = CoreClock.Instance.RealtimeSinceStartup;
 
                 state.optimized.executionTime = endTime - startTime;
             }

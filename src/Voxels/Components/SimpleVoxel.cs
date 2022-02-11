@@ -2,7 +2,7 @@
 
 using System;
 using Appalachia.Core.Attributes.Editing;
-using Appalachia.Core.Filtering;
+using Appalachia.Core.Objects.Filtering;
 using Appalachia.Core.Objects.Initialization;
 using Appalachia.Core.Objects.Root;
 using Appalachia.Utility.Async;
@@ -131,9 +131,9 @@ namespace Appalachia.Spatial.Voxels.Components
             using (_PRF_RefreshChildCollections.Auto())
             {
                 _colliders = Transform.FilterComponentsFromChildren<Collider>()
-                                       .NoTriggers()
-                                       .ActiveOnly()
-                                       .RunFilter();
+                                      .NoTriggers()
+                                      .ActiveOnly()
+                                      .RunFilter();
                 _renderers = Transform.FilterComponentsFromChildren<MeshRenderer>().RunFilter();
             }
         }
