@@ -30,6 +30,7 @@ namespace Appalachia.Spatial.ConvexDecomposition.MeshCutting.Runtime
 
         #endregion
 
+        /// <inheritdoc />
         protected override async AppaTask Initialize(Initializer initializer)
         {
             await base.Initialize(initializer);
@@ -37,16 +38,24 @@ namespace Appalachia.Spatial.ConvexDecomposition.MeshCutting.Runtime
             meshCutter = new MeshCutter(256);
         }
 
+        /// <inheritdoc />
         protected override async AppaTask WhenDisabled()
         {
             await base.WhenDisabled();
-            lineRenderer.OnLineDrawn -= OnLineDrawn;
+            using (_PRF_WhenDisabled.Auto())
+            {
+                lineRenderer.OnLineDrawn -= OnLineDrawn;
+            }
         }
 
+        /// <inheritdoc />
         protected override async AppaTask WhenEnabled()
         {
             await base.WhenEnabled();
-            lineRenderer.OnLineDrawn += OnLineDrawn;
+            using (_PRF_WhenEnabled.Auto())
+            {
+                lineRenderer.OnLineDrawn += OnLineDrawn;
+            }
         }
 
         #region Utility Functions
@@ -222,12 +231,6 @@ namespace Appalachia.Spatial.ConvexDecomposition.MeshCutting.Runtime
                 SeparateMeshes(positive, negative, normal);
             }
         }
-
-        #region Profiling
-
-        
-
-        #endregion
     }
 }
 

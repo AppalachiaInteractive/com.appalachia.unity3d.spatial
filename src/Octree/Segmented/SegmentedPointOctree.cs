@@ -28,14 +28,22 @@ namespace Appalachia.Spatial.Octree.Segmented
         {
         }
 
+        /// <inheritdoc />
         protected override PointOctree<T> CreateFromVectors(
             OctreeStyle style,
             Vector3 position,
             Vector3 size,
             int depth)
         {
-            return new(style, position, size, _maxDepth, _initialCapacity,
-                _capacityIncreaseMultiplier, depth);
+            return new(
+                style,
+                position,
+                size,
+                _maxDepth,
+                _initialCapacity,
+                _capacityIncreaseMultiplier,
+                depth
+            );
         }
     }
 }

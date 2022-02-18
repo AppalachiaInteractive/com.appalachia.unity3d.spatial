@@ -42,6 +42,7 @@ namespace Appalachia.Spatial.ConvexDecomposition.MeshCutting.Runtime
             cameraOrbit.target = Instantiate(SelectedObject, ObjectContainer).transform;
         }
 
+        /// <inheritdoc />
         protected override async AppaTask Initialize(Initializer initializer)
         {
             await base.Initialize(initializer);
@@ -51,12 +52,6 @@ namespace Appalachia.Spatial.ConvexDecomposition.MeshCutting.Runtime
 
             cameraOrbit = FindObjectOfType<CameraOrbit>();
         }
-
-        #region Profiling
-
-        
-
-        #endregion
     }
 }
 

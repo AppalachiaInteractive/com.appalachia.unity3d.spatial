@@ -27,7 +27,7 @@ namespace Appalachia.Spatial.Terrains
     {
         static TerrainMetadataComponent()
         {
-            When.Behaviour<TerrainMetadataManager>().IsAvailableThen( i => _terrainMetadataManager = i);
+            When.Behaviour<TerrainMetadataManager>().IsAvailableThen(i => _terrainMetadataManager = i);
         }
 
         #region Static Fields and Autoproperties
@@ -105,6 +105,7 @@ namespace Appalachia.Spatial.Terrains
             }
         }
 
+        /// <inheritdoc />
         protected override async AppaTask WhenDisabled()
         {
             await base.WhenDisabled();
@@ -120,6 +121,7 @@ namespace Appalachia.Spatial.Terrains
             }
         }
 
+        /// <inheritdoc />
         protected override async AppaTask WhenEnabled()
         {
             await base.WhenEnabled();

@@ -22,8 +22,10 @@ namespace Appalachia.Spatial.Voxels.Persistence
         where TRaycastHit : struct, IVoxelRaycastHit
         where TThis : VoxelDataStoreLookup<TVoxelData, TRaycastHit, TThis, TLookup, TValue, TValueList>
     {
+        /// <inheritdoc />
         public override bool HasDefault => false;
 
+        /// <inheritdoc />
         protected override string GetUniqueKeyFromValue(TValue value)
         {
             return value.identifier;

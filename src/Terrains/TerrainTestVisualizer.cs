@@ -7,15 +7,33 @@ using UnityEngine;
 
 namespace Appalachia.Spatial.Terrains
 {
-    public class TerrainTestVisualizer : InstancedIndirectHeightmapMapVisualization
+    public sealed class
+        TerrainTestVisualizer : InstancedIndirectHeightmapMapVisualization<TerrainTestVisualizer>
     {
+        #region Fields and Autoproperties
+
         [OnValueChanged(nameof(SetupTerrainTexture))]
         public Terrain terrain;
 
-        protected override bool ShouldRegenerate => false;
+        #endregion
 
+        /// <inheritdoc />
         protected override bool CanGenerate => terrain != null;
 
+        /// <inheritdoc />
+        protected override bool ShouldRegenerate => false;
+
+        /// <inheritdoc />
+        protected override void GetVisualizationInfo(
+            Vector3 position,
+            out Quaternion rotation,
+            out Vector3 scale)
+        {
+            rotation = quaternion.identity;
+            scale = Vector3.one * visualizationSize;
+        }
+
+        /// <inheritdoc />
         protected override void PrepareInitialGeneration()
         {
             if (terrain == null)
@@ -24,6 +42,7 @@ namespace Appalachia.Spatial.Terrains
             }
         }
 
+        /// <inheritdoc />
         protected override void PrepareSubsequentGenerations()
         {
             if (terrain == null)
@@ -41,15 +60,6 @@ namespace Appalachia.Spatial.Terrains
 
             texture = terrain.terrainData.heightmapTexture.ToTexture2D();
             Transform.position = terrain.transform.position;
-        }
-
-        protected override void GetVisualizationInfo(
-            Vector3 position,
-            out Quaternion rotation,
-            out Vector3 scale)
-        {
-            rotation = quaternion.identity;
-            scale = Vector3.one * visualizationSize;
         }
     }
 }

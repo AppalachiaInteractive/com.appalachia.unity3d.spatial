@@ -43,17 +43,21 @@ namespace Appalachia.Spatial.MeshBurial.State
             }
         }
 
+        /// <inheritdoc />
         protected override async AppaTask WhenEnabled()
         {
             await base.WhenEnabled();
 
-            if (_state == null)
+            using (_PRF_WhenEnabled.Auto())
             {
-                _state = new MeshBurialSharedStateLookup();
-                MarkAsModified();
-            }
+                if (_state == null)
+                {
+                    _state = new MeshBurialSharedStateLookup();
+                    MarkAsModified();
+                }
 
-            _state.SetSerializationOwner(this);
+                _state.SetSerializationOwner(this);
+            }
         }
     }
 }

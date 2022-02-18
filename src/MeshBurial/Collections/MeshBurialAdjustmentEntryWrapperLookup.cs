@@ -24,30 +24,27 @@ namespace Appalachia.Spatial.MeshBurial.Collections
     )]
     [HideReferenceObjectPicker]
     public class MeshBurialAdjustmentEntryWrapperLookup : AppaLookup<Matrix4x4Key,
-        MeshBurialAdjustmentEntryWrapper, AppaList_Matrix4x4Key,
-        AppaList_MeshBurialAdjustmentEntryWrapper>
+        MeshBurialAdjustmentEntryWrapper, AppaList_Matrix4x4Key, AppaList_MeshBurialAdjustmentEntryWrapper>
     {
+        /// <inheritdoc />
         protected override bool ShouldDisplayTitle => true;
 
-        protected override string GetDisplayTitle(
-            Matrix4x4Key key,
-            MeshBurialAdjustmentEntryWrapper value)
+        /// <inheritdoc />
+        protected override Color GetDisplayColor(Matrix4x4Key key, MeshBurialAdjustmentEntryWrapper value)
         {
-            return key.ToString();
+            return Color.white;
         }
 
-        protected override string GetDisplaySubtitle(
-            Matrix4x4Key key,
-            MeshBurialAdjustmentEntryWrapper value)
+        /// <inheritdoc />
+        protected override string GetDisplaySubtitle(Matrix4x4Key key, MeshBurialAdjustmentEntryWrapper value)
         {
             return value.ToString();
         }
 
-        protected override Color GetDisplayColor(
-            Matrix4x4Key key,
-            MeshBurialAdjustmentEntryWrapper value)
+        /// <inheritdoc />
+        protected override string GetDisplayTitle(Matrix4x4Key key, MeshBurialAdjustmentEntryWrapper value)
         {
-            return Color.white;
+            return key.ToString();
         }
     }
 }

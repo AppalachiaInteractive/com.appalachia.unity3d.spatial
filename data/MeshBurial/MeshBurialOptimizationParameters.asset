@@ -17,6 +17,11 @@ MonoBehaviour:
   _initializer:
     _tags: []
     _resetToken: 
+  _objectId:
+    _increment: 0
+    _machine: 0
+    _timestamp: 0
+    _pid: 0
   optimizerType: 3
   xzDegreeAdjustment: 30
   xzDegreeAdjustmentMinimal: 8

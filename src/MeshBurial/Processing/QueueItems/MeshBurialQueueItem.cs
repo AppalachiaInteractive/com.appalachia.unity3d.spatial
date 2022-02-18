@@ -48,6 +48,7 @@ namespace Appalachia.Spatial.MeshBurial.Processing.QueueItems
 
         //public abstract int[] GetAllTerrainHashCodes();
 
+        /// <inheritdoc />
         [DebuggerStepThrough]
         public abstract override string ToString();
 

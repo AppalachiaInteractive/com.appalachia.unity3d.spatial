@@ -215,6 +215,7 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data
                    (index == other.index);
         }
 
+        /// <inheritdoc />
         [DebuggerStepThrough]
         public override bool Equals(object obj)
         {
@@ -236,6 +237,7 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data
             return Equals((DecomposedColliderElement)obj);
         }
 
+        /// <inheritdoc />
         [DebuggerStepThrough]
         public override int GetHashCode()
         {

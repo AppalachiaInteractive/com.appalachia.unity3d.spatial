@@ -79,6 +79,7 @@ namespace Appalachia.Spatial.ConvexDecomposition.MeshCutting.Runtime
             return Mathf.Clamp(angle, min, max);
         }
 
+        /// <inheritdoc />
         protected override async AppaTask Initialize(Initializer initializer)
         {
             await base.Initialize(initializer);
@@ -97,12 +98,6 @@ namespace Appalachia.Spatial.ConvexDecomposition.MeshCutting.Runtime
                 fixedPosition = target.position;
             }
         }
-
-        #region Profiling
-
-        
-
-        #endregion
     }
 }
 

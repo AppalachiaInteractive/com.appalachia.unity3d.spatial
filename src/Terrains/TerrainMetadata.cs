@@ -213,6 +213,7 @@ namespace Appalachia.Spatial.Terrains
             }
         }
 
+        /// <inheritdoc />
         protected override async AppaTask Initialize(Initializer initializer)
         {
             await base.Initialize(initializer);
@@ -245,19 +246,20 @@ namespace Appalachia.Spatial.Terrains
 
         #region Profiling
 
+        private static readonly ProfilerMarker _PRF_CheckHeights = new(_PRF_PFX + nameof(CheckHeights));
+
+        private static readonly ProfilerMarker _PRF_GetFoleyIndexAtPosition =
+            new(_PRF_PFX + nameof(GetFoleyIndexAtPosition));
+
+        private static readonly ProfilerMarker _PRF_GetSplatIndexAtPosition =
+            new(_PRF_PFX + nameof(GetSplatIndexAtPosition));
+
+        private static readonly ProfilerMarker _PRF_InitializeFoley = new(_PRF_PFX + nameof(InitializeFoley));
 
         private static readonly ProfilerMarker _PRF_InitializeTerrain =
             new ProfilerMarker(_PRF_PFX + nameof(InitializeTerrain));
 
         private static readonly ProfilerMarker _PRF_OnEnable = new(_PRF_PFX + nameof(OnEnable));
-        private static readonly ProfilerMarker _PRF_InitializeFoley = new(_PRF_PFX + nameof(InitializeFoley));
-        private static readonly ProfilerMarker _PRF_CheckHeights = new(_PRF_PFX + nameof(CheckHeights));
-
-        private static readonly ProfilerMarker _PRF_GetSplatIndexAtPosition =
-            new(_PRF_PFX + nameof(GetSplatIndexAtPosition));
-
-        private static readonly ProfilerMarker _PRF_GetFoleyIndexAtPosition =
-            new(_PRF_PFX + nameof(GetFoleyIndexAtPosition));
 
         #endregion
     }

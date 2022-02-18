@@ -14,25 +14,22 @@ namespace Appalachia.Spatial.Voxels.Gizmos
     public class VoxelDataGizmoSettingsLookup : AppaLookup<VoxelDataGizmoStyle, VoxelDataGizmoSettings,
         VoxelDataGizmoStyleList, VoxelDataGizmoSettingsList>
     {
-        protected override string GetDisplayTitle(
-            VoxelDataGizmoStyle key,
-            VoxelDataGizmoSettings value)
+        /// <inheritdoc />
+        protected override Color GetDisplayColor(VoxelDataGizmoStyle key, VoxelDataGizmoSettings value)
         {
-            return key.ToString();
+            return Color.white;
         }
 
-        protected override string GetDisplaySubtitle(
-            VoxelDataGizmoStyle key,
-            VoxelDataGizmoSettings value)
+        /// <inheritdoc />
+        protected override string GetDisplaySubtitle(VoxelDataGizmoStyle key, VoxelDataGizmoSettings value)
         {
             return value.name;
         }
 
-        protected override Color GetDisplayColor(
-            VoxelDataGizmoStyle key,
-            VoxelDataGizmoSettings value)
+        /// <inheritdoc />
+        protected override string GetDisplayTitle(VoxelDataGizmoStyle key, VoxelDataGizmoSettings value)
         {
-            return Color.white;
+            return key.ToString();
         }
     }
 }

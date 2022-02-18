@@ -16,8 +16,6 @@ namespace Appalachia.Spatial.MeshBurial.Processing.QueueItems
     [Serializable]
     public class MeshBurialNativeQueueItem : MeshBurialManySameQueueItem
     {
-        private NativeList<float4x4> _matrices;
-
         public MeshBurialNativeQueueItem(
             GameObject model,
             NativeList<float4x4> matrices,
@@ -31,8 +29,34 @@ namespace Appalachia.Spatial.MeshBurial.Processing.QueueItems
             _matrices = matrices;
         }
 
+        #region Fields and Autoproperties
+
+        private NativeList<float4x4> _matrices;
+
+        #endregion
+
+        /// <inheritdoc />
+        public override void GetAllMatrices(NativeList<float4x4> matrices)
+        {
+            matrices.AddRange(_matrices);
+        }
+
+        /// <inheritdoc />
+        public override void SetAllMatrices(NativeArray<float4x4> matrices)
+        {
+            _matrices.Clear();
+            _matrices.AddRange(matrices);
+        }
+
+        [DebuggerStepThrough]
+        public override string ToString()
+        {
+            return name;
+        }
+
         /*
-        protected override bool TryGetMatrixInternal(int i, out float4x4 matrix)
+        /// <inheritdoc />
+protected override bool TryGetMatrixInternal(int i, out float4x4 matrix)
         {
             if (i >= _matrices.Length)
             {
@@ -44,34 +68,21 @@ namespace Appalachia.Spatial.MeshBurial.Processing.QueueItems
             return true;
         }
 
-        protected override void SetMatrixInternal(int i, float4x4 m)
+        /// <inheritdoc />
+protected override void SetMatrixInternal(int i, float4x4 m)
         {
             _matrices[i] = m;
         }*/
 
+        /// <inheritdoc />
         protected override float GetDegreeAdjustmentStrengthInternal()
         {
             return 1.0f;
         }
 
+        /// <inheritdoc />
         protected override void OnCompleteInternal()
         {
-        }
-
-        public override void GetAllMatrices(NativeList<float4x4> matrices)
-        {
-            matrices.AddRange(_matrices);
-        }
-
-        public override void SetAllMatrices(NativeArray<float4x4> matrices)
-        {
-            _matrices.Clear();
-            _matrices.AddRange(matrices);
-        }
-
-        [DebuggerStepThrough] public override string ToString()
-        {
-            return name;
         }
     }
 }

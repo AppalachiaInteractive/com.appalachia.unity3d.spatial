@@ -91,6 +91,7 @@ namespace Appalachia.Spatial.Voxels.Components
             }
         }
 
+        /// <inheritdoc />
         protected override async AppaTask Initialize(Initializer initializer)
         {
             await base.Initialize(initializer);
@@ -105,6 +106,7 @@ namespace Appalachia.Spatial.Voxels.Components
 #endif
         }
 
+        /// <inheritdoc />
         protected override async AppaTask WhenDestroyed()
         {
             await base.WhenDestroyed();
@@ -115,6 +117,7 @@ namespace Appalachia.Spatial.Voxels.Components
             }
         }
 
+        /// <inheritdoc />
         protected override async AppaTask WhenDisabled()
         {
             await base.WhenDisabled();

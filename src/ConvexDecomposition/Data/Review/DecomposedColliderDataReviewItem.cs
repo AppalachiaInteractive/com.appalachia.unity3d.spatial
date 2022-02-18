@@ -261,6 +261,7 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data.Review
 
         private string _toString;
 
+        /// <inheritdoc />
         [DebuggerStepThrough]
         public override string ToString()
         {

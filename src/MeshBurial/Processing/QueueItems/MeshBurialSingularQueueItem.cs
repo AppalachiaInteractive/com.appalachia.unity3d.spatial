@@ -60,26 +60,31 @@ namespace Appalachia.Spatial.MeshBurial.Processing.QueueItems
 
         #endregion
 
+        /// <inheritdoc />
         protected override bool GetAdoptTerrainNormalInternal()
         {
             return _adoptTerrainNormal;
         }
 
+        /// <inheritdoc />
         protected override MeshBurialAdjustmentState GetMeshBurialAdjustmentStateInternal()
         {
             return _adjustmentState;
         }
 
+        /// <inheritdoc />
         protected override MeshBurialSharedState GetMeshBurialSharedStateInternal()
         {
             return _sharedState;
         }
 
+        /// <inheritdoc />
         protected override int GetModelHashCodeInternal()
         {
             return _hashCode;
         }
 
+        /// <inheritdoc />
         protected override void OnInitializeInternal()
         {
         }

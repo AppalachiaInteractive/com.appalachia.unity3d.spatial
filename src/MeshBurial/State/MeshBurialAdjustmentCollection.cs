@@ -102,12 +102,13 @@ namespace Appalachia.Spatial.MeshBurial.State
             }
         }
 
+        /// <inheritdoc />
         protected override async AppaTask WhenEnabled()
         {
+            await base.WhenEnabled();
+
             using (_PRF_WhenEnabled.Auto())
             {
-                await base.WhenEnabled();
-
                 if (_state == null)
                 {
                     _state = new MeshBurialAdjustmentStateLookup();

@@ -57,11 +57,13 @@ namespace Appalachia.Spatial.MeshBurial.Processing.QueueItems
 
         #endregion
 
+        /// <inheritdoc />
         protected override bool GetAdoptTerrainNormalInternal()
         {
             return _adoptTerrainNormal;
         }
 
+        /// <inheritdoc />
         protected override MeshBurialAdjustmentState GetMeshBurialAdjustmentStateInternal()
         {
             if (_adjustmentState == null)
@@ -72,6 +74,7 @@ namespace Appalachia.Spatial.MeshBurial.Processing.QueueItems
             return _adjustmentState;
         }
 
+        /// <inheritdoc />
         protected override MeshBurialSharedState GetMeshBurialSharedStateInternal()
         {
             if (_sharedState == null)
@@ -82,11 +85,13 @@ namespace Appalachia.Spatial.MeshBurial.Processing.QueueItems
             return _sharedState;
         }
 
+        /// <inheritdoc />
         protected override int GetModelHashCodeInternal()
         {
             return _modelHashCode;
         }
 
+        /// <inheritdoc />
         protected override void OnInitializeInternal()
         {
             using (_PRF_OnInitializeInternal.Auto())

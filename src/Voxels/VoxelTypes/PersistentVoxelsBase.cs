@@ -29,13 +29,16 @@ namespace Appalachia.Spatial.Voxels.VoxelTypes
 
         #endregion
 
+        /// <inheritdoc />
         public override bool IsPersistent => true;
 
+        /// <inheritdoc />
         public override void InitializeDataStore()
         {
-            dataStore.Record((TVoxelData) this);
+            dataStore.Record((TVoxelData)this);
         }
 
+        /// <inheritdoc />
         public override void OnInitialize()
         {
 #if UNITY_EDITOR
@@ -52,7 +55,7 @@ namespace Appalachia.Spatial.Voxels.VoxelTypes
             MeshRenderer[] renderers,
             float activeRatio = 1.0f)
         {
-            dataStore.Restore((TVoxelData) this);
+            dataStore.Restore((TVoxelData)this);
             _transform = transform;
             this.colliders = colliders;
             this.renderers = renderers;

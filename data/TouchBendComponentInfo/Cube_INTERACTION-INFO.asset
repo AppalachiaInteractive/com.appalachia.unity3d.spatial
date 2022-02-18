@@ -17,6 +17,11 @@ MonoBehaviour:
   _initializer:
     _tags: []
     _resetToken: 
+  _objectId:
+    _increment: 0
+    _machine: 0
+    _timestamp: 0
+    _pid: 0
   texture: {fileID: 2800000, guid: 8f122c99c9cdd6b47989946b32dcd712, type: 3}
   size: 1.7320508
   offset: 0

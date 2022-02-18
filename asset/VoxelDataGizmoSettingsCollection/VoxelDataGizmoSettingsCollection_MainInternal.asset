@@ -17,7 +17,25 @@ MonoBehaviour:
   _initializer:
     _tags: []
     _resetToken: 
+  _objectId:
+    _increment: 0
+    _machine: 0
+    _timestamp: 0
+    _pid: 0
   _defaultValue: {fileID: 0}
   _items:
     initializerCount: 64
     _object: {fileID: 11400000}
+    keys:
+      _capacityIncreaseMultiplier: 2
+      _values: 0a0000000000000014000000
+      noTracking: 0
+      _count: 3
+    values:
+      _capacityIncreaseMultiplier: 2
+      _values:
+      - {fileID: 11400000, guid: ddca9169facb3f64ba76d7688957116e, type: 2}
+      - {fileID: 11400000, guid: 4cc98b533c5d9e44aa757536b577e77f, type: 2}
+      - {fileID: 11400000, guid: 43de81fae138d2a4f9f65e6e4ff3cd73, type: 2}
+      noTracking: 0
+      _count: 3

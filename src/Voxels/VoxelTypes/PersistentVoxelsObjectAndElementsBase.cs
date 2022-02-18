@@ -12,23 +12,51 @@ using UnityEngine;
 
 namespace Appalachia.Spatial.Voxels.VoxelTypes
 {
+    [Serializable]
     public abstract class
         PersistentVoxelsObjectAndElementsBase<TVoxelData, TDataStore, TObject, TElement> :
             PersistentVoxelsBase<TVoxelData, TDataStore, VoxelRaycastHit<TElement>>
-        where TVoxelData : PersistentVoxelsObjectAndElementsBase<TVoxelData, TDataStore, TObject,
+        where TVoxelData : PersistentVoxelsObjectAndElementsBase<TVoxelData, TDataStore, TObject, TElement>
+        where TDataStore : VoxelPersistentObjectAndElementsDataStore<TVoxelData, TDataStore, TObject,
             TElement>
-        where TDataStore : VoxelPersistentObjectAndElementsDataStore<TVoxelData, TDataStore, TObject
-            , TElement>
         where TObject : IVoxelsInit, new()
         where TElement : struct
     {
-        [NonSerialized] public NativeArray<TElement> elementDatas;
-        [NonSerialized] public TObject objectData;
-
         protected PersistentVoxelsObjectAndElementsBase(string identifier) : base(identifier)
         {
         }
 
+        #region Fields and Autoproperties
+
+        [NonSerialized] public NativeArray<TElement> elementDatas;
+        [NonSerialized] public TObject objectData;
+
+        #endregion
+
+        public static TVoxelData Voxelize(
+            TVoxelData instance,
+            VoxelPopulationStyle style,
+            Transform t,
+            Collider[] c,
+            MeshRenderer[] r,
+            float3 res)
+        {
+            return Voxelizer.Voxelize<TVoxelData, VoxelRaycastHit<TElement>>(instance, t, style, c, r, res);
+        }
+
+        public static TVoxelData VoxelizeSingle(TVoxelData instance, Transform t, Bounds b, float3 p)
+        {
+            return Voxelizer.VoxelizeSingle<TVoxelData, VoxelRaycastHit<TElement>>(instance, t, b, p);
+        }
+
+        /// <inheritdoc />
+        public override void InitializeElements(int elementCount)
+        {
+            base.InitializeElements(elementCount);
+            elementDatas = new NativeArray<TElement>(elementCount, Allocator.Persistent);
+        }
+
+        /// <inheritdoc />
         public override void OnInitialize()
         {
             base.OnInitialize();
@@ -41,20 +69,7 @@ namespace Appalachia.Spatial.Voxels.VoxelTypes
             objectData.Initialize();
         }
 
-        public override void InitializeElements(int elementCount)
-        {
-            base.InitializeElements(elementCount);
-            elementDatas = new NativeArray<TElement>(elementCount, Allocator.Persistent);
-        }
-
-        protected override VoxelRaycastHit<TElement> PrepareRaycastHit(
-            int voxelIndex,
-            Voxel voxel,
-            float distance)
-        {
-            return new() {data = elementDatas[voxelIndex], voxel = voxel, distance = distance};
-        }
-
+        /// <inheritdoc />
         protected override void Dispose(bool disposing)
         {
             if (disposing)
@@ -71,36 +86,13 @@ namespace Appalachia.Spatial.Voxels.VoxelTypes
             }
         }
 
-        public static TVoxelData VoxelizeSingle(
-            TVoxelData instance,
-            Transform t,
-            Bounds b,
-            float3 p)
+        /// <inheritdoc />
+        protected override VoxelRaycastHit<TElement> PrepareRaycastHit(
+            int voxelIndex,
+            Voxel voxel,
+            float distance)
         {
-            return Voxelizer.VoxelizeSingle<TVoxelData, VoxelRaycastHit<TElement>>(
-                instance,
-                t,
-                b,
-                p
-            );
-        }
-
-        public static TVoxelData Voxelize(
-            TVoxelData instance,
-            VoxelPopulationStyle style,
-            Transform t,
-            Collider[] c,
-            MeshRenderer[] r,
-            float3 res)
-        {
-            return Voxelizer.Voxelize<TVoxelData, VoxelRaycastHit<TElement>>(
-                instance,
-                t,
-                style,
-                c,
-                r,
-                res
-            );
+            return new() { data = elementDatas[voxelIndex], voxel = voxel, distance = distance };
         }
     }
 }

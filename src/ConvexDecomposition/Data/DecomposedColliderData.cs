@@ -1673,6 +1673,7 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data
             ApplyMaterials();
         }
 
+        /// <inheritdoc />
         protected override async AppaTask WhenDestroyed()
         {
             await base.WhenDestroyed();
@@ -1685,92 +1686,96 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data
             _meshObject = default;
         }
 
+        /// <inheritdoc />
         protected override async AppaTask WhenEnabled()
         {
             await base.WhenEnabled();
-            modelSelector = LookupSelectionGenerator.CreatePhysicMaterialSelector(
-                AssignMaterialModel,
-                ColorPrefs.Instance.DecomposedColliderSelectorModel
-            );
-            swapFromSelector = LookupSelectionGenerator.CreatePhysicMaterialSelector(
-                mat => swapFrom = mat,
-                ColorPrefs.Instance.DecomposedColliderSelectorSwap
-            );
-            swapToSelector = LookupSelectionGenerator.CreatePhysicMaterialSelector(
-                mat => swapTo = mat,
-                ColorPrefs.Instance.DecomposedColliderSelectorSwap
-            );
-            assignSelector = LookupSelectionGenerator.CreatePhysicMaterialSelector(
-                AssignMaterialToSelected,
-                ColorPrefs.Instance.DecomposedColliderSelectorAssign
-            );
-            assignAllSelector = LookupSelectionGenerator.CreatePhysicMaterialSelector(
-                AssignMaterialToAll,
-                ColorPrefs.Instance.DecomposedColliderSelectorAssignAll
-            );
-
-            InitializeLogging();
-
-            if (materialModel == null)
+            using (_PRF_WhenEnabled.Auto())
             {
-                AssignMaterialModel(elements.MostFrequent(p => p.material));
-            }
+                modelSelector = LookupSelectionGenerator.CreatePhysicMaterialSelector(
+                    AssignMaterialModel,
+                    ColorPrefs.Instance.DecomposedColliderSelectorModel
+                );
+                swapFromSelector = LookupSelectionGenerator.CreatePhysicMaterialSelector(
+                    mat => swapFrom = mat,
+                    ColorPrefs.Instance.DecomposedColliderSelectorSwap
+                );
+                swapToSelector = LookupSelectionGenerator.CreatePhysicMaterialSelector(
+                    mat => swapTo = mat,
+                    ColorPrefs.Instance.DecomposedColliderSelectorSwap
+                );
+                assignSelector = LookupSelectionGenerator.CreatePhysicMaterialSelector(
+                    AssignMaterialToSelected,
+                    ColorPrefs.Instance.DecomposedColliderSelectorAssign
+                );
+                assignAllSelector = LookupSelectionGenerator.CreatePhysicMaterialSelector(
+                    AssignMaterialToAll,
+                    ColorPrefs.Instance.DecomposedColliderSelectorAssignAll
+                );
 
-            if (settings == default)
-            {
-                settings = ConvexMeshSettings.Default();
+                InitializeLogging();
 
-                migrated = true;
+                if (materialModel == null)
+                {
+                    AssignMaterialModel(elements.MostFrequent(p => p.material));
+                }
 
-                MarkAsModified();
-            }
+                if (settings == default)
+                {
+                    settings = ConvexMeshSettings.Default();
 
-            if (locked)
-            {
-                return;
-            }
+                    migrated = true;
+
+                    MarkAsModified();
+                }
+
+                if (locked)
+                {
+                    return;
+                }
 
 #pragma warning disable 612
 
-            var noElements = (elements == null) || (elements.Count == 0);
-            var hasOldPieces = (pieces != null) && (pieces.Count > 0);
+                var noElements = (elements == null) || (elements.Count == 0);
+                var hasOldPieces = (pieces != null) && (pieces.Count > 0);
 
-            if (noElements && hasOldPieces && !_migratedPieces)
-            {
-                if (elements == null)
+                if (noElements && hasOldPieces && !_migratedPieces)
                 {
-                    elements = new List<DecomposedColliderElement>();
-                }
-
-                _migratedPieces = true;
-
-                var newIndex = 0;
-
-                for (var i = 0; i < pieces.Count; i++)
-                {
-                    var piece = pieces[i];
-                    if (piece == null)
+                    if (elements == null)
                     {
-                        continue;
+                        elements = new List<DecomposedColliderElement>();
                     }
 
-                    var element =
-                        new DecomposedColliderElement(piece.mesh, piece.material, piece.externalMesh)
+                    _migratedPieces = true;
+
+                    var newIndex = 0;
+
+                    for (var i = 0; i < pieces.Count; i++)
+                    {
+                        var piece = pieces[i];
+                        if (piece == null)
                         {
-                            index = newIndex
-                        };
+                            continue;
+                        }
 
-                    newIndex += 1;
+                        var element = new DecomposedColliderElement(
+                            piece.mesh,
+                            piece.material,
+                            piece.externalMesh
+                        ) { index = newIndex };
 
-                    if (element.material == null)
-                    {
-                        element.material = materialModel;
+                        newIndex += 1;
+
+                        if (element.material == null)
+                        {
+                            element.material = materialModel;
+                        }
+
+                        elements.Add(element);
                     }
-
-                    elements.Add(element);
                 }
-            }
 #pragma warning restore 612
+            }
         }
 
         private static void ExecuteGenerationIteration(

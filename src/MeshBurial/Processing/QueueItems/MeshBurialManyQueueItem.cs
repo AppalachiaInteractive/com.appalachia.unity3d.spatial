@@ -19,6 +19,7 @@ namespace Appalachia.Spatial.MeshBurial.Processing.QueueItems
         {
         }
 
+        /// <inheritdoc />
         protected override void OnInitializeInternal()
         {
         }

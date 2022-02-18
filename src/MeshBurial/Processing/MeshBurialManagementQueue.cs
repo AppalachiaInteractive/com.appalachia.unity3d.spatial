@@ -39,6 +39,7 @@ namespace Appalachia.Spatial.MeshBurial.Processing
 
         public int Count => vegetation.Count + native.Count + array.Count + gameObject.Count; // +
 
+        /// <inheritdoc />
         protected override async AppaTask Initialize(Initializer initializer)
         {
             await base.Initialize(initializer);
@@ -112,8 +113,6 @@ namespace Appalachia.Spatial.MeshBurial.Processing
         #endregion
 
         #region Profiling
-
-        
 
         private static readonly ProfilerMarker _PRF_ClearQueues = new(_PRF_PFX + nameof(ClearQueues));
 

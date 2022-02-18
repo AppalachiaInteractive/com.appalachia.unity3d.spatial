@@ -205,6 +205,7 @@ namespace Appalachia.Spatial.MeshBurial.State
             }
         }
 
+        /// <inheritdoc />
         protected override async AppaTask Initialize(Initializer initializer)
         {
             await base.Initialize(initializer);
@@ -212,11 +213,12 @@ namespace Appalachia.Spatial.MeshBurial.State
             InitializeLookup();
         }
 
+        /// <inheritdoc />
         protected override async AppaTask WhenDisabled()
         {
+            await base.WhenDisabled();
             using (_PRF_WhenDisabled.Auto())
             {
-                await base.WhenDisabled();
                 _nativeAdjustments.SafeDispose();
             }
         }

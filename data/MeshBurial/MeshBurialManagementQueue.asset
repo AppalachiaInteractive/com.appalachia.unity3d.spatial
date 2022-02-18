@@ -17,6 +17,11 @@ MonoBehaviour:
   _initializer:
     _tags: []
     _resetToken: 
+  _objectId:
+    _increment: 0
+    _machine: 0
+    _timestamp: 0
+    _pid: 0
   array:
     _array: []
     _current:
@@ -24,6 +29,11 @@ MonoBehaviour:
         _tags: []
         _resetToken: 
       _owner: {fileID: 0}
+      _objectId:
+        _increment: 0
+        _machine: 0
+        _timestamp: 0
+        _pid: 0
       _adoptTerrainNormal: 0
       _model: {fileID: 0}
       _modelHashCode: 0
@@ -35,6 +45,11 @@ MonoBehaviour:
         _tags: []
         _resetToken: 
       _owner: {fileID: 0}
+      _objectId:
+        _increment: 0
+        _machine: 0
+        _timestamp: 0
+        _pid: 0
       _adoptTerrainNormal: 0
       _model: {fileID: 0}
       _modelHashCode: 0
@@ -45,6 +60,11 @@ MonoBehaviour:
         _tags: []
         _resetToken: 
       _owner: {fileID: 0}
+      _objectId:
+        _increment: 0
+        _machine: 0
+        _timestamp: 0
+        _pid: 0
       _adoptTerrainNormal: 0
       _model: {fileID: 0}
       _modelHashCode: 0
@@ -55,3 +75,8 @@ MonoBehaviour:
         _tags: []
         _resetToken: 
       _owner: {fileID: 0}
+      _objectId:
+        _increment: 0
+        _machine: 0
+        _timestamp: 0
+        _pid: 0

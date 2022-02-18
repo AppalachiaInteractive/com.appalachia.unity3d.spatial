@@ -24,8 +24,6 @@ namespace Appalachia.Spatial.Terrains
     {
         static TerrainMetadataManager()
         {
-            
-
             RegisterDependency<MainTerrainMetadataDictionary>(i => _mainTerrainMetadataDictionary = i);
         }
 
@@ -135,6 +133,7 @@ namespace Appalachia.Spatial.Terrains
             }
         }
 
+        /// <inheritdoc />
         protected override async AppaTask Initialize(Initializer initializer)
         {
             await base.Initialize(initializer);
@@ -172,6 +171,7 @@ namespace Appalachia.Spatial.Terrains
             }
         }
 
+        /// <inheritdoc />
         protected override async AppaTask WhenDisabled()
         {
             await base.WhenDisabled();
@@ -208,14 +208,10 @@ namespace Appalachia.Spatial.Terrains
         private static readonly ProfilerMarker _PRF_GetTerrainHashCodeAt =
             new(_PRF_PFX + nameof(GetTerrainHashCodeAt));
 
-        
-
         private static readonly ProfilerMarker _PRF_Remove = new(_PRF_PFX + nameof(Remove));
 
         private static readonly ProfilerMarker _PRF_TerrainMetadataManager =
             new(_PRF_PFX + nameof(TerrainMetadataManager));
-
-        
 
         #endregion
     }

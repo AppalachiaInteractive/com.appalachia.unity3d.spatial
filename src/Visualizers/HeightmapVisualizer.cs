@@ -3,20 +3,15 @@ using UnityEngine;
 
 namespace Appalachia.Spatial.Visualizers
 {
-    public class HeightmapVisualizer : InstancedIndirectHeightmapMapVisualization
+    public sealed class HeightmapVisualizer : InstancedIndirectHeightmapMapVisualization<HeightmapVisualizer>
     {
-        protected override bool ShouldRegenerate => false;
-
+        /// <inheritdoc />
         protected override bool CanGenerate => texture != null;
 
-        protected override void PrepareInitialGeneration()
-        {
-        }
+        /// <inheritdoc />
+        protected override bool ShouldRegenerate => false;
 
-        protected override void PrepareSubsequentGenerations()
-        {
-        }
-
+        /// <inheritdoc />
         protected override void GetVisualizationInfo(
             Vector3 position,
             out Quaternion rotation,
@@ -24,6 +19,16 @@ namespace Appalachia.Spatial.Visualizers
         {
             rotation = Quaternion.identity;
             scale = Vector3.one * visualizationSize;
+        }
+
+        /// <inheritdoc />
+        protected override void PrepareInitialGeneration()
+        {
+        }
+
+        /// <inheritdoc />
+        protected override void PrepareSubsequentGenerations()
+        {
         }
     }
 }

@@ -12,30 +12,6 @@ namespace Appalachia.Spatial.Octree
 {
     public sealed class BoundsOctree<T> : Octree<BoundsOctree<T>, Bounds, T>
     {
-        private const string _PRF_PFX = nameof(BoundsOctree<T>) + ".";
-
-        private static readonly ProfilerMarker _PRF_GetRayHits = new(_PRF_PFX + nameof(GetRayHits));
-
-        private static readonly ProfilerMarker _PRF_GetRayHitsWhere =
-            new(_PRF_PFX + nameof(GetRayHitsWhere));
-
-        private static readonly ProfilerMarker _PRF_CreateFromVectors =
-            new(_PRF_PFX + nameof(CreateFromVectors));
-
-        private static readonly ProfilerMarker _PRF_ContainedInTree =
-            new(_PRF_PFX + nameof(ContainedInTree));
-
-        private static readonly ProfilerMarker _PRF_GetAppropriateChildIndex =
-            new(_PRF_PFX + nameof(GetAppropriateChildIndex));
-
-        private static readonly ProfilerMarker _PRF_NodeIsEligible =
-            new(_PRF_PFX + nameof(NodeIsEligible));
-
-        private static readonly ProfilerMarker _PRF_Magnitude = new(_PRF_PFX + nameof(Magnitude));
-
-        private static readonly ProfilerMarker _PRF_MagnitudeSquared =
-            new(_PRF_PFX + nameof(MagnitudeSquared));
-
         public BoundsOctree(
             OctreeStyle style,
             Vector3 position,
@@ -61,19 +37,15 @@ namespace Appalachia.Spatial.Octree
             int maxDepth = _MAX_DEPTH,
             int initialCapacity = _INITIAL_CAPACITY,
             float capacityIncreaseMultiplier = _CAPACITY_INCREASE_MULTIPLIER,
-            int depth = 0) : base(
-            style,
-            bounds,
-            maxDepth,
-            initialCapacity,
-            capacityIncreaseMultiplier,
-            depth
-        )
+            int depth = 0) : base(style, bounds, maxDepth, initialCapacity, capacityIncreaseMultiplier, depth)
         {
         }
 
-        protected override Color gizmoNodeColor => Color.cyan;
+        /// <inheritdoc />
         protected override Color gizmoBoundsColor => Color.red;
+
+        /// <inheritdoc />
+        protected override Color gizmoNodeColor => Color.cyan;
 
         public void GetRayHits(Ray ray, AppaList<Bounds> keys, AppaList<T> values)
         {
@@ -129,25 +101,7 @@ namespace Appalachia.Spatial.Octree
             }
         }
 
-        protected override BoundsOctree<T> CreateFromVectors(
-            OctreeStyle style,
-            Vector3 position,
-            Vector3 size,
-            int depth)
-        {
-            using (_PRF_CreateFromVectors.Auto())
-            {
-                return new BoundsOctree<T>(
-                    style,
-                    position,
-                    size,
-                    _maxDepth,
-                    _initialCapacity,
-                    depth
-                );
-            }
-        }
-
+        /// <inheritdoc />
         protected override bool ContainedInTree(Bounds bounds, Bounds key)
         {
             using (_PRF_ContainedInTree.Auto())
@@ -156,6 +110,26 @@ namespace Appalachia.Spatial.Octree
             }
         }
 
+        /// <inheritdoc />
+        protected override BoundsOctree<T> CreateFromVectors(
+            OctreeStyle style,
+            Vector3 position,
+            Vector3 size,
+            int depth)
+        {
+            using (_PRF_CreateFromVectors.Auto())
+            {
+                return new BoundsOctree<T>(style, position, size, _maxDepth, _initialCapacity, depth);
+            }
+        }
+
+        /// <inheritdoc />
+        protected override void DrawNodeGizmo(Bounds key, T value)
+        {
+            Gizmos.DrawWireCube(key.center, key.size);
+        }
+
+        /// <inheritdoc />
         protected override int GetAppropriateChildIndex(Bounds key)
         {
             using (_PRF_GetAppropriateChildIndex.Auto())
@@ -164,6 +138,25 @@ namespace Appalachia.Spatial.Octree
             }
         }
 
+        /// <inheritdoc />
+        protected override float Magnitude(Vector3 position, Bounds key)
+        {
+            using (_PRF_Magnitude.Auto())
+            {
+                return math.distance(key.center, position);
+            }
+        }
+
+        /// <inheritdoc />
+        protected override float MagnitudeSquared(Vector3 position, Bounds key)
+        {
+            using (_PRF_MagnitudeSquared.Auto())
+            {
+                return math.distancesq(key.center, position);
+            }
+        }
+
+        /// <inheritdoc />
         protected override bool NodeIsEligible(Bounds key, OctreeQueryMode mode, Bounds bounds)
         {
             using (_PRF_NodeIsEligible.Auto())
@@ -182,25 +175,27 @@ namespace Appalachia.Spatial.Octree
             }
         }
 
-        protected override float Magnitude(Vector3 position, Bounds key)
-        {
-            using (_PRF_Magnitude.Auto())
-            {
-                return math.distance(key.center, position);
-            }
-        }
+        #region Profiling
 
-        protected override float MagnitudeSquared(Vector3 position, Bounds key)
-        {
-            using (_PRF_MagnitudeSquared.Auto())
-            {
-                return math.distancesq(key.center, position);
-            }
-        }
+        private const string _PRF_PFX = nameof(BoundsOctree<T>) + ".";
 
-        protected override void DrawNodeGizmo(Bounds key, T value)
-        {
-            Gizmos.DrawWireCube(key.center, key.size);
-        }
+        private static readonly ProfilerMarker _PRF_GetRayHits = new(_PRF_PFX + nameof(GetRayHits));
+        private static readonly ProfilerMarker _PRF_GetRayHitsWhere = new(_PRF_PFX + nameof(GetRayHitsWhere));
+
+        private static readonly ProfilerMarker _PRF_CreateFromVectors =
+            new(_PRF_PFX + nameof(CreateFromVectors));
+
+        private static readonly ProfilerMarker _PRF_ContainedInTree = new(_PRF_PFX + nameof(ContainedInTree));
+
+        private static readonly ProfilerMarker _PRF_GetAppropriateChildIndex =
+            new(_PRF_PFX + nameof(GetAppropriateChildIndex));
+
+        private static readonly ProfilerMarker _PRF_NodeIsEligible = new(_PRF_PFX + nameof(NodeIsEligible));
+        private static readonly ProfilerMarker _PRF_Magnitude = new(_PRF_PFX + nameof(Magnitude));
+
+        private static readonly ProfilerMarker _PRF_MagnitudeSquared =
+            new(_PRF_PFX + nameof(MagnitudeSquared));
+
+        #endregion
     }
 }

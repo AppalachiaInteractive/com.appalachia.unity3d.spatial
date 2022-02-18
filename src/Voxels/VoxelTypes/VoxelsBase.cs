@@ -22,41 +22,76 @@ using UnityEngine;
 
 namespace Appalachia.Spatial.Voxels.VoxelTypes
 {
+    [Serializable]
     public abstract partial class VoxelsBase<TThis, TRaycastHit> : IDisposable,
-                                                       IEquatable<VoxelsBase<TThis, TRaycastHit>>
+                                                                   IEquatable<VoxelsBase<TThis, TRaycastHit>>
         where TThis : VoxelsBase<TThis, TRaycastHit>
         where TRaycastHit : struct, IVoxelRaycastHit
     {
-        protected float3 _centerOfMass;
+        #region Fields and Autoproperties
 
-        protected Bounds _rawBounds;
-        protected Bounds _rawWorldBounds;
-        protected Transform _transform;
-        protected bool _voidCenterOfMassCalculation;
-        protected float _volume;
-
-        protected JobHandle _voxelBaseJobHandle;
-        protected Bounds _voxelBounds;
-        protected Bounds _voxelWorldBounds;
-        protected float3 _worldCenterOfMass;
-        protected float _worldVolume;
-        public float activeRatio;
         public Collider[] colliders;
+        public float activeRatio;
+        public float3 resolution;
         public int faceCount;
         public int JOB_LOOP_SIZE = JOB_SIZE._LARGE;
-
-        protected NativeFloatPtr nativeVolume;
-        protected NativeFloatPtr nativeWorldVolume;
         public MeshRenderer[] renderers;
-        public float3 resolution;
-        public NativeArray3D<VoxelSamplePoint> samplePoints;
-
-        public VoxelPopulationStyle style;
         public NativeArray<Voxel> voxels;
+        public NativeArray3D<VoxelSamplePoint> samplePoints;
         public NativeBitArray voxelsActive;
         public NativeIntPtr voxelsActiveCount;
 
+        public VoxelPopulationStyle style;
+        protected bool _voidCenterOfMassCalculation;
+
+        protected Bounds _rawBounds;
+        protected Bounds _rawWorldBounds;
+        protected Bounds _voxelBounds;
+        protected Bounds _voxelWorldBounds;
+        protected float _volume;
+        protected float _worldVolume;
+        protected float3 _centerOfMass;
+        protected float3 _worldCenterOfMass;
+
+        protected JobHandle _voxelBaseJobHandle;
+
+        protected NativeFloatPtr nativeVolume;
+        protected NativeFloatPtr nativeWorldVolume;
+        protected Transform _transform;
+
+        #endregion
+
         public abstract bool IsPersistent { get; }
+
+        public Bounds rawWorldBounds
+        {
+            get
+            {
+                if (_rawWorldBounds == default)
+                {
+                    throw new ClassNotProperlyInitializedException(nameof(TThis), nameof(_rawWorldBounds));
+                }
+
+                return _rawWorldBounds;
+            }
+        }
+
+        public Bounds voxelWorldBounds
+        {
+            get
+            {
+                if (_voxelWorldBounds == default)
+                {
+                    throw new ClassNotProperlyInitializedException(nameof(TThis), nameof(_voxelWorldBounds));
+                }
+
+                return _voxelWorldBounds;
+            }
+        }
+
+        public float worldVolume => _worldVolume;
+
+        public float3 worldCenterOfMass => _worldCenterOfMass;
 
         public float3 worldResolution => resolution * _transform.lossyScale;
 
@@ -86,6 +121,16 @@ namespace Appalachia.Spatial.Voxels.VoxelTypes
             }
         }
 
+        public int count => voxels.IsCreated ? voxels.Length : 0;
+
+        public int size => samplePoints.IsCreated ? samplePoints.TotalLength : 0;
+
+        public int x => samplePoints.IsCreated ? samplePoints.Length0 : 0;
+
+        public int y => samplePoints.IsCreated ? samplePoints.Length1 : 0;
+
+        public int z => samplePoints.IsCreated ? samplePoints.Length2 : 0;
+
         public Bounds rawBounds
         {
             get
@@ -98,22 +143,6 @@ namespace Appalachia.Spatial.Voxels.VoxelTypes
                 return _rawBounds;
             }
             internal set => _rawBounds = value;
-        }
-
-        public Bounds rawWorldBounds
-        {
-            get
-            {
-                if (_rawWorldBounds == default)
-                {
-                    throw new ClassNotProperlyInitializedException(
-                        nameof(TThis),
-                        nameof(_rawWorldBounds)
-                    );
-                }
-
-                return _rawWorldBounds;
-            }
         }
 
         public Bounds voxelBounds
@@ -130,31 +159,11 @@ namespace Appalachia.Spatial.Voxels.VoxelTypes
             internal set => _voxelBounds = value;
         }
 
-        public Bounds voxelWorldBounds
-        {
-            get
-            {
-                if (_voxelWorldBounds == default)
-                {
-                    throw new ClassNotProperlyInitializedException(
-                        nameof(TThis),
-                        nameof(_voxelWorldBounds)
-                    );
-                }
-
-                return _voxelWorldBounds;
-            }
-        }
-
         public float volume
         {
             get => _volume;
             set => _volume = value;
         }
-
-        public float worldVolume => _worldVolume;
-
-        public float3 worldCenterOfMass => _worldCenterOfMass;
 
         public float3 centerOfMass
         {
@@ -169,21 +178,11 @@ namespace Appalachia.Spatial.Voxels.VoxelTypes
             }
         }
 
-        public int x => samplePoints.IsCreated ? samplePoints.Length0 : 0;
-
-        public int y => samplePoints.IsCreated ? samplePoints.Length1 : 0;
-
-        public int z => samplePoints.IsCreated ? samplePoints.Length2 : 0;
-
-        public int size => samplePoints.IsCreated ? samplePoints.TotalLength : 0;
-
-        public int count => voxels.IsCreated ? voxels.Length : 0;
-
         public virtual void InitializeDataStore()
         {
         }
 
-#region Spatial Query
+        #region Spatial Query
 
         public bool TryGetSamplePointIndices(float3 localPosition, out int3 samplePointIndex)
         {
@@ -196,32 +195,111 @@ namespace Appalachia.Spatial.Voxels.VoxelTypes
                     return false;
                 }
 
-                var shifted = localPosition - (float3) voxelBounds.min;
+                var shifted = localPosition - (float3)voxelBounds.min;
 
                 var rounded = RoundVector(shifted, resolution);
                 var resolved = rounded / resolution;
 
-                samplePointIndex.x = (int) resolved.x;
-                samplePointIndex.y = (int) resolved.y;
-                samplePointIndex.z = (int) resolved.z;
+                samplePointIndex.x = (int)resolved.x;
+                samplePointIndex.y = (int)resolved.y;
+                samplePointIndex.z = (int)resolved.z;
 
                 samplePointIndex.x -= 1;
                 samplePointIndex.y -= 1;
                 samplePointIndex.z -= 1;
 
-                samplePointIndex = math.clamp(
-                    samplePointIndex,
-                    int3.zero,
-                    samplePoints.Length - int3c.one
-                );
+                samplePointIndex = math.clamp(samplePointIndex, int3.zero, samplePoints.Length - int3c.one);
 
                 return true;
             }
         }
 
-#endregion
+        #endregion
 
-#region General
+        #region Profiling
+
+        private const string _PRF_PFX = nameof(VoxelsBase<TThis, TRaycastHit>) + ".";
+
+        private static readonly TRaycastHit[] _empty = new TRaycastHit[0];
+        private static readonly NonSerializedList<TRaycastHit> _hits = new();
+        private static readonly NonSerializedList<int3> _traversedVoxels = new();
+        private static readonly ProfilerMarker _PRF_Initialize = new(_PRF_PFX + nameof(Initialize));
+
+        private static readonly ProfilerMarker _PRF_Synchronize = new(_PRF_PFX + nameof(Synchronize));
+
+        private static readonly ProfilerMarker _PRF_UpdateBounds = new(_PRF_PFX + nameof(UpdateBounds));
+
+        private static readonly ProfilerMarker _PRF_SynchronizeBounds =
+            new(_PRF_PFX + nameof(SynchronizeBounds));
+
+        private static readonly ProfilerMarker _PRF_UpdateVoxelActiveRatio =
+            new(_PRF_PFX + nameof(UpdateVoxelActiveRatio));
+
+        private static readonly ProfilerMarker _PRF_UpdateVoxelActiveRatio_CreateUpdateActiveJob =
+            new(_PRF_PFX + nameof(UpdateVoxelActiveRatio) + ".CreateUpdateActiveJob");
+
+        private static readonly ProfilerMarker _PRF_SetupPhysical = new(_PRF_PFX + nameof(SetupPhysical));
+
+        private static readonly ProfilerMarker _PRF_SetupPhysical_CreateCenterOfMassSetupJob =
+            new(_PRF_PFX + nameof(SetupPhysical) + ".CreateCenterOfMassSetupJob");
+
+        private static readonly ProfilerMarker _PRF_UpdatePhysical = new(_PRF_PFX + nameof(UpdatePhysical));
+
+        private static readonly ProfilerMarker _PRF_UpdatePhysical_CompleteVoxelToWorldJob =
+            new(_PRF_PFX + nameof(UpdatePhysical) + ".CompleteVoxelToWorldJob");
+
+        private static readonly ProfilerMarker _PRF_UpdatePhysical_UpdateVolume =
+            new(_PRF_PFX + nameof(UpdatePhysical) + ".UpdateVolume");
+
+        private static readonly ProfilerMarker _PRF_UpdatePhysical_CreateVoxelToWorldJob =
+            new(_PRF_PFX + nameof(UpdatePhysical) + ".CreateVoxelToWorldJob");
+
+        private static readonly ProfilerMarker _PRF_UpdatePhysical_CreateVoxelVolumeUpdateJob =
+            new(_PRF_PFX + nameof(UpdatePhysical) + ".CreateVoxeVolumeUpdateJob");
+
+        private static readonly ProfilerMarker _PRF_UpdatePhysical_ScheduleBatchedJobs =
+            new(_PRF_PFX + nameof(UpdatePhysical) + ".ScheduleBatchedJobs");
+
+        private static readonly ProfilerMarker _PRF_UpdatePhysical_UpdateVolumeParams =
+            new(_PRF_PFX + nameof(UpdatePhysical) + ".UpdateVolumeParams");
+
+        private static readonly ProfilerMarker _PRF_UpdatePhysical_CreateCenterOfMassSetupJob =
+            new(_PRF_PFX + nameof(UpdatePhysical) + ".CreateCenterOfMassSetupJob");
+
+        private static readonly ProfilerMarker _PRF_CompletePhysical =
+            new(_PRF_PFX + nameof(CompletePhysical));
+
+        private static readonly ProfilerMarker _PRF_TryGetSamplePointIndices =
+            new(_PRF_PFX + nameof(TryGetSamplePointIndices));
+
+        private static readonly ProfilerMarker _PRF_Raycast = new(_PRF_PFX + nameof(Raycast));
+        private static readonly ProfilerMarker _PRF_Linecast = new(_PRF_PFX + nameof(Linecast));
+
+        private static readonly ProfilerMarker _PRF_RaycastNonAlloc = new(_PRF_PFX + nameof(RaycastNonAlloc));
+
+        private static readonly ProfilerMarker _PRF_RaycastAll = new(_PRF_PFX + nameof(RaycastAll));
+
+        private static readonly ProfilerMarker _PRF_Internal_Raycast =
+            new(_PRF_PFX + nameof(Internal_Raycast));
+
+        private static readonly ProfilerMarker _PRF_Internal_RaycastNonAlloc =
+            new(_PRF_PFX + nameof(Internal_RaycastNonAlloc));
+
+        private static readonly ProfilerMarker _PRF_Internal_RaycastAll =
+            new(_PRF_PFX + nameof(Internal_RaycastAll));
+
+        private static readonly ProfilerMarker _PRF_RoundVector = new(_PRF_PFX + nameof(RoundVector));
+
+        private static readonly ProfilerMarker _PRF_ShouldCastRay = new(_PRF_PFX + nameof(ShouldCastRay));
+
+        private static readonly ProfilerMarker _PRF_GetTraversedVoxels =
+            new(_PRF_PFX + nameof(GetTraversedVoxels));
+
+        private static readonly ProfilerMarker _PRF_RoundValue = new(_PRF_PFX + nameof(RoundValue));
+
+        #endregion
+
+        #region General
 
         public void Initialize(Transform t)
         {
@@ -312,7 +390,7 @@ namespace Appalachia.Spatial.Voxels.VoxelTypes
 
         protected void CalculateVoxelActiveRatio()
         {
-            activeRatio = voxelsActiveCount.Value / (float) count;
+            activeRatio = voxelsActiveCount.Value / (float)count;
         }
 
         public JobHandle UpdateVoxelActiveRatio(float ratio)
@@ -354,10 +432,16 @@ namespace Appalachia.Spatial.Voxels.VoxelTypes
         [BurstCompile]
         protected struct UpdateActiveJob : IJob
         {
+            #region Fields and Autoproperties
+
+            public float activeRatio;
             public NativeArray<Voxel> voxels;
             public NativeBitArray voxelsActive;
-            public float activeRatio;
             public NativeIntPtr voxelsActiveCount;
+
+            #endregion
+
+            #region IJob Members
 
             public void Execute()
             {
@@ -375,11 +459,13 @@ namespace Appalachia.Spatial.Voxels.VoxelTypes
                     }
                 }
             }
+
+            #endregion
         }
 
-#endregion
+        #endregion
 
-#region Voxel To World Job
+        #region Voxel To World Job
 
         public JobHandle SetupPhysical()
         {
@@ -392,8 +478,9 @@ namespace Appalachia.Spatial.Voxels.VoxelTypes
                 using (_PRF_SetupPhysical_CreateCenterOfMassSetupJob.Auto())
                 {
                     _voxelBaseJobHandle =
-                        new CenterOfMassSetupJob {voxels = voxels, centerOfMass = centerOfMass}
-                           .Schedule(_voxelBaseJobHandle);
+                        new CenterOfMassSetupJob { voxels = voxels, centerOfMass = centerOfMass }.Schedule(
+                            _voxelBaseJobHandle
+                        );
                 }
 
                 return _voxelBaseJobHandle;
@@ -435,7 +522,7 @@ namespace Appalachia.Spatial.Voxels.VoxelTypes
                     using (_PRF_UpdatePhysical_CreateCenterOfMassSetupJob.Auto())
                     {
                         _voxelBaseJobHandle =
-                            new CenterOfMassSetupJob {voxels = voxels, centerOfMass = centerOfMass}
+                            new CenterOfMassSetupJob { voxels = voxels, centerOfMass = centerOfMass }
                                .Schedule(_voxelBaseJobHandle);
                     }
                 }
@@ -492,13 +579,19 @@ namespace Appalachia.Spatial.Voxels.VoxelTypes
         [BurstCompile]
         protected struct VoxelWorldPositionUpdateJob : IJob
         {
-            [ReadOnly] public float4x4 matrix;
+            #region Fields and Autoproperties
+
+            [ReadOnly] public float deltaTime;
             [ReadOnly] public float3 resolution;
             [ReadOnly] public float3 worldResolution;
-            [ReadOnly] public float deltaTime;
+            [ReadOnly] public float4x4 matrix;
 
             public NativeArray<Voxel> voxels;
             [ReadOnly] public NativeBitArray voxelsActive;
+
+            #endregion
+
+            #region IJob Members
 
             public void Execute()
             {
@@ -513,24 +606,26 @@ namespace Appalachia.Spatial.Voxels.VoxelTypes
 
                     var voxel = voxels[i];
 
-                    voxel.UpdatePhysical(
-                        matrix,
-                        inverseMatrix,
-                        resolution,
-                        worldResolution,
-                        deltaTime
-                    );
+                    voxel.UpdatePhysical(matrix, inverseMatrix, resolution, worldResolution, deltaTime);
 
                     voxels[i] = voxel;
                 }
             }
+
+            #endregion
         }
 
         [BurstCompile]
         protected struct CenterOfMassSetupJob : IJob
         {
+            #region Fields and Autoproperties
+
             public float3 centerOfMass;
             public NativeArray<Voxel> voxels;
+
+            #endregion
+
+            #region IJob Members
 
             public void Execute()
             {
@@ -562,16 +657,23 @@ namespace Appalachia.Spatial.Voxels.VoxelTypes
                         (voxel.distanceToCenterOfMass - minDistance) / denom;
                 }
             }
+
+            #endregion
         }
 
         [BurstCompile]
         protected struct VoxelVolumeUpdateJob : IJobParallelFor
         {
-            public NativeFloatPtr.Parallel volume;
-            public NativeFloatPtr.Parallel worldVolume;
+            #region Fields and Autoproperties
 
             [ReadOnly] public NativeArray<Voxel> voxels;
             [ReadOnly] public NativeBitArray voxelsActive;
+            public NativeFloatPtr.Parallel volume;
+            public NativeFloatPtr.Parallel worldVolume;
+
+            #endregion
+
+            #region IJobParallelFor Members
 
             public void Execute(int index)
             {
@@ -585,11 +687,13 @@ namespace Appalachia.Spatial.Voxels.VoxelTypes
                 volume.Add(vox.volume);
                 worldVolume.Add(vox.worldVolume);
             }
+
+            #endregion
         }
 
-#endregion
+        #endregion
 
-#region Raycast API
+        #region Raycast API
 
         public bool Raycast(Vector3 origin, Vector3 direction, float maxDistance)
         {
@@ -615,11 +719,7 @@ namespace Appalachia.Spatial.Voxels.VoxelTypes
             }
         }
 
-        public bool Raycast(
-            Vector3 origin,
-            Vector3 direction,
-            out TRaycastHit hitInfo,
-            float maxDistance)
+        public bool Raycast(Vector3 origin, Vector3 direction, out TRaycastHit hitInfo, float maxDistance)
         {
             using (_PRF_Raycast.Auto())
             {
@@ -647,12 +747,7 @@ namespace Appalachia.Spatial.Voxels.VoxelTypes
         {
             using (_PRF_Raycast.Auto())
             {
-                return Internal_Raycast(
-                    ray.origin,
-                    ray.direction,
-                    out hitInfo,
-                    float.PositiveInfinity
-                );
+                return Internal_Raycast(ray.origin, ray.direction, out hitInfo, float.PositiveInfinity);
             }
         }
 
@@ -726,12 +821,7 @@ namespace Appalachia.Spatial.Voxels.VoxelTypes
         {
             using (_PRF_RaycastNonAlloc.Auto())
             {
-                return Internal_RaycastNonAlloc(
-                    ray.origin,
-                    ray.direction,
-                    results,
-                    float.PositiveInfinity
-                );
+                return Internal_RaycastNonAlloc(ray.origin, ray.direction, results, float.PositiveInfinity);
             }
         }
 
@@ -755,17 +845,11 @@ namespace Appalachia.Spatial.Voxels.VoxelTypes
             }
         }
 
-#endregion
+        #endregion
 
-#region Raycast Internals
+        #region Raycast Internals
 
-        private static readonly TRaycastHit[] _empty = new TRaycastHit[0];
-        private static readonly NonSerializedList<TRaycastHit> _hits = new();
-
-        protected TRaycastHit[] Internal_RaycastAll(
-            float3 origin,
-            float3 direction,
-            float maxDistance)
+        protected TRaycastHit[] Internal_RaycastAll(float3 origin, float3 direction, float maxDistance)
         {
             using (_PRF_Internal_RaycastAll.Auto())
             {
@@ -906,10 +990,7 @@ namespace Appalachia.Spatial.Voxels.VoxelTypes
             }
         }
 
-        protected abstract TRaycastHit PrepareRaycastHit(
-            int voxelIndex,
-            Voxel voxel,
-            float distance);
+        protected abstract TRaycastHit PrepareRaycastHit(int voxelIndex, Voxel voxel, float distance);
 
         protected bool ShouldCastRay(
             float3 origin,
@@ -936,9 +1017,9 @@ namespace Appalachia.Spatial.Voxels.VoxelTypes
                 localRayDirection = worldToLocal.MultiplyVector(direction);
 
                 if (!rawBounds.IntersectRay(
-                    new Ray(localRayStart, localRayDirection),
-                    out var distanceToBounds
-                ))
+                        new Ray(localRayStart, localRayDirection),
+                        out var distanceToBounds
+                    ))
                 {
                     localRayStart = float3.zero;
                     localRayDirection = float3.zero;
@@ -954,14 +1035,12 @@ namespace Appalachia.Spatial.Voxels.VoxelTypes
                 var maximumIntersectingRayLength = math.distance(voxelBounds.max, voxelBounds.min);
 
                 var oppositeSideRayStart = localRayStart +
-                                           (localRayDirection *
-                                            maximumIntersectingRayLength *
-                                            -1.5f);
+                                           (localRayDirection * maximumIntersectingRayLength * -1.5f);
 
                 if (!rawBounds.IntersectRay(
-                    new Ray(oppositeSideRayStart, -localRayDirection),
-                    out var oppositeDistanceToBounds
-                ))
+                        new Ray(oppositeSideRayStart, -localRayDirection),
+                        out var oppositeDistanceToBounds
+                    ))
                 {
                     localRayStart = float3.zero;
                     localRayDirection = float3.zero;
@@ -978,21 +1057,13 @@ namespace Appalachia.Spatial.Voxels.VoxelTypes
             }
         }
 
-        private static readonly NonSerializedList<int3> _traversedVoxels = new();
-
         protected NonSerializedList<int3> GetTraversedVoxels(float3 o, float3 v)
         {
             using (_PRF_GetTraversedVoxels.Auto())
             {
                 _traversedVoxels.ClearFast();
 
-                if (!ShouldCastRay(
-                    o,
-                    v,
-                    out var rayStart,
-                    out var rayDirection,
-                    out var rayDistance
-                ))
+                if (!ShouldCastRay(o, v, out var rayStart, out var rayDirection, out var rayDistance))
                 {
                     return _traversedVoxels;
                 }
@@ -1003,16 +1074,16 @@ namespace Appalachia.Spatial.Voxels.VoxelTypes
                 // Using floor (round down) is actually very important,
                 // the implicit int-casting will round up for negative numbers.
                 var currentVoxelCoordinate = new int3(
-                    (int) math.floor(rayStart.x / resolution.x),
-                    (int) math.floor(rayStart.y / resolution.y),
-                    (int) math.floor(rayStart.z / resolution.z)
+                    (int)math.floor(rayStart.x / resolution.x),
+                    (int)math.floor(rayStart.y / resolution.y),
+                    (int)math.floor(rayStart.z / resolution.z)
                 );
 
                 // The id of the last voxel hit by the ray.
                 var lastVoxelCoordinate = new int3(
-                    (int) math.floor(rayEnd.x / resolution.x),
-                    (int) math.floor(rayEnd.y / resolution.y),
-                    (int) math.floor(rayEnd.z / resolution.z)
+                    (int)math.floor(rayEnd.x / resolution.x),
+                    (int)math.floor(rayEnd.y / resolution.y),
+                    (int)math.floor(rayEnd.z / resolution.z)
                 );
 
                 // In which direction the voxel ids are incremented.
@@ -1124,11 +1195,12 @@ namespace Appalachia.Spatial.Voxels.VoxelTypes
             }
         }
 
-#endregion
+        #endregion
 
-#region IEquatable
+        #region IEquatable
 
-        [DebuggerStepThrough] public bool Equals(VoxelsBase<TThis, TRaycastHit> other)
+        [DebuggerStepThrough]
+        public bool Equals(VoxelsBase<TThis, TRaycastHit> other)
         {
             if (ReferenceEquals(null, other))
             {
@@ -1171,10 +1243,11 @@ namespace Appalachia.Spatial.Voxels.VoxelTypes
                    ) &&
                    Equals(_testHits, other._testHits)
 #endif
-                   ;
+                ;
         }
 
-        [DebuggerStepThrough] public override bool Equals(object obj)
+        [DebuggerStepThrough]
+        public override bool Equals(object obj)
         {
             if (ReferenceEquals(null, obj))
             {
@@ -1191,10 +1264,11 @@ namespace Appalachia.Spatial.Voxels.VoxelTypes
                 return false;
             }
 
-            return Equals((VoxelsBase<TThis, TRaycastHit>) obj);
+            return Equals((VoxelsBase<TThis, TRaycastHit>)obj);
         }
 
-        [DebuggerStepThrough] public override int GetHashCode()
+        [DebuggerStepThrough]
+        public override int GetHashCode()
         {
             unchecked
             {
@@ -1208,7 +1282,7 @@ namespace Appalachia.Spatial.Voxels.VoxelTypes
                 hashCode = (hashCode * 397) ^ _worldCenterOfMass.GetHashCode();
                 hashCode = (hashCode * 397) ^ _centerOfMass.GetHashCode();
                 hashCode = (hashCode * 397) ^ _voidCenterOfMassCalculation.GetHashCode();
-                hashCode = (hashCode * 397) ^ (int) style;
+                hashCode = (hashCode * 397) ^ (int)style;
                 hashCode = (hashCode * 397) ^ faceCount;
                 hashCode = (hashCode * 397) ^ resolution.GetHashCode();
                 hashCode = (hashCode * 397) ^ nativeVolume.GetHashCode();
@@ -1232,23 +1306,25 @@ namespace Appalachia.Spatial.Voxels.VoxelTypes
             }
         }
 
-        [DebuggerStepThrough] public static bool operator ==(
+        [DebuggerStepThrough]
+        public static bool operator ==(
             VoxelsBase<TThis, TRaycastHit> left,
             VoxelsBase<TThis, TRaycastHit> right)
         {
             return Equals(left, right);
         }
 
-        [DebuggerStepThrough] public static bool operator !=(
+        [DebuggerStepThrough]
+        public static bool operator !=(
             VoxelsBase<TThis, TRaycastHit> left,
             VoxelsBase<TThis, TRaycastHit> right)
         {
             return !Equals(left, right);
         }
 
-#endregion
+        #endregion
 
-#region IDisposable
+        #region IDisposable
 
         public void Dispose()
         {
@@ -1288,9 +1364,9 @@ namespace Appalachia.Spatial.Voxels.VoxelTypes
             }
         }
 
-#endregion
+        #endregion
 
-#region ISerializationCallbackReceiver
+        #region ISerializationCallbackReceiver
 
 /*
         [SerializeField] private VoxelSamplePoint[] __samplePoints;
@@ -1328,97 +1404,9 @@ namespace Appalachia.Spatial.Voxels.VoxelTypes
         }
         */
 
-#endregion
+        #endregion
 
-#region Profiling
-
-        private const string _PRF_PFX = nameof(VoxelsBase<TThis, TRaycastHit>) + ".";
-
-        private static readonly ProfilerMarker _PRF_Initialize = new(_PRF_PFX + nameof(Initialize));
-
-        private static readonly ProfilerMarker _PRF_Synchronize =
-            new(_PRF_PFX + nameof(Synchronize));
-
-        private static readonly ProfilerMarker _PRF_UpdateBounds =
-            new(_PRF_PFX + nameof(UpdateBounds));
-
-        private static readonly ProfilerMarker _PRF_SynchronizeBounds =
-            new(_PRF_PFX + nameof(SynchronizeBounds));
-
-        private static readonly ProfilerMarker _PRF_UpdateVoxelActiveRatio =
-            new(_PRF_PFX + nameof(UpdateVoxelActiveRatio));
-
-        private static readonly ProfilerMarker _PRF_UpdateVoxelActiveRatio_CreateUpdateActiveJob =
-            new(_PRF_PFX + nameof(UpdateVoxelActiveRatio) + ".CreateUpdateActiveJob");
-
-        private static readonly ProfilerMarker _PRF_SetupPhysical =
-            new(_PRF_PFX + nameof(SetupPhysical));
-
-        private static readonly ProfilerMarker _PRF_SetupPhysical_CreateCenterOfMassSetupJob =
-            new(_PRF_PFX + nameof(SetupPhysical) + ".CreateCenterOfMassSetupJob");
-
-        private static readonly ProfilerMarker _PRF_UpdatePhysical =
-            new(_PRF_PFX + nameof(UpdatePhysical));
-
-        private static readonly ProfilerMarker _PRF_UpdatePhysical_CompleteVoxelToWorldJob =
-            new(_PRF_PFX + nameof(UpdatePhysical) + ".CompleteVoxelToWorldJob");
-
-        private static readonly ProfilerMarker _PRF_UpdatePhysical_UpdateVolume =
-            new(_PRF_PFX + nameof(UpdatePhysical) + ".UpdateVolume");
-
-        private static readonly ProfilerMarker _PRF_UpdatePhysical_CreateVoxelToWorldJob =
-            new(_PRF_PFX + nameof(UpdatePhysical) + ".CreateVoxelToWorldJob");
-
-        private static readonly ProfilerMarker _PRF_UpdatePhysical_CreateVoxelVolumeUpdateJob =
-            new(_PRF_PFX + nameof(UpdatePhysical) + ".CreateVoxeVolumeUpdateJob");
-
-        private static readonly ProfilerMarker _PRF_UpdatePhysical_ScheduleBatchedJobs =
-            new(_PRF_PFX + nameof(UpdatePhysical) + ".ScheduleBatchedJobs");
-
-        private static readonly ProfilerMarker _PRF_UpdatePhysical_UpdateVolumeParams =
-            new(_PRF_PFX + nameof(UpdatePhysical) + ".UpdateVolumeParams");
-
-        private static readonly ProfilerMarker _PRF_UpdatePhysical_CreateCenterOfMassSetupJob =
-            new(_PRF_PFX + nameof(UpdatePhysical) + ".CreateCenterOfMassSetupJob");
-
-        private static readonly ProfilerMarker _PRF_CompletePhysical =
-            new(_PRF_PFX + nameof(CompletePhysical));
-
-        private static readonly ProfilerMarker _PRF_TryGetSamplePointIndices =
-            new(_PRF_PFX + nameof(TryGetSamplePointIndices));
-
-        private static readonly ProfilerMarker _PRF_Raycast = new(_PRF_PFX + nameof(Raycast));
-        private static readonly ProfilerMarker _PRF_Linecast = new(_PRF_PFX + nameof(Linecast));
-
-        private static readonly ProfilerMarker _PRF_RaycastNonAlloc =
-            new(_PRF_PFX + nameof(RaycastNonAlloc));
-
-        private static readonly ProfilerMarker _PRF_RaycastAll = new(_PRF_PFX + nameof(RaycastAll));
-
-        private static readonly ProfilerMarker _PRF_Internal_Raycast =
-            new(_PRF_PFX + nameof(Internal_Raycast));
-
-        private static readonly ProfilerMarker _PRF_Internal_RaycastNonAlloc =
-            new(_PRF_PFX + nameof(Internal_RaycastNonAlloc));
-
-        private static readonly ProfilerMarker _PRF_Internal_RaycastAll =
-            new(_PRF_PFX + nameof(Internal_RaycastAll));
-
-        private static readonly ProfilerMarker _PRF_RoundVector =
-            new(_PRF_PFX + nameof(RoundVector));
-
-        private static readonly ProfilerMarker _PRF_ShouldCastRay =
-            new(_PRF_PFX + nameof(ShouldCastRay));
-
-        private static readonly ProfilerMarker _PRF_GetTraversedVoxels =
-            new(_PRF_PFX + nameof(GetTraversedVoxels));
-
-        private static readonly ProfilerMarker _PRF_RoundValue = new(_PRF_PFX + nameof(RoundValue));
-
-#endregion
-
-
-#region Algorithms
+        #region Algorithms
 
 /*
 * https://github.com/francisengelmann/fast_voxel_traversal/blob/master/main.cpp
@@ -1537,6 +1525,6 @@ int main (int, char**) {
 
 */
 
-#endregion
+        #endregion
     }
 }

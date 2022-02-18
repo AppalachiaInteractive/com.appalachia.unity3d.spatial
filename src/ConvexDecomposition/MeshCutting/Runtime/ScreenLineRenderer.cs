@@ -2,6 +2,7 @@
 using Appalachia.Core.Objects.Initialization;
 using Appalachia.Core.Objects.Root;
 using Appalachia.Utility.Async;
+using Unity.Profiling;
 using UnityEngine;
 
 namespace Appalachia.Spatial.ConvexDecomposition.MeshCutting.Runtime
@@ -65,6 +66,7 @@ namespace Appalachia.Spatial.ConvexDecomposition.MeshCutting.Runtime
 
         #endregion
 
+        /// <inheritdoc />
         protected override async AppaTask Initialize(Initializer initializer)
         {
             await base.Initialize(initializer);
@@ -73,16 +75,24 @@ namespace Appalachia.Spatial.ConvexDecomposition.MeshCutting.Runtime
             dragging = false;
         }
 
+        /// <inheritdoc />
         protected override async AppaTask WhenDisabled()
         {
             await base.WhenDisabled();
-            Camera.onPostRender -= PostRenderDrawLine;
+            using (_PRF_WhenDisabled.Auto())
+            {
+                Camera.onPostRender -= PostRenderDrawLine;
+            }
         }
 
+        /// <inheritdoc />
         protected override async AppaTask WhenEnabled()
         {
             await base.WhenEnabled();
-            Camera.onPostRender += PostRenderDrawLine;
+            using (_PRF_WhenEnabled.Auto())
+            {
+                Camera.onPostRender += PostRenderDrawLine;
+            }
         }
 
         /// <summary>
@@ -90,23 +100,27 @@ namespace Appalachia.Spatial.ConvexDecomposition.MeshCutting.Runtime
         /// </summary>
         private void PostRenderDrawLine(Camera c)
         {
-            if (dragging && lineMaterial)
+            using (_PRF_PostRenderDrawLine.Auto())
             {
-                GL.PushMatrix();
-                lineMaterial.SetPass(0);
-                GL.LoadOrtho();
-                GL.Begin(GL.LINES);
-                GL.Color(Color.black);
-                GL.Vertex(start);
-                GL.Vertex(end);
-                GL.End();
-                GL.PopMatrix();
+                if (dragging && lineMaterial)
+                {
+                    GL.PushMatrix();
+                    lineMaterial.SetPass(0);
+                    GL.LoadOrtho();
+                    GL.Begin(GL.LINES);
+                    GL.Color(Color.black);
+                    GL.Vertex(start);
+                    GL.Vertex(end);
+                    GL.End();
+                    GL.PopMatrix();
+                }
             }
         }
 
         #region Profiling
 
-        
+        private static readonly ProfilerMarker _PRF_PostRenderDrawLine =
+            new ProfilerMarker(_PRF_PFX + nameof(PostRenderDrawLine));
 
         #endregion
     }

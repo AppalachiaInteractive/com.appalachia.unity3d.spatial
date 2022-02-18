@@ -8,8 +8,11 @@ using UnityEngine;
 namespace Appalachia.Spatial.Visualizers
 {
     public abstract class
-        InstancedIndirectHeightmapMapVisualization : InstancedIndirectGridVisualization
+        InstancedIndirectHeightmapMapVisualization<T> : InstancedIndirectGridVisualization<T>
+        where T : InstancedIndirectHeightmapMapVisualization<T>
     {
+        #region Fields and Autoproperties
+
         [HorizontalGroup("A")]
         [PropertyOrder(-100)]
         [OnValueChanged(nameof(Regenerate))]
@@ -19,6 +22,8 @@ namespace Appalachia.Spatial.Visualizers
 
         protected NativeArray<float> _data;
 
+        #endregion
+
         [HorizontalGroup("A")]
         [PropertyOrder(-100)]
         [ShowInInspector]
@@ -26,21 +31,22 @@ namespace Appalachia.Spatial.Visualizers
         [PreviewField(ObjectFieldAlignment.Right, Height = 128)]
         public Texture2D preview => texture;
 
+        /// <inheritdoc />
         protected override bool CanVisualize => _data.IsCreated;
 
+        protected abstract void GetVisualizationInfo(
+            Vector3 position,
+            out Quaternion rotation,
+            out Vector3 scale);
+
+        /// <inheritdoc />
         protected override Bounds GetBounds()
         {
             var center = Transform.position + (.5f * size);
             return new Bounds(center, size);
         }
 
-        protected override async AppaTask WhenDisabled()
-        {
-            await base.WhenDisabled();
-            
-            texture = null;
-        }
-
+        /// <inheritdoc />
         protected override void GetGridPosition(
             Vector3 position,
             out float height,
@@ -77,10 +83,16 @@ namespace Appalachia.Spatial.Visualizers
             GetVisualizationInfo(position, out rotation, out scale);
         }
 
-        protected abstract void GetVisualizationInfo(
-            Vector3 position,
-            out Quaternion rotation,
-            out Vector3 scale);
+        /// <inheritdoc />
+        protected override async AppaTask WhenDisabled()
+        {
+            await base.WhenDisabled();
+
+            using (_PRF_WhenDisabled.Auto())
+            {
+                texture = null;
+            }
+        }
     }
 }
 

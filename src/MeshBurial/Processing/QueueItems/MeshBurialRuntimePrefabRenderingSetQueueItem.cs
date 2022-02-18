@@ -29,18 +29,21 @@ namespace Appalachia.Spatial.MeshBurial.Processing.QueueItems
             _set = set;
         }
 
-        protected override float GetDegreeAdjustmentStrengthInternal()
+        /// <inheritdoc />
+protected override float GetDegreeAdjustmentStrengthInternal()
         {
             return _set.modelOptions.burialOptions.adjustmentStrength;
         }
 
-        protected override void OnCompleteInternal()
+        /// <inheritdoc />
+protected override void OnCompleteInternal()
         {
             _set.instanceManager.transferOriginalToCurrent = true;
         }
 
         private static readonly ProfilerMarker _PRF_GetAllMatrices = new ProfilerMarker(_PRF_PFX + nameof(GetAllMatrices));
-        public override void GetAllMatrices(NativeList<float4x4> matrices)
+        /// <inheritdoc />
+public override void GetAllMatrices(NativeList<float4x4> matrices)
         {
             using (_PRF_GetAllMatrices.Auto())
             {
@@ -49,7 +52,8 @@ namespace Appalachia.Spatial.MeshBurial.Processing.QueueItems
         }
 
         private static readonly ProfilerMarker _PRF_SetAllMatrices = new ProfilerMarker(_PRF_PFX + nameof(SetAllMatrices));
-        public override void SetAllMatrices(NativeArray<float4x4> matrices)
+        /// <inheritdoc />
+public override void SetAllMatrices(NativeArray<float4x4> matrices)
         {
             using (_PRF_SetAllMatrices.Auto())
             {

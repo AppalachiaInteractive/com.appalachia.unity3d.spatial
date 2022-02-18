@@ -8,9 +8,11 @@ using UnityEngine;
 
 namespace Appalachia.Spatial.Visualizers
 {
-    public abstract class
-        InstancedIndirectSpatialMapVisualization : InstancedIndirectGridVisualization
+    public abstract class InstancedIndirectSpatialMapVisualization<T> : InstancedIndirectGridVisualization<T>
+        where T : InstancedIndirectSpatialMapVisualization<T>
     {
+        #region Fields and Autoproperties
+
         [PropertyOrder(-150)]
         [OnValueChanged(nameof(Regenerate))]
         public Texture2D texture;
@@ -19,19 +21,23 @@ namespace Appalachia.Spatial.Visualizers
 
         private NativeArray<float4> _data;
 
+        #endregion
+
+        protected abstract void GetVisualizationInfo(
+            Vector3 position,
+            float4 color,
+            out float height,
+            out Quaternion rotation,
+            out Vector3 scale);
+
+        /// <inheritdoc />
         protected override Bounds GetBounds()
         {
             var center = Transform.position + (.5f * size);
             return new Bounds(center, size);
         }
 
-        protected override async AppaTask WhenDisabled()
-        {
-            await base.WhenDisabled();
-            
-            texture = null;
-        }
-
+        /// <inheritdoc />
         protected override void GetGridPosition(
             Vector3 position,
             out float height,
@@ -63,12 +69,16 @@ namespace Appalachia.Spatial.Visualizers
             GetVisualizationInfo(position, valueAtPosition, out height, out rotation, out scale);
         }
 
-        protected abstract void GetVisualizationInfo(
-            Vector3 position,
-            float4 color,
-            out float height,
-            out Quaternion rotation,
-            out Vector3 scale);
+        /// <inheritdoc />
+        protected override async AppaTask WhenDisabled()
+        {
+            await base.WhenDisabled();
+
+            using (_PRF_WhenDisabled.Auto())
+            {
+                texture = null;
+            }
+        }
     }
 }
 

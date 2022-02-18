@@ -682,6 +682,7 @@ namespace Appalachia.Spatial.MeshBurial
             }
         }
 
+        /// <inheritdoc />
         protected override async AppaTask Initialize(Initializer initializer)
         {
             await base.Initialize(initializer);
@@ -779,6 +780,7 @@ namespace Appalachia.Spatial.MeshBurial
             _terrainHashCodes[0] = _terrainMetadataManager.GetTerrainHashCodeAt(p.position);
         }
 
+        /// <inheritdoc />
         protected override async AppaTask WhenDisabled()
         {
             await base.WhenDisabled();

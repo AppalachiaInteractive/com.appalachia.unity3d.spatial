@@ -14,9 +14,10 @@ namespace Appalachia.Spatial.Voxels.Gizmos
         VoxelDataGizmoSettings, VoxelDataGizmoStyleList, VoxelDataGizmoSettingsList,
         VoxelDataGizmoSettingsLookup, VoxelDataGizmoSettingsCollection>
     {
-        
+        /// <inheritdoc />
         public override bool HasDefault => false;
 
+        /// <inheritdoc />
         protected override VoxelDataGizmoStyle GetUniqueKeyFromValue(VoxelDataGizmoSettings value)
         {
             return value.style;

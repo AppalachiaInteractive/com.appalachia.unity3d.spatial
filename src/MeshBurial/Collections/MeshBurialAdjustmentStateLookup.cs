@@ -25,21 +25,22 @@ namespace Appalachia.Spatial.MeshBurial.Collections
     public class MeshBurialAdjustmentStateLookup : AppaLookup<GameObject, MeshBurialAdjustmentState,
         AppaList_GameObject, AppaList_MeshBurialAdjustmentState>
     {
-        protected override string GetDisplayTitle(GameObject key, MeshBurialAdjustmentState value)
+        /// <inheritdoc />
+        protected override Color GetDisplayColor(GameObject key, MeshBurialAdjustmentState value)
         {
-            return ZString.Format("Prefab: {0}", key.name);
+            return Color.white;
         }
 
-        protected override string GetDisplaySubtitle(
-            GameObject key,
-            MeshBurialAdjustmentState value)
+        /// <inheritdoc />
+        protected override string GetDisplaySubtitle(GameObject key, MeshBurialAdjustmentState value)
         {
             return string.Empty;
         }
 
-        protected override Color GetDisplayColor(GameObject key, MeshBurialAdjustmentState value)
+        /// <inheritdoc />
+        protected override string GetDisplayTitle(GameObject key, MeshBurialAdjustmentState value)
         {
-            return Color.white;
+            return ZString.Format("Prefab: {0}", key.name);
         }
     }
 }

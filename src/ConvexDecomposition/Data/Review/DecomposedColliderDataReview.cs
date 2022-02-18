@@ -352,12 +352,13 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data.Review
             }
         }
 
+        /// <inheritdoc />
         protected override async AppaTask WhenEnabled()
         {
+            await base.WhenEnabled();
+
             using (_PRF_WhenEnabled.Auto())
             {
-                await base.WhenEnabled();
-
                 if (!AppalachiaApplication.IsPlayingOrWillPlay)
                 {
                     RebuildList();
@@ -501,8 +502,6 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data.Review
 
         private static readonly ProfilerMarker _PRF_SortVerticesDesc =
             new ProfilerMarker(_PRF_PFX + nameof(SortVerticesDesc));
-
-        
 
         #endregion
 

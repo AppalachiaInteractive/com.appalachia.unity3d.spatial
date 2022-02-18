@@ -16,7 +16,8 @@ namespace Appalachia.Core.Spatial
         
         public PrefabSpawnPointState points;
         
-        public override bool TryGetMatrix(int i, out Matrix4x4 matrix)
+        /// <inheritdoc />
+public override bool TryGetMatrix(int i, out Matrix4x4 matrix)
         {
             if (current >= points.Count)
             {
@@ -32,7 +33,8 @@ namespace Appalachia.Core.Spatial
             return true;
         }
 
-        public override void SetMatrix(int i, Matrix4x4 m)
+        /// <inheritdoc />
+public override void SetMatrix(int i, Matrix4x4 m)
         {
             points.spawnedObjects[i].transform.Matrix4x4ToTransform(m);
         }

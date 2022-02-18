@@ -16,6 +16,7 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data.Review
         {
         }
 
+        /// <inheritdoc />
         protected override Color GetDisplayColor(
             DecomposedColliderData key,
             DecomposedColliderDataReviewItem value)
@@ -25,6 +26,7 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data.Review
             return ratioColor;
         }
 
+        /// <inheritdoc />
         protected override string GetDisplaySubtitle(
             DecomposedColliderData key,
             DecomposedColliderDataReviewItem value)
@@ -32,6 +34,7 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data.Review
             return value.ToString();
         }
 
+        /// <inheritdoc />
         protected override string GetDisplayTitle(
             DecomposedColliderData key,
             DecomposedColliderDataReviewItem value)

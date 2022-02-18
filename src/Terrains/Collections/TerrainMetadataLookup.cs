@@ -30,11 +30,13 @@ namespace Appalachia.Spatial.Terrains.Collections
 
         #endregion
 
+        /// <inheritdoc />
         protected override Color GetDisplayColor(int key, TerrainMetadata value)
         {
             return Color.white;
         }
 
+        /// <inheritdoc />
         protected override string GetDisplaySubtitle(int key, TerrainMetadata value)
         {
             using (_PRF_GetDisplaySubtitle.Auto())
@@ -60,6 +62,7 @@ namespace Appalachia.Spatial.Terrains.Collections
             }
         }
 
+        /// <inheritdoc />
         protected override string GetDisplayTitle(int key, TerrainMetadata value)
         {
             using (_PRF_GetDisplayTitle.Auto())

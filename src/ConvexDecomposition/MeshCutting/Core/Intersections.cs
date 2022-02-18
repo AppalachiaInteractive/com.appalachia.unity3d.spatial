@@ -1,33 +1,24 @@
 #if UNITY_EDITOR
 using System;
 using System.Collections.Generic;
+using Appalachia.Core.Attributes;
 using Appalachia.Core.Objects.Root;
 using UnityEngine;
 
 namespace Appalachia.Spatial.ConvexDecomposition.MeshCutting.Core
 {
+    [NonSerializable]
     public class Intersections : AppalachiaSimpleBase
     {
-#region Static functions
-
-        /// <summary>
-        /// Based on https://gdbooks.gitbooks.io/3dcollisions/content/Chapter2/static_aabb_plane.html
-        /// </summary>
-        public static bool BoundPlaneIntersect(Mesh mesh, ref Plane plane)
+        public Intersections()
         {
-            // Compute projection interval radius
-            float r = (mesh.bounds.extents.x * Mathf.Abs(plane.normal.x)) +
-                      (mesh.bounds.extents.y * Mathf.Abs(plane.normal.y)) +
-                      (mesh.bounds.extents.z * Mathf.Abs(plane.normal.z));
-
-            // Compute distance of box center from plane
-            float s = Vector3.Dot(plane.normal, mesh.bounds.center) - (-plane.distance);
-
-            // Intersection occurs when distance s falls within [-r,+r] interval
-            return Mathf.Abs(s) <= r;
+            v = new Vector3[3];
+            u = new Vector2[3];
+            t = new int[3];
+            positive = new bool[3];
         }
 
-#endregion
+        #region Fields and Autoproperties
 
         // Initialize fixed arrays so that we don't initialize them every time we call TrianglePlaneIntersect
         private readonly Vector3[] v;
@@ -38,37 +29,62 @@ namespace Appalachia.Spatial.ConvexDecomposition.MeshCutting.Core
         // Used in intersect method
         private Ray edgeRay;
 
-        public Intersections()
-        {
-            v = new Vector3[3];
-            u = new Vector2[3];
-            t = new int[3];
-            positive = new bool[3];
-        }
+        #endregion
+
+        #region Static functions
 
         /// <summary>
-        /// Find intersection between a plane and a line segment defined by vectors first and second.
+        ///     Based on https://gdbooks.gitbooks.io/3dcollisions/content/Chapter2/static_aabb_plane.html
         /// </summary>
-        public ValueTuple<Vector3, Vector2> Intersect(Plane plane, Vector3 first, Vector3 second, Vector2 uv1, Vector2 uv2)
+        public static bool BoundPlaneIntersect(Mesh mesh, ref Plane plane)
+        {
+            // Compute projection interval radius
+            var r = (mesh.bounds.extents.x * Mathf.Abs(plane.normal.x)) +
+                    (mesh.bounds.extents.y * Mathf.Abs(plane.normal.y)) +
+                    (mesh.bounds.extents.z * Mathf.Abs(plane.normal.z));
+
+            // Compute distance of box center from plane
+            var s = Vector3.Dot(plane.normal, mesh.bounds.center) - -plane.distance;
+
+            // Intersection occurs when distance s falls within [-r,+r] interval
+            return Mathf.Abs(s) <= r;
+        }
+
+        #endregion
+
+        /// <summary>
+        ///     Find intersection between a plane and a line segment defined by vectors first and second.
+        /// </summary>
+        public ValueTuple<Vector3, Vector2> Intersect(
+            Plane plane,
+            Vector3 first,
+            Vector3 second,
+            Vector2 uv1,
+            Vector2 uv2)
         {
             edgeRay.origin = first;
             edgeRay.direction = (second - first).normalized;
             float dist;
-            float maxDist = Vector3.Distance(first, second);
+            var maxDist = Vector3.Distance(first, second);
 
             if (!plane.Raycast(edgeRay, out dist))
-                // Intersect in wrong direction...
-                throw new UnityException("Line-Plane intersect in wrong direction");
-            else if (dist > maxDist)
-                // Intersect outside of line segment
-                throw new UnityException("Intersect outside of line");
 
-            var returnVal = new ValueTuple<Vector3, Vector2>
+                // Intersect in wrong direction...
             {
-                Item1 = edgeRay.GetPoint(dist)
-            };
+                throw new UnityException("Line-Plane intersect in wrong direction");
+            }
+
+            if (dist > maxDist)
+
+                // Intersect outside of line segment
+            {
+                throw new UnityException("Intersect outside of line");
+            }
+
+            var returnVal = new ValueTuple<Vector3, Vector2> { Item1 = edgeRay.GetPoint(dist) };
 
             var relativeDist = dist / maxDist;
+
             // Compute new uv by doing Linear interpolation between uv1 and uv2
             returnVal.Item2.x = Mathf.Lerp(uv1.x, uv2.x, relativeDist);
             returnVal.Item2.y = Mathf.Lerp(uv1.y, uv2.y, relativeDist);
@@ -89,12 +105,20 @@ namespace Appalachia.Spatial.ConvexDecomposition.MeshCutting.Core
      *       |___________________
      */
 
-        public bool TrianglePlaneIntersect(List<Vector3> vertices, List<Vector2> uvs, List<int> triangles, int startIdx, ref Plane plane, TempMesh posMesh, TempMesh negMesh, Vector3[] intersectVectors)
+        public bool TrianglePlaneIntersect(
+            List<Vector3> vertices,
+            List<Vector2> uvs,
+            List<int> triangles,
+            int startIdx,
+            ref Plane plane,
+            TempMesh posMesh,
+            TempMesh negMesh,
+            Vector3[] intersectVectors)
         {
             int i;
 
             // Store triangle, vertex and uv from indices
-            for(i = 0; i < 3; ++i)
+            for (i = 0; i < 3; ++i)
             {
                 t[i] = triangles[startIdx + i];
                 v[i] = vertices[t[i]];
@@ -116,43 +140,70 @@ namespace Appalachia.Spatial.ConvexDecomposition.MeshCutting.Core
             // Find lonely point
             int lonelyPoint;
             if (positive[0] != positive[1])
+            {
                 lonelyPoint = positive[0] != positive[2] ? 0 : 1;
+            }
             else
+            {
                 lonelyPoint = 2;
+            }
 
             // Set previous point in relation to front face order
-            int prevPoint = lonelyPoint - 1;
-            if (prevPoint == -1) prevPoint = 2;
+            var prevPoint = lonelyPoint - 1;
+            if (prevPoint == -1)
+            {
+                prevPoint = 2;
+            }
+
             // Set next point in relation to front face order
-            int nextPoint = lonelyPoint + 1;
-            if (nextPoint == 3) nextPoint = 0;
+            var nextPoint = lonelyPoint + 1;
+            if (nextPoint == 3)
+            {
+                nextPoint = 0;
+            }
 
             // Get the 2 intersection points
-            ValueTuple<Vector3, Vector2> newPointPrev = Intersect(plane, v[lonelyPoint], v[prevPoint], u[lonelyPoint], u[prevPoint]);
-            ValueTuple<Vector3, Vector2> newPointNext = Intersect(plane, v[lonelyPoint], v[nextPoint], u[lonelyPoint], u[nextPoint]);
+            var newPointPrev = Intersect(plane, v[lonelyPoint], v[prevPoint], u[lonelyPoint], u[prevPoint]);
+            var newPointNext = Intersect(plane, v[lonelyPoint], v[nextPoint], u[lonelyPoint], u[nextPoint]);
 
             //Set the new triangles and store them in respective tempmeshes
-            (positive[lonelyPoint] ? posMesh : negMesh).AddSlicedTriangle(t[lonelyPoint], newPointNext.Item1, newPointPrev.Item1, newPointNext.Item2, newPointPrev.Item2);
+            (positive[lonelyPoint] ? posMesh : negMesh).AddSlicedTriangle(
+                t[lonelyPoint],
+                newPointNext.Item1,
+                newPointPrev.Item1,
+                newPointNext.Item2,
+                newPointPrev.Item2
+            );
 
-            (positive[prevPoint] ? posMesh : negMesh).AddSlicedTriangle(t[prevPoint], newPointPrev.Item1, newPointPrev.Item2, t[nextPoint]);
+            (positive[prevPoint] ? posMesh : negMesh).AddSlicedTriangle(
+                t[prevPoint],
+                newPointPrev.Item1,
+                newPointPrev.Item2,
+                t[nextPoint]
+            );
 
-            (positive[prevPoint] ? posMesh : negMesh).AddSlicedTriangle(t[nextPoint], newPointPrev.Item1, newPointNext.Item1, newPointPrev.Item2, newPointNext.Item2);
+            (positive[prevPoint] ? posMesh : negMesh).AddSlicedTriangle(
+                t[nextPoint],
+                newPointPrev.Item1,
+                newPointNext.Item1,
+                newPointPrev.Item2,
+                newPointNext.Item2
+            );
 
             // We return the edge that will be in the correct orientation for the positive side mesh
             if (positive[lonelyPoint])
             {
                 intersectVectors[0] = newPointPrev.Item1;
                 intersectVectors[1] = newPointNext.Item1;
-            } else
+            }
+            else
             {
                 intersectVectors[0] = newPointNext.Item1;
                 intersectVectors[1] = newPointPrev.Item1;
             }
+
             return true;
         }
-
-
-
     }
 }
 

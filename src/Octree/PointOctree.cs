@@ -12,25 +12,6 @@ namespace Appalachia.Spatial.Octree
 {
     public sealed class PointOctree<T> : Octree<PointOctree<T>, Vector3, T>
     {
-        private const string _PRF_PFX = nameof(PointOctree<T>) + ".";
-
-        private static readonly ProfilerMarker _PRF_CreateFromVectors =
-            new(_PRF_PFX + nameof(CreateFromVectors));
-
-        private static readonly ProfilerMarker _PRF_ContainedInTree =
-            new(_PRF_PFX + nameof(ContainedInTree));
-
-        private static readonly ProfilerMarker _PRF_GetAppropriateChildIndex =
-            new(_PRF_PFX + nameof(GetAppropriateChildIndex));
-
-        private static readonly ProfilerMarker _PRF_NodeIsEligible =
-            new(_PRF_PFX + nameof(NodeIsEligible));
-
-        private static readonly ProfilerMarker _PRF_Magnitude = new(_PRF_PFX + nameof(Magnitude));
-
-        private static readonly ProfilerMarker _PRF_MagnitudeSquared =
-            new(_PRF_PFX + nameof(MagnitudeSquared));
-
         public PointOctree(
             OctreeStyle style,
             Vector3 position,
@@ -56,39 +37,17 @@ namespace Appalachia.Spatial.Octree
             int maxDepth = _MAX_DEPTH,
             int initialCapacity = _INITIAL_CAPACITY,
             float capacityIncreaseMultiplier = _CAPACITY_INCREASE_MULTIPLIER,
-            int depth = 0) : base(
-            style,
-            bounds,
-            maxDepth,
-            initialCapacity,
-            capacityIncreaseMultiplier,
-            depth
-        )
+            int depth = 0) : base(style, bounds, maxDepth, initialCapacity, capacityIncreaseMultiplier, depth)
         {
         }
 
-        protected override Color gizmoNodeColor => Color.blue;
+        /// <inheritdoc />
         protected override Color gizmoBoundsColor => Color.yellow;
 
-        protected override PointOctree<T> CreateFromVectors(
-            OctreeStyle style,
-            Vector3 position,
-            Vector3 size,
-            int depth)
-        {
-            using (_PRF_CreateFromVectors.Auto())
-            {
-                return new PointOctree<T>(
-                    style,
-                    position,
-                    size,
-                    _maxDepth,
-                    _initialCapacity,
-                    depth
-                );
-            }
-        }
+        /// <inheritdoc />
+        protected override Color gizmoNodeColor => Color.blue;
 
+        /// <inheritdoc />
         protected override bool ContainedInTree(Bounds bounds, Vector3 key)
         {
             using (_PRF_ContainedInTree.Auto())
@@ -97,6 +56,26 @@ namespace Appalachia.Spatial.Octree
             }
         }
 
+        /// <inheritdoc />
+        protected override PointOctree<T> CreateFromVectors(
+            OctreeStyle style,
+            Vector3 position,
+            Vector3 size,
+            int depth)
+        {
+            using (_PRF_CreateFromVectors.Auto())
+            {
+                return new PointOctree<T>(style, position, size, _maxDepth, _initialCapacity, depth);
+            }
+        }
+
+        /// <inheritdoc />
+        protected override void DrawNodeGizmo(Vector3 key, T value)
+        {
+            Gizmos.DrawWireCube(key, float3c.one * math.clamp(_bounds.size.magnitude / 512.0f, 0.1f, 1.0f));
+        }
+
+        /// <inheritdoc />
         protected override int GetAppropriateChildIndex(Vector3 key)
         {
             using (_PRF_GetAppropriateChildIndex.Auto())
@@ -105,6 +84,25 @@ namespace Appalachia.Spatial.Octree
             }
         }
 
+        /// <inheritdoc />
+        protected override float Magnitude(Vector3 position, Vector3 key)
+        {
+            using (_PRF_Magnitude.Auto())
+            {
+                return math.distance(position, key);
+            }
+        }
+
+        /// <inheritdoc />
+        protected override float MagnitudeSquared(Vector3 position, Vector3 key)
+        {
+            using (_PRF_MagnitudeSquared.Auto())
+            {
+                return math.distancesq(position, key);
+            }
+        }
+
+        /// <inheritdoc />
         protected override bool NodeIsEligible(Vector3 key, OctreeQueryMode mode, Bounds bounds)
         {
             using (_PRF_NodeIsEligible.Auto())
@@ -121,28 +119,24 @@ namespace Appalachia.Spatial.Octree
             }
         }
 
-        protected override float Magnitude(Vector3 position, Vector3 key)
-        {
-            using (_PRF_Magnitude.Auto())
-            {
-                return math.distance(position, key);
-            }
-        }
+        #region Profiling
 
-        protected override float MagnitudeSquared(Vector3 position, Vector3 key)
-        {
-            using (_PRF_MagnitudeSquared.Auto())
-            {
-                return math.distancesq(position, key);
-            }
-        }
+        private const string _PRF_PFX = nameof(PointOctree<T>) + ".";
 
-        protected override void DrawNodeGizmo(Vector3 key, T value)
-        {
-            Gizmos.DrawWireCube(
-                key,
-                float3c.one * math.clamp(_bounds.size.magnitude / 512.0f, 0.1f, 1.0f)
-            );
-        }
+        private static readonly ProfilerMarker _PRF_CreateFromVectors =
+            new(_PRF_PFX + nameof(CreateFromVectors));
+
+        private static readonly ProfilerMarker _PRF_ContainedInTree = new(_PRF_PFX + nameof(ContainedInTree));
+
+        private static readonly ProfilerMarker _PRF_GetAppropriateChildIndex =
+            new(_PRF_PFX + nameof(GetAppropriateChildIndex));
+
+        private static readonly ProfilerMarker _PRF_NodeIsEligible = new(_PRF_PFX + nameof(NodeIsEligible));
+        private static readonly ProfilerMarker _PRF_Magnitude = new(_PRF_PFX + nameof(Magnitude));
+
+        private static readonly ProfilerMarker _PRF_MagnitudeSquared =
+            new(_PRF_PFX + nameof(MagnitudeSquared));
+
+        #endregion
     }
 }

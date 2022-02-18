@@ -24,19 +24,22 @@ namespace Appalachia.Spatial.MeshBurial.Collections
     public class MeshBurialSharedStateLookup : AppaLookup<int, MeshBurialSharedState, intList,
         AppaList_MeshBurialSharedState>
     {
-        protected override string GetDisplayTitle(int key, MeshBurialSharedState value)
+        /// <inheritdoc />
+        protected override Color GetDisplayColor(int key, MeshBurialSharedState value)
         {
-            return value.meshObject.mesh.name;
+            return Color.white;
         }
 
+        /// <inheritdoc />
         protected override string GetDisplaySubtitle(int key, MeshBurialSharedState value)
         {
             return string.Empty;
         }
 
-        protected override Color GetDisplayColor(int key, MeshBurialSharedState value)
+        /// <inheritdoc />
+        protected override string GetDisplayTitle(int key, MeshBurialSharedState value)
         {
-            return Color.white;
+            return value.meshObject.mesh.name;
         }
     }
 }
