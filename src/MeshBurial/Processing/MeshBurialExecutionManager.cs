@@ -189,7 +189,8 @@ namespace Appalachia.Spatial.MeshBurial.Processing
 
             if (!randoms.IsCreated)
             {
-                randoms = new JobRandoms(Allocator.Persistent);
+                randoms = JobRandoms.Create(Allocator.Persistent);
+                CleanupManager.Store(ref randoms);
             }
 
             PopulateQueueingActions();
@@ -418,6 +419,7 @@ namespace Appalachia.Spatial.MeshBurial.Processing
             using (_PRF_NativeDisposal.Auto())
             {
                 randoms.Dispose();
+                randoms = default;
 
                 if (dependencyList.IsCreated)
                 {

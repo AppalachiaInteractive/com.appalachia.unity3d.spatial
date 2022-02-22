@@ -4,7 +4,6 @@
 
 using Appalachia.CI.Constants;
 using Appalachia.Core.Collections.Native;
-using Appalachia.Core.Extensions;
 using Appalachia.Jobs.Burstable;
 using Appalachia.Jobs.MeshData;
 using Appalachia.Jobs.Optimization;

@@ -8,6 +8,7 @@ using Appalachia.CI.Integration.Assets;
 using Appalachia.Core.Attributes;
 using Appalachia.Core.Collections.Native;
 using Appalachia.Core.Debugging;
+using Appalachia.Core.Execution;
 using Appalachia.Core.Objects.Initialization;
 using Appalachia.Core.Preferences;
 using Appalachia.Editing.Core.Behaviours;
@@ -758,7 +759,8 @@ namespace Appalachia.Spatial.MeshBurial
 
             if (_randoms.ShouldAllocate())
             {
-                _randoms = new JobRandoms(Allocator.Persistent);
+                _randoms =  JobRandoms.Create(Allocator.Persistent);
+                CleanupManager.Store(ref _randoms);
             }
 
             var randomSearch = _optimizationOptions.randomSearch;

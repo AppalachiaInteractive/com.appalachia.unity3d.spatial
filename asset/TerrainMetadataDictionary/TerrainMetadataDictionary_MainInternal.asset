@@ -28,7 +28,7 @@ MonoBehaviour:
     _object: {fileID: 11400000}
     keys:
       _capacityIncreaseMultiplier: 2
-      _values: b8250100
+      _values: a6260100
       noTracking: 0
       _count: 1
     values:

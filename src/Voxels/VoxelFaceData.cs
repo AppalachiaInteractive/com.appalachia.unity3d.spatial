@@ -2,7 +2,6 @@
 
 using System;
 using System.Diagnostics;
-using Appalachia.Core.Extensions;
 using Appalachia.Utility.Constants;
 using Appalachia.Utility.Extensions;
 using Unity.Burst;
