@@ -74,8 +74,6 @@ namespace Appalachia.Spatial.MeshBurial.Processing
             //if (runtimePrefabRenderingElements == null) { runtimePrefabRenderingElements = new AppaTemporalQueue<MeshBurialRuntimePrefabRenderingElementQueueItem>(); }
 
             //if (runtimePrefabRenderingSets == null) { runtimePrefabRenderingSets = new AppaTemporalQueue<MeshBurialRuntimePrefabRenderingSetQueueItem>(); }
-
-            MarkAsModified();
         }
 
         #region Menu Items

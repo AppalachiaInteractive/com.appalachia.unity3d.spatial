@@ -140,7 +140,7 @@ namespace Appalachia.Spatial.Terrains
 
             using (_PRF_Initialize.Auto())
             {
-                _mainTerrainMetadataDictionary.Lookup.Clear();
+                _mainTerrainMetadataDictionary.Lookup.RemoveNulls();
 
                 List<TerrainMetadata> results;
 #if UNITY_EDITOR

@@ -15,6 +15,7 @@ MonoBehaviour:
   _cachedName: Lake_196cfb0cd00e3c049b3717bad8efd79c
   _niceName: Lake_196cfb 0cd 00e 3c 049b 3717bad 8efd 79c
   _initializer:
+    _initializationCount: 0
     _tags:
     - profileName
     _resetToken: 

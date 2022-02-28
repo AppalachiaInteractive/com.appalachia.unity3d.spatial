@@ -233,7 +233,7 @@ namespace Appalachia.Spatial.MeshBurial.State
                     MarkAsModified();
                 }
 
-                _state.SetSerializationOwner(this);
+                _state.Changed.Event += OnChanged;
 
                 if (_nativeAdjustments.ShouldAllocate())
                 {

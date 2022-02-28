@@ -15,6 +15,7 @@ MonoBehaviour:
   _cachedName: 
   _niceName: 
   _initializer:
+    _initializationCount: 0
     _tags: []
     _resetToken: 
   _objectId:
@@ -26,6 +27,7 @@ MonoBehaviour:
     _array: []
     _current:
       _initializer:
+        _initializationCount: 0
         _tags: []
         _resetToken: 
       _owner: {fileID: 0}
@@ -42,6 +44,7 @@ MonoBehaviour:
     _array: []
     _current:
       _initializer:
+        _initializationCount: 0
         _tags: []
         _resetToken: 
       _owner: {fileID: 0}
@@ -57,6 +60,7 @@ MonoBehaviour:
     _array: []
     _current:
       _initializer:
+        _initializationCount: 0
         _tags: []
         _resetToken: 
       _owner: {fileID: 0}
@@ -72,6 +76,7 @@ MonoBehaviour:
     _array: []
     _current:
       _initializer:
+        _initializationCount: 0
         _tags: []
         _resetToken: 
       _owner: {fileID: 0}

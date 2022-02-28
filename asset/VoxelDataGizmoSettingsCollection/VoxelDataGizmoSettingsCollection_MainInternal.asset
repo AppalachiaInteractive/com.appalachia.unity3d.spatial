@@ -15,17 +15,17 @@ MonoBehaviour:
   _cachedName: 
   _niceName: 
   _initializer:
+    _initializationCount: 0
     _tags: []
     _resetToken: 
   _objectId:
-    _increment: 0
-    _machine: 0
-    _timestamp: 0
-    _pid: 0
+    _increment: 3077313
+    _machine: 14129404
+    _timestamp: 1645733498
+    _pid: -8016
   _defaultValue: {fileID: 0}
   _items:
     initializerCount: 64
-    _object: {fileID: 11400000}
     keys:
       _capacityIncreaseMultiplier: 2
       _values: 0a0000000000000014000000

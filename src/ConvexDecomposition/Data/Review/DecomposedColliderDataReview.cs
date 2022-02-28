@@ -410,7 +410,7 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data.Review
                     index = new DecomposedColliderDataReviewItemIndex(dataList.Count);
                 }
 
-                index.SetSerializationOwner(this);
+                index.Changed.Event += OnChanged;
                 index.Clear();
 
                 for (var i = 0; i < dataList.Count; i++)

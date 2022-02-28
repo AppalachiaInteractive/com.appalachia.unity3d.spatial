@@ -15,17 +15,17 @@ MonoBehaviour:
   _cachedName: TerrainMetadataDictionary_MainInternal
   _niceName: Terrain Metadata Dictionary_Main Internal
   _initializer:
+    _initializationCount: 0
     _tags: []
     _resetToken: 
   _objectId:
-    _increment: 0
-    _machine: 0
-    _timestamp: 0
-    _pid: 0
+    _increment: 7861752
+    _machine: 14129404
+    _timestamp: 1645732320
+    _pid: -8016
   _defaultValue: {fileID: 0}
   _items:
     initializerCount: 64
-    _object: {fileID: 11400000}
     keys:
       _capacityIncreaseMultiplier: 2
       _values: a6260100
