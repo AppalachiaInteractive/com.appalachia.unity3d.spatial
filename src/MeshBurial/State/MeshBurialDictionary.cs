@@ -18,10 +18,7 @@ namespace Appalachia.Spatial.MeshBurial.State
         {
             var l = lookup;
 
-            if (l.ContainsKey(key))
-            {
-                return l[key];
-            }
+            if (l.TryGetValue(key, out var result)) return result;
 
             var sharedState = MeshBurialSharedStateManager.GetByPrefab(instanceOrPrefab);
 
@@ -40,10 +37,7 @@ namespace Appalachia.Spatial.MeshBurial.State
         {
             var l = lookup;
 
-            if (l.ContainsKey(key))
-            {
-                return l[key];
-            }
+            if (l.TryGetValue(key, out var result)) return result;
 
             var newState = new MeshBurialState(sharedState, ltw, terrainHashCode);
 

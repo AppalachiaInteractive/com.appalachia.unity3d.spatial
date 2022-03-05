@@ -49,10 +49,7 @@ namespace Appalachia.Spatial.Terrains.Collections
                 _displaySubtitles ??= new Dictionary<int, string>();
                 var hashCode = value.GetHashCode();
 
-                if (_displaySubtitles.ContainsKey(hashCode))
-                {
-                    return _displaySubtitles[hashCode];
-                }
+                if (_displaySubtitles.TryGetValue(hashCode, out var result)) return result;
 
                 var displaySubtitle = value.terrainPosition.ToString();
 
@@ -77,10 +74,7 @@ namespace Appalachia.Spatial.Terrains.Collections
                 _displayTitles ??= new Dictionary<int, string>();
                 var hashCode = value.GetHashCode();
 
-                if (_displayTitles.ContainsKey(hashCode))
-                {
-                    return _displayTitles[hashCode];
-                }
+                if (_displayTitles.TryGetValue(hashCode, out var result)) return result;
 
                 var displayTitle = ZString.Format(TERRAIN_FORMAT_TITLE, terrain.name);
 

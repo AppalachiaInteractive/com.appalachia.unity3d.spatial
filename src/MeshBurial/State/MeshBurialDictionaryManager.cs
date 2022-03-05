@@ -40,10 +40,7 @@ namespace Appalachia.Spatial.MeshBurial.State
                 _extras = new Dictionary<string, MeshBurialDictionary>();
             }
 
-            if (_extras.ContainsKey(name))
-            {
-                return _extras[name];
-            }
+            if (_extras.TryGetValue(name, out var result)) return result;
 
             var newDict = new MeshBurialDictionary();
 

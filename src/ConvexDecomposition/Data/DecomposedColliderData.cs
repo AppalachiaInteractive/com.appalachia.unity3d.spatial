@@ -1504,7 +1504,7 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data
 
                         for (var i = 0; i < existingMeshes.Length; i++)
                         {
-                            var path = AssetDatabaseManager.GUIDToAssetPath(existingMeshes[i]).relativePath;
+                            var path = AssetDatabaseManager.GUIDToAssetPath(existingMeshes[i]).RelativePath;
 
                             if (!string.IsNullOrWhiteSpace(path) &&
                                 !AssetDatabaseManager.IsSubAsset(
@@ -2148,7 +2148,7 @@ namespace Appalachia.Spatial.ConvexDecomposition.Data
 
                 for (var i = 0; i < existingMeshes.Length; i++)
                 {
-                    var path = AssetDatabaseManager.GUIDToAssetPath(existingMeshes[i]).relativePath;
+                    var path = AssetDatabaseManager.GUIDToAssetPath(existingMeshes[i]).RelativePath;
 
                     if (string.IsNullOrWhiteSpace(path))
                     {
