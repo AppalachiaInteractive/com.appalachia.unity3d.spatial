@@ -77,11 +77,7 @@ namespace Appalachia.Spatial.MeshBurial
 
         [FoldoutGroup(GR_ + "Adjustment"), ShowInInspector, InlineProperty]
         [NonSerialized]
-        private PREF<Color> calculatedAdjustmentColor = PREFS.REG(
-            G_,
-            "Rotation Color Calculated",
-            Colors.Cornsilk3
-        );
+        private PREF<Color> calculatedAdjustmentColor = PREFS.REG(G_, "Rotation Color Calculated", Colors.Cornsilk3);
 
         [FoldoutGroup(GR_ + "Debug"), ShowInInspector, InlineProperty]
         [NonSerialized]
@@ -126,11 +122,7 @@ namespace Appalachia.Spatial.MeshBurial
 
         [FoldoutGroup(GR_ + "Axis"), ShowInInspector, InlineProperty]
         [NonSerialized]
-        private PREF<HandleCapType> meshBorderHandle = PREFS.REG(
-            G_,
-            "Mesh Border Handle",
-            HandleCapType.Sphere
-        );
+        private PREF<HandleCapType> meshBorderHandle = PREFS.REG(G_, "Mesh Border Handle", HandleCapType.Sphere);
 
         [FoldoutGroup(GR_ + "Axis"), ShowInInspector, InlineProperty]
         [NonSerialized]
@@ -239,8 +231,7 @@ namespace Appalachia.Spatial.MeshBurial
         [NonSerialized] private MeshBurialSharedState _state;
         [NonSerialized] private MeshBurialAdjustmentState _adjustment;
 
-        [NonSerialized]
-        private NativeArray<float4x4> _matrices = new NativeArray<float4x4>(1, Allocator.Persistent);
+        [NonSerialized] private NativeArray<float4x4> _matrices = new NativeArray<float4x4>(1, Allocator.Persistent);
 
         [NonSerialized] private int[] _terrainHashCodes = new int[1];
         [NonSerialized] private MeshBurialInstanceTracking _recent;
@@ -638,8 +629,7 @@ namespace Appalachia.Spatial.MeshBurial
                         float3c.up
                     );
 
-                    var dummy = m.MultiplyVector(_meshObject.data.BorderNormal)
-                                 .fromToRotation(terrainNormal, true);
+                    var dummy = m.MultiplyVector(_meshObject.data.BorderNormal).fromToRotation(terrainNormal, true);
 
                     var terrainIndicatorPosition = pos + (gDist * terrainRotation.forward());
                     var meshIndicatorPosition = pos + (gDist * meshBorderRotation.forward());
@@ -759,7 +749,7 @@ namespace Appalachia.Spatial.MeshBurial
 
             if (_randoms.ShouldAllocate())
             {
-                _randoms =  JobRandoms.Create(Allocator.Persistent);
+                _randoms = JobRandoms.Create(Allocator.Persistent);
                 CleanupManager.Store(ref _randoms);
             }
 
