@@ -115,7 +115,7 @@ namespace Appalachia.Spatial.MeshBurial.State
                     MarkAsModified();
                 }
 
-                _state.Changed.Event += OnChanged;
+                _state.Changed.Event +=(OnChanged);
             }
         }
 

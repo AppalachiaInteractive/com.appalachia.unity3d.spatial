@@ -15,9 +15,10 @@ MonoBehaviour:
   _initializer:
     _initializationCount: 0
     _tags: []
+    _unityObject: {fileID: 0}
     _resetToken: 
   _niceName: Terrain Metadata Dictionary_Main Internal
-  _objectId:
+  _objectID:
     _increment: 7861752
     _machine: 14129404
     _timestamp: 1645732320
@@ -27,14 +28,15 @@ MonoBehaviour:
     initializerCount: 64
     keys:
       _capacityIncreaseMultiplier: 2
-      _values: a6260100e6d20100fc210100
+      _values: a6260100e6d20100fc2101006c090100
       noTracking: 0
-      _count: 3
+      _count: 4
     values:
       _capacityIncreaseMultiplier: 2
       _values:
       - {fileID: 11400000, guid: 7ebdfc37b882ff74a974239794282c66, type: 2}
       - {fileID: 11400000, guid: 7ebdfc37b882ff74a974239794282c66, type: 2}
       - {fileID: 11400000, guid: 7ebdfc37b882ff74a974239794282c66, type: 2}
+      - {fileID: 11400000, guid: 7ebdfc37b882ff74a974239794282c66, type: 2}
       noTracking: 0
-      _count: 3
+      _count: 4
